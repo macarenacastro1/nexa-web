@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NEXA Automations · Tu negocio, en piloto automático</title>
+  <meta name="description" content="Webs inteligentes, bots de WhatsApp, contenido visual con IA y sistemas a medida." />
+  <meta name="theme-color" content="#000000" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%237C3AED'/%3E%3Cpath d='M9 23V9l14 14V9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="nav" id="nav">
+    <div class="container nav__inner">
+      <a href="#top" class="logo"><span class="logo__mark">N</span><span data-brand>NEXA</span></a>
+      <nav class="nav__links" id="navLinks">
+        <a href="#servicios">Servicios</a>
+        <a href="#proceso">Cómo trabajamos</a>
+        <a href="#casos">Casos</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <a href="#contacto" class="btn btn--primary btn--sm nav__cta">Agendar llamada</a>
+      <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero dark">
+      <div class="hero__orb"></div>
+      <div class="hero__grid"></div>
+      <div class="container hero__content">
+        <p class="eyebrow reveal">Agencia de automatizaciones con IA</p>
+        <h1 class="display reveal">Tu negocio,<br /><span class="grad">en piloto automático.</span></h1>
+        <p class="lead reveal">Webs inteligentes, bots de WhatsApp, contenido visual con IA y sistemas a medida. Trabajamos mientras vos dormís.</p>
+        <div class="hero__ctas reveal">
+          <a href="#contacto" class="btn btn--primary">Agendar llamada gratis</a>
+          <a href="#servicios" class="btn btn--ghost">Ver servicios <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <a href="#metricas" class="scroll-hint" aria-label="Bajar"><span></span></a>
+    </section>
+
+    <!-- METRICS -->
+    <section class="metrics dark" id="metricas">
+      <div class="container metrics__grid">
+        <div class="metric reveal"><strong>+<span class="count" data-to="70">0</span>%</strong><span>consultas respondidas al instante</span></div>
+        <div class="metric reveal"><strong><span class="count" data-to="24">0</span>/7</strong><span>atención sin pausas</span></div>
+        <div class="metric reveal"><strong>-<span class="count" data-to="15">0</span> hs</strong><span>semanales de tareas manuales</span></div>
+        <div class="metric reveal"><strong>x<span class="count" data-to="3">0</span></strong><span>contenido publicado</span></div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="section light" id="servicios">
+      <div class="container">
+        <div class="section__head reveal">
+          <p class="eyebrow">Servicios</p>
+          <h2 class="h2">Lo que automatizamos.</h2>
+          <p class="lead lead--dark">Cuatro formas de sacarte trabajo de encima y vender más, sin sumar personal.</p>
+        </div>
+
+        <div class="bento">
+          <!-- Web -->
+          <article class="card card--light card--wide reveal">
+            <div class="card__icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18M8 21h8M12 18v3"/></svg></div>
+            <h3>Páginas web inteligentes</h3>
+            <p>Webs que no solo se ven bien: atienden, cotizan, agendan y venden solas.</p>
+            <ul class="chips">
+              <li>Chatbot con IA entrenado con tu negocio</li>
+              <li>Reservas y turnos con Google Calendar</li>
+              <li>Formularios que califican leads y avisan por WhatsApp</li>
+              <li>Tienda con Mercado Pago / Stripe</li>
+              <li>Cotizador automático</li>
+              <li>Contenido que se adapta a cada visitante</li>
+              <li>Multi-idioma automático</li>
+              <li>SEO + panel de métricas</li>
+            </ul>
+          </article>
+
+          <!-- WhatsApp -->
+          <article class="card card--light reveal">
+            <div class="card__icon"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-13.4 7.9L3 21l1.1-4.6A9 9 0 1 1 21 12z"/><path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01"/></svg></div>
+            <h3>Bots de atención en WhatsApp</h3>
+            <p>Tu mejor vendedor, disponible 24/7 en el canal que tus clientes ya usan.</p>
+            <ul class="list">
+              <li>Respuestas con IA al instante</li>
+              <li>Toma de pedidos y turnos</li>
+              <li>Catálogo dentro del chat</li>
+              <li>Derivación a un humano</li>
+              <li>Recordatorios y seguimiento</li>
+              <li>Links de pago y confirmaciones</li>
+            </ul>
+            <div class="chat">
+              <div class="bubble bubble--in">Hola! ¿Tienen turno para mañana?</div>
+              <div class="bubble bubble--out">¡Hola! 👋 Tengo 10:30 y 16:00. ¿Cuál te reservo?</div>
+            </div>
+          </article>
+
+          <!-- Visual -->
+          <article class="card card--light reveal">
+            <div class="card__icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div>
+            <h3>Imágenes y recursos visuales con IA</h3>
+            <p>Contenido profesional para redes, en una fracción del tiempo y el costo.</p>
+            <ul class="list">
+              <li>Posts y carruseles</li>
+              <li>Fotos de producto con IA</li>
+              <li>Banners y anuncios</li>
+              <li>Reels y videos cortos</li>
+              <li>Kit de marca consistente</li>
+              <li>Calendario de contenido</li>
+            </ul>
+            <div class="swatches"><span></span><span></span><span></span><span></span></div>
+          </article>
+
+          <!-- Systems -->
+          <article class="card card--dark card--wide reveal">
+            <div class="card__icon card__icon--dark"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></div>
+            <h3>Sistemas a medida</h3>
+            <p>Plataformas internas que ordenan tu operación: pedidos, stock, clientes, producción y reportes en un solo lugar.</p>
+            <ul class="chips chips--dark">
+              <li>Dashboards en tiempo real</li>
+              <li>Roles y permisos</li>
+              <li>Automatizaciones entre áreas</li>
+              <li>Integraciones con tus herramientas</li>
+            </ul>
+            <a href="#casos" class="link">Mirá Tex Hub, el sistema que hicimos para Texbros →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CASE -->
+    <section class="section dark" id="casos">
+      <div class="container case">
+        <div class="case__text reveal">
+          <p class="eyebrow">Caso destacado</p>
+          <h2 class="h2">Tex Hub <span class="muted">×</span> <span class="grad">Texbros</span></h2>
+          <div class="case__block">
+            <h4>El problema</h4>
+            <p>Procesos manuales, planillas dispersas y poca visibilidad de lo que pasaba en el negocio.</p>
+          </div>
+          <div class="case__block">
+            <h4>La solución</h4>
+            <p>Un sistema centralizado a medida que concentra pedidos, stock, clientes y reportes, con automatizaciones entre áreas.</p>
+          </div>
+          <ul class="results">
+            <li><strong>-60%</strong><span>tiempo en tareas administrativas</span></li>
+            <li><strong>100%</strong><span>de la información en un solo lugar</span></li>
+            <li><strong>Tiempo real</strong><span>métricas para decidir mejor</span></li>
+          </ul>
+        </div>
+
+        <div class="mock reveal" aria-hidden="true">
+          <div class="mock__bar"><i></i><i></i><i></i><span>texhub.app/dashboard</span></div>
+          <div class="mock__body">
+            <aside class="mock__side">
+              <b class="mock__logo">TH</b>
+              <span class="on"></span><span></span><span></span><span></span><span></span>
+            </aside>
+            <div class="mock__main">
+              <div class="mock__kpis">
+                <div><small>Pedidos hoy</small><b>128</b><em>+12%</em></div>
+                <div><small>Facturación</small><b>$4.2M</b><em>+8%</em></div>
+                <div><small>Stock crítico</small><b>6</b><em class="warn">revisar</em></div>
+              </div>
+              <div class="mock__chart">
+                <small>Ventas · últimos 12 meses</small>
+                <div class="bars">
+                  <i style="--h:35%"></i><i style="--h:48%"></i><i style="--h:42%"></i><i style="--h:60%"></i><i style="--h:55%"></i><i style="--h:70%"></i><i style="--h:64%"></i><i style="--h:78%"></i><i style="--h:72%"></i><i style="--h:85%"></i><i style="--h:80%"></i><i style="--h:95%"></i>
+                </div>
+              </div>
+              <div class="mock__table">
+                <div class="row head"><span>Pedido</span><span>Cliente</span><span>Estado</span></div>
+                <div class="row"><span>#2041</span><span>Distribuidora Sur</span><span class="tag tag--ok">Entregado</span></div>
+                <div class="row"><span>#2042</span><span>Moda Norte</span><span class="tag">En producción</span></div>
+                <div class="row"><span>#2043</span><span>Textil Andes</span><span class="tag tag--new">Nuevo</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section class="section light" id="proceso">
+      <div class="container">
+        <div class="section__head reveal">
+          <p class="eyebrow">Cómo trabajamos</p>
+          <h2 class="h2">De la idea a funcionando,<br />en semanas.</h2>
+        </div>
+        <ol class="steps">
+          <li class="step reveal"><span class="step__n">01</span><h3>Diagnóstico gratis</h3><p>Charlamos 30 minutos y detectamos qué tareas te están comiendo el tiempo.</p></li>
+          <li class="step reveal"><span class="step__n">02</span><h3>Diseño de la solución</h3><p>Te proponemos un plan claro, con alcance, tiempos y precio cerrado.</p></li>
+          <li class="step reveal"><span class="step__n">03</span><h3>Desarrollo e implementación</h3><p>Construimos, probamos con vos y lo dejamos andando con tu equipo.</p></li>
+          <li class="step reveal"><span class="step__n">04</span><h3>Soporte y mejora continua</h3><p>Medimos resultados y seguimos optimizando mes a mes.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- WHY -->
+    <section class="section dark">
+      <div class="container">
+        <div class="section__head reveal">
+          <p class="eyebrow">Por qué elegirnos</p>
+          <h2 class="h2">Tecnología seria.<br /><span class="grad">Trato humano.</span></h2>
+        </div>
+        <div class="why">
+          <div class="card card--dark reveal"><h3>⚡ Rápidos</h3><p>Entregas en semanas, no en meses.</p></div>
+          <div class="card card--dark reveal"><h3>🎯 Hechos a medida</h3><p>Nada de plantillas: cada solución se adapta a tu negocio.</p></div>
+          <div class="card card--dark reveal"><h3>🤝 Soporte humano</h3><p>Hablás con personas reales que conocen tu proyecto.</p></div>
+          <div class="card card--dark reveal"><h3>💬 Precio claro</h3><p>Presupuesto cerrado desde el día uno. Sin sorpresas.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="section light">
+      <div class="container">
+        <div class="section__head reveal">
+          <p class="eyebrow">Testimonios</p>
+          <h2 class="h2">Lo que dicen nuestros clientes.</h2>
+        </div>
+        <div class="slider reveal">
+          <div class="slider__track" id="track">
+            <figure class="quote"><blockquote>“El bot de WhatsApp responde el 80% de las consultas. Ahora nos dedicamos a cerrar ventas, no a contestar lo mismo todo el día.”</blockquote><figcaption><b>Lucía M.</b> · Estética & Spa</figcaption></figure>
+            <figure class="quote"><blockquote>“Tex Hub nos ordenó el negocio. Pasamos de diez planillas a un solo sistema que todo el equipo usa.”</blockquote><figcaption><b>Equipo Texbros</b> · Industria textil</figcaption></figure>
+            <figure class="quote"><blockquote>“La web nueva agenda turnos sola y el contenido con IA nos triplicó la presencia en redes.”</blockquote><figcaption><b>Martín R.</b> · Consultorio odontológico</figcaption></figure>
+          </div>
+          <div class="slider__dots" id="dots"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section dark" id="faq">
+      <div class="container container--narrow">
+        <div class="section__head reveal">
+          <p class="eyebrow">Preguntas frecuentes</p>
+          <h2 class="h2">Todo lo que querés saber.</h2>
+        </div>
+        <div class="faq reveal">
+          <details><summary>¿Cuánto tarda un proyecto?</summary><p>Un bot de WhatsApp o una web inteligente suelen estar listos en 2 a 4 semanas. Un sistema a medida depende del alcance; lo definimos juntos en el diagnóstico.</p></details>
+          <details><summary>¿Necesito saber de tecnología?</summary><p>Para nada. Nos encargamos de todo y te capacitamos para que uses las herramientas sin complicaciones.</p></details>
+          <details><summary>¿Funciona con mi WhatsApp actual?</summary><p>Sí. Trabajamos con WhatsApp Business y la API oficial, manteniendo tu número.</p></details>
+          <details><summary>¿Qué pasa después de entregar?</summary><p>Te acompañamos con soporte y mejoras continuas. Podés elegir un plan mensual de mantenimiento.</p></details>
+          <details><summary>¿Cuánto cuesta?</summary><p>Depende de cada solución. Después de la llamada gratuita te pasamos un presupuesto cerrado, sin costos ocultos.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="final dark">
+      <div class="final__glow"></div>
+      <div class="container final__inner reveal">
+        <h2 class="display display--md">¿Listo para<br /><span class="grad">automatizar?</span></h2>
+        <p class="lead">Agendá una llamada de 30 minutos. Sin compromiso.</p>
+        <div class="hero__ctas">
+          <a href="#contacto" class="btn btn--primary">Agendar llamada gratis</a>
+          <a href="#" data-wa class="btn btn--ghost" target="_blank" rel="noopener">Escribinos por WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section light" id="contacto">
+      <div class="container contact">
+        <div class="reveal">
+          <p class="eyebrow">Contacto</p>
+          <h2 class="h2">Hablemos de<br />tu proyecto.</h2>
+          <p class="lead lead--dark">Contanos qué querés automatizar y te respondemos en menos de 24 hs.</p>
+        </div>
+        <form class="form reveal" id="form" novalidate>
+          <div class="field"><label for="f-name">Nombre</label><input id="f-name" name="name" required autocomplete="name" /><small></small></div>
+          <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" required autocomplete="email" /><small></small></div>
+          <div class="field"><label for="f-wa">WhatsApp</label><input id="f-wa" name="whatsapp" type="tel" required autocomplete="tel" placeholder="+54 9 11 ..." /><small></small></div>
+          <div class="field"><label for="f-svc">Servicio de interés</label>
+            <select id="f-svc" name="service" required>
+              <option value="">Elegí una opción</option>
+              <option>Página web inteligente</option>
+              <option>Bot de WhatsApp</option>
+              <option>Imágenes y contenido con IA</option>
+              <option>Sistema a medida</option>
+              <option>No sé, quiero asesoramiento</option>
+            </select><small></small>
+          </div>
+          <div class="field field--full"><label for="f-msg">Mensaje</label><textarea id="f-msg" name="message" rows="4" required></textarea><small></small></div>
+          <button class="btn btn--primary field--full" type="submit">Enviar mensaje</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer dark">
+    <div class="container footer__inner">
+      <a href="#top" class="logo"><span class="logo__mark">N</span><span data-brand>NEXA</span></a>
+      <nav class="footer__links">
+        <a href="#servicios">Servicios</a><a href="#proceso">Proceso</a><a href="#casos">Casos</a><a href="#contacto">Contacto</a>
+      </nav>
+      <div class="footer__social">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7h.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/></svg></a>
+        <a href="#" data-wa aria-label="WhatsApp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-13.4 7.9L3 21l1.1-4.6A9 9 0 1 1 21 12z"/></svg></a>
+      </div>
+    </div>
+    <p class="container footer__copy">© <span id="year">2026</span> <span data-brand-full>NEXA Automations</span>. Todos los derechos reservados.</p>
+  </footer>
+
+  <a href="#" data-wa class="wa-float" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp">
+    <svg viewBox="0 0 32 32"><path fill="currentColor" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.6c-2 0-4-.5-5.7-1.6l-.4-.2-3.9 1 1-3.8-.3-.4A10.6 10.6 0 1 1 16 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.6 5.8 5 2.2.9 3 1 4 .8.7-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+  </a>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="main.js"></script>
+</body>
+</html>
