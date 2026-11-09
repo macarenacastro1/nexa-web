@@ -1,0 +1,25 @@
+{
+  "name": "nexa-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "npx serve out"
+  },
+  "dependencies": {
+    "@react-three/drei": "10.7.9",
+    "@react-three/fiber": "9.3.0",
+    "gsap": "3.15.1",
+    "next": "15.5.29",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "@types/react": "19.2.2",
+    "@types/three": "0.180.0",
+    "typescript": "5.9.3"
+  }
+}
