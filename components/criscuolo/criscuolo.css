@@ -445,3 +445,30 @@
   .cc-ch__text { grid-column: 1; }
   .cc-ch__num { font-size: 96px; }
 }
+
+/* ================= v3 · ORIGEM: rótulos y leyenda cartográfica ================= */
+.cc-data, .cc-origin > .cc-note { display: none; }
+.cc-omap__region { font-family: var(--serif); font-style: italic; font-size: 4.2px; letter-spacing: 2px; fill: var(--bordo); fill-opacity: .38; text-transform: uppercase; }
+.cc-omap__callout path { fill: none; stroke: var(--bordo); stroke-width: 1; stroke-opacity: .7; }
+.cc-omap__callout text { font-family: var(--sans); font-size: 1.9px; letter-spacing: .5px; font-weight: 600; fill: var(--bordo); }
+.cc-omap__callout text.sub { font-weight: 400; fill-opacity: .7; font-family: var(--serif); font-style: italic; font-size: 2.2px; letter-spacing: .1px; }
+.cc-legend { position: absolute; right: clamp(20px, 6vw, 96px); top: 92px; width: 240px; padding: 16px 18px 14px; background: rgba(244,239,229,.9); border: 1px solid rgba(80,31,38,.35); color: var(--bordo); pointer-events: auto; }
+.cc-legend::before { content: ""; position: absolute; inset: 4px; border: 1px solid rgba(80,31,38,.12); pointer-events: none; }
+.cc-legend__head { display: flex; justify-content: space-between; align-items: center; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; font-weight: 600; margin-bottom: 10px; }
+.cc-legend__head svg { width: 16px; height: 22px; }
+.cc-legend__head svg path { fill: var(--bordo); }
+.cc-legend__head svg text { font-family: var(--sans); font-size: 6px; font-weight: 700; fill: var(--bordo); }
+.cc-legend ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 11.5px; }
+.cc-legend li { display: flex; align-items: center; gap: 10px; }
+.cc-legend i { flex: none; width: 22px; height: 10px; position: relative; }
+.cc-legend i.lot::before { content: ""; position: absolute; left: 7px; top: 1px; width: 8px; height: 8px; border-radius: 50%; background: var(--bordo); }
+.cc-legend i.road { border-top: 1px dashed var(--bordo); top: 5px; height: 0; }
+.cc-legend i.river { height: 6px; border-bottom: 2px solid var(--olive); border-radius: 0 0 50% 50%; opacity: .8; }
+.cc-legend i.contour { border-top: 1px solid rgba(80,31,38,.45); border-bottom: 1px solid rgba(80,31,38,.2); height: 5px; top: 1px; }
+.cc-legend__scale { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); height: 5px; margin: 14px 0 16px; border: 1px solid var(--bordo); }
+.cc-legend__scale span:nth-child(odd) { background: var(--bordo); }
+.cc-legend__scale em { position: absolute; top: 8px; font-style: normal; font-size: 9px; letter-spacing: .08em; }
+.cc-legend__scale em:first-of-type { left: 0; }
+.cc-legend__scale em:last-of-type { right: 0; }
+.cc-legend p { margin: 0; font-family: var(--serif); font-style: italic; font-size: 13px; opacity: .8; }
+@media (max-width: 760px) { .cc-legend { display: none; } }

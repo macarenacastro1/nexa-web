@@ -77,6 +77,15 @@ export default function OriginMap({ onPick, active = 0, cross = false }: { onPic
         </g>
       )}
       <text x={MAP_POINT.x + 2.2} y={MAP_POINT.y - 3} className="cc-omap__town">CAMPOS ALTOS</text>
+      {/* rótulo de región sobre el terreno, como en los mapas impresos */}
+      <path id="cc-region" d="M40,94 C60,89 80,95 104,90" fill="none" />
+      <text className="cc-omap__region"><textPath href="#cc-region">Cerrado Mineiro</textPath></text>
+      {/* anotación con línea guía hacia los lotes */}
+      <g className="cc-omap__callout">
+        <path d="M111,67 L118,76 L138,76" vectorEffect="non-scaling-stroke" />
+        <text x="119" y="74.6">FAZENDA GRANNO</text>
+        <text x="119" y="79.6" className="sub">lotes 01 — 04</text>
+      </g>
     </svg>
   );
 }

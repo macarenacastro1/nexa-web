@@ -145,13 +145,20 @@ export default function Journey() {
                 <h2 className="cc-display cc-display--md">A origem define tudo.</h2>
                 <p className="cc-italic">Do Cerrado Mineiro para o mundo.</p>
               </div>
-              <dl className="cc-data">
-                <div><dt>Região</dt><dd>Cerrado Mineiro</dd></div>
-                <div><dt>Município</dt><dd>Campos Altos · MG</dd></div>
-                <div><dt>Fazenda</dt><dd>Granno</dd></div>
-                <div><dt>Café</dt><dd>100% Arábica</dd></div>
-              </dl>
-              <p className="cc-note">Coordenadas ilustrativas</p>
+              {/* leyenda cartográfica */}
+              <aside className="cc-legend" aria-label="Legenda do mapa">
+                <div className="cc-legend__head"><span>Legenda</span>
+                  <svg viewBox="0 0 20 28" aria-hidden><path d="M10,2 L16,24 L10,19 L4,24 Z" /><text x="10" y="27.5" textAnchor="middle">N</text></svg>
+                </div>
+                <ul>
+                  <li><i className="lot" />Lotes Criscuolo · Fazenda Granno</li>
+                  <li><i className="road" />Estrada rural</li>
+                  <li><i className="river" />Córrego</li>
+                  <li><i className="contour" />Curvas de nível</li>
+                </ul>
+                <div className="cc-legend__scale"><span /><span /><span /><span /><em>0</em><em>1 km</em></div>
+                <p>Mapa ilustrativo · Campos Altos, MG</p>
+              </aside>
             </div>
           </div>
         </div>
