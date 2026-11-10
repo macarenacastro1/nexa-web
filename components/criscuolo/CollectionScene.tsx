@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
+import { Environment, Lightformer } from "@react-three/drei";
+import SoftShadow from "./SoftShadow";
 import * as THREE from "three";
 import { PRODUCTS } from "./products";
 import { pouchGeometry, pouchFront, pouchBack, paperNormal } from "./pouch";
@@ -17,8 +18,8 @@ function Pouches({ ctl, onPick, onHover }: { ctl: React.MutableRefObject<Ctl>; o
   const mats = useMemo(() => {
     const normal = paperNormal();
     return PRODUCTS.map((p) => ({
-      front: new THREE.MeshPhysicalMaterial({ map: pouchFront(p), normalMap: normal, normalScale: new THREE.Vector2(0.12, 0.12), roughness: 0.78, sheen: 0.25, sheenRoughness: 0.8, sheenColor: new THREE.Color("#ffffff"), envMapIntensity: 0.7 }),
-      back: new THREE.MeshPhysicalMaterial({ map: pouchBack(p), normalMap: normal, normalScale: new THREE.Vector2(0.12, 0.12), roughness: 0.78, sheen: 0.25, sheenRoughness: 0.8, envMapIntensity: 0.7 }),
+      front: new THREE.MeshStandardMaterial({ map: pouchFront(p), normalMap: normal, normalScale: new THREE.Vector2(0.12, 0.12), roughness: 0.8, envMapIntensity: 0.75 }),
+      back: new THREE.MeshStandardMaterial({ map: pouchBack(p), normalMap: normal, normalScale: new THREE.Vector2(0.12, 0.12), roughness: 0.8, envMapIntensity: 0.75 }),
     }));
   }, []);
   const refs = useRef<(THREE.Group | null)[]>([]);
@@ -73,7 +74,7 @@ function Pouches({ ctl, onPick, onHover }: { ctl: React.MutableRefObject<Ctl>; o
   );
 }
 
-export default function CollectionScene({ ctl, onPick, onHover }: { ctl: React.MutableRefObject<Ctl>; onPick: (i: number) => void; onHover: (i: number | null) => void }) {
+export default function CollectionScene({ ctl, onPick, onHover, active = true }: { ctl: React.MutableRefObject<Ctl>; onPick: (i: number) => void; onHover: (i: number | null) => void; active?: boolean }) {
   // las texturas usan las tipografías de la marca: esperamos a que estén cargadas
   const [fontsReady, setFontsReady] = useState(false);
   useEffect(() => {
@@ -83,7 +84,7 @@ export default function CollectionScene({ ctl, onPick, onHover }: { ctl: React.M
     ]).catch(() => null).finally(() => setFontsReady(true));
   }, []);
   return (
-    <Canvas dpr={[1, 1.75]} camera={{ position: [0, 0.1, 5.6], fov: 32 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping }}>
+    <Canvas frameloop={active ? "always" : "never"} dpr={[1, 1.5]} camera={{ position: [0, 0.1, 5.6], fov: 32 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping }}>
       <Environment resolution={256} frames={1}>
         <color attach="background" args={["#6b5a4c"]} />
         <Lightformer form="rect" intensity={2} color="#fff3e0" position={[-4, 4, 4]} scale={[5, 5, 1]} />
@@ -93,7 +94,7 @@ export default function CollectionScene({ ctl, onPick, onHover }: { ctl: React.M
       <directionalLight position={[-3, 5, 5]} intensity={1.2} color="#fff1dd" />
       <ambientLight intensity={0.2} />
       {fontsReady && <Pouches ctl={ctl} onPick={onPick} onHover={onHover} />}
-      <ContactShadows position={[0, -0.8, 0]} opacity={0.28} scale={14} blur={2.6} far={3} color="#3a1a14" />
+      <SoftShadow position={[0, -0.8, 0]} scale={[9, 1.6]} opacity={0.2} />
     </Canvas>
   );
 }

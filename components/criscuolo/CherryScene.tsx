@@ -1,7 +1,8 @@
 "use client";
 import { useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
+import { Environment, Lightformer } from "@react-three/drei";
+import SoftShadow from "./SoftShadow";
 import * as THREE from "three";
 import { cherrySkin, pulpFace, parchment, roastedBean } from "./textures";
 import { journey } from "./state";
@@ -75,9 +76,8 @@ function Cherry() {
       roughness: 0.52, clearcoat: 0.3, clearcoatRoughness: 0.45, envMapIntensity: 0.8,
     });
     // grano tostado: misma fibra, tono marrón y brillo de aceites
-    const roastMats = tex.roast.map((r) => new THREE.MeshPhysicalMaterial({
-      map: r.map, normalMap: r.normal, normalScale: new THREE.Vector2(0.55, 0.55),
-      roughness: 0.48, clearcoat: 0.32, clearcoatRoughness: 0.35, sheen: 0.25, sheenColor: new THREE.Color("#c08a5a"), envMapIntensity: 0.85, transparent: true,
+    const roastMats = tex.roast.map((r) => new THREE.MeshStandardMaterial({
+      map: r.map, normalMap: r.normal, normalScale: new THREE.Vector2(0.55, 0.55), roughness: 0.42, envMapIntensity: 0.9, transparent: true,
     }));
     const roastedHero = roastMats[0].clone(); roastedHero.transparent = false;
     return { skin, pulp, seed, seedL: seed.clone(), roastMats, roastedHero };
@@ -222,15 +222,15 @@ function Cherry() {
         ))}
       </group>
       <group ref={shadow}>
-        <ContactShadows position={[0, -1.45, 0]} opacity={0.32} scale={7} blur={2.8} far={3} color="#3a1a14" />
+        <SoftShadow position={[0, -1.45, 0]} scale={[3.2, 1.1]} opacity={0.28} />
       </group>
     </>
   );
 }
 
-export default function CherryScene() {
+export default function CherryScene({ active = true }: { active?: boolean }) {
   return (
-    <Canvas dpr={[1, 1.75]} camera={{ position: [0, 0.35, 14], fov: 25 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1 }}>
+    <Canvas frameloop={active ? "always" : "never"} dpr={[1, 1.5]} camera={{ position: [0, 0.35, 14], fov: 25 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1 }}>
       {/* luz de estudio natural: ventana grande cálida, relleno suave y contraluz */}
       <Environment resolution={256} frames={1}>
         <color attach="background" args={["#6b5a4c"]} />

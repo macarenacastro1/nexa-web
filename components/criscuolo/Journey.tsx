@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { journey } from "./state";
 import FieldCanvas from "./FieldCanvas";
+import { useInView } from "./useInView";
 
 gsap.registerPlugin(ScrollTrigger);
 const CherryScene = dynamic(() => import("./CherryScene"), { ssr: false });
@@ -31,6 +32,7 @@ export default function Journey() {
     origin: useRef<HTMLDivElement>(null), bar: useRef<HTMLSpanElement>(null),
   };
   const [dark, setDark] = useState(false);
+  const active = useInView(root, "100px");
   const [step, setStep] = useState(0);
 
   useEffect(() => {
@@ -79,7 +81,7 @@ export default function Journey() {
 
       <section className="cc-journey" ref={root} id="jornada" aria-label="Da fruta à xícara">
         <div className={`cc-stage${dark ? " cc-stage--dark" : ""}`}>
-          <div className="cc-canvas"><CherryScene /></div>
+          <div className="cc-canvas"><CherryScene active={active} /></div>
 
           {/* marco editorial */}
           <div className="cc-frame" aria-hidden>

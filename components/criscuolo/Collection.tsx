@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { PRODUCTS } from "./products";
 import type { Ctl } from "./CollectionScene";
+import { useInView } from "./useInView";
 
 gsap.registerPlugin(ScrollTrigger);
 const CollectionScene = dynamic(() => import("./CollectionScene"), { ssr: false });
@@ -63,6 +64,7 @@ export default function Collection() {
   const [map, setMap] = useState(false);
   const [mount, setMount] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+  const active = useInView(root, "100px");
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -102,7 +104,7 @@ export default function Collection() {
       </div>
 
       <div className="cc-col__stage" ref={stage} onPointerDown={onDown}>
-        {mount && <CollectionScene ctl={ctl} onPick={pick} onHover={onHover} />}
+        {mount && <CollectionScene ctl={ctl} onPick={pick} onHover={onHover} active={active} />}
         {/* nombres bajo cada bolsa (vista de colección) */}
         <ol className="cc-col__names" aria-label="Escolha um café">
           {PRODUCTS.map((q, i) => (

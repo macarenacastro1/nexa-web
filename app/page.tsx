@@ -1,3 +1,4 @@
+import ScrollRefresh from "@/components/ScrollRefresh";
 import Nav, { Logo } from "@/components/Nav";
 import ChaosStage from "@/components/ChaosStage";
 import Flow from "@/components/Flow";
@@ -13,6 +14,7 @@ const Seam = () => <div className="seam" aria-hidden><i /></div>;
 export default function Home() {
   return (
     <>
+      <ScrollRefresh />
       <Nav />
       <main>
         <ChaosStage />
