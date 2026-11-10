@@ -4,14 +4,12 @@ import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { journey } from "./state";
-import FieldCanvas from "./FieldCanvas";
+import OriginMap from "./OriginMap";
 import { useInView } from "./useInView";
 
 gsap.registerPlugin(ScrollTrigger);
 const CherryScene = dynamic(() => import("./CherryScene"), { ssr: false });
 
-// Cuando tengamos la foto real del campo, poner aquí su ruta (p. ej. "/criscuolo/campo.jpg").
-const FIELD_PHOTO: string | null = null;
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
@@ -46,17 +44,21 @@ export default function Journey() {
       set(r.open.current, o, (1 - seg(p, 0.27, 0.34)) * 30);
       const s = inOut(p, 0.55, 0.6, 0.66, 0.7);
       set(r.seed.current, s, (1 - seg(p, 0.52, 0.58)) * 16);
-      const f = seg(p, 0.72, 0.83);
-      if (r.field.current) { r.field.current.style.opacity = String(f); r.field.current.style.visibility = f < 0.01 ? "hidden" : "visible"; }
+      // ORIGEM: las fibras del grano se vuelven curvas de nivel y el mapa se aleja hasta la región
+      // apertura circular desde el centro del grano (sin fundidos turbios)
+      const rv = seg(p, 0.745, 0.86);
+      if (r.field.current) {
+        r.field.current.style.opacity = rv > 0 ? "1" : "0"; r.field.current.style.visibility = rv > 0 ? "visible" : "hidden";
+        r.field.current.style.setProperty("--iris", `${(Math.pow(rv, 1.4) * 120).toFixed(2)}%`);
+      }
       if (r.fieldImg.current) {
-        const z = seg(p, 0.72, 1);
-        r.fieldImg.current.style.transform = `scale(${1.32 - z * 0.26}) translate3d(0, ${z * -2}%, 0)`;
-        r.fieldImg.current.style.filter = `blur(${(1 - seg(p, 0.72, 0.86)) * 14}px) saturate(${0.6 + seg(p, 0.72, 0.9) * 0.4})`;
+        const z = seg(p, 0.74, 0.97), e = 1 - Math.pow(1 - z, 3);
+        r.fieldImg.current.style.transform = `scale(${(4 - e * 3).toFixed(3)}) rotate(${((1 - e) * -8).toFixed(2)}deg)`;
       }
       const og = seg(p, 0.85, 0.93);
       set(r.origin.current, og, (1 - og) * 30);
       if (r.bar.current) r.bar.current.style.transform = `scaleY(${p})`;
-      setDark(p > 0.8);
+      setDark(p > 0.67 && p < 0.83);
       setStep(p < 0.22 ? 0 : p < 0.5 ? 1 : p < 0.74 ? 2 : 3);
     };
     update(0);
@@ -119,9 +121,7 @@ export default function Journey() {
 
           {/* 03 — origem */}
           <div className="cc-field" ref={r.field} id="origem">
-            <div className="cc-field__media" ref={r.fieldImg}>
-              {FIELD_PHOTO ? <img className="cc-field__img" src={BASE + FIELD_PHOTO} alt="Plantação de café no Cerrado Mineiro" /> : <FieldCanvas />}
-            </div>
+            <div className="cc-field__media" ref={r.fieldImg}><OriginMap /></div>
             <div className="cc-field__shade" />
             <div className="cc-origin" ref={r.origin}>
               <div className="cc-coords" aria-label="Coordenadas ilustrativas">

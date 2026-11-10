@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { PRODUCTS } from "./products";
 import type { Ctl } from "./CollectionScene";
 import { useInView } from "./useInView";
+import OriginMap from "./OriginMap";
 
 gsap.registerPlugin(ScrollTrigger);
 const CollectionScene = dynamic(() => import("./CollectionScene"), { ssr: false });
@@ -17,40 +18,25 @@ const NOTE_HINT: Record<string, string> = {
   Jasmim: "Floral intenso e limpo.", "Frutas cítricas": "Acidez brilhante, bergamota.", "Chá branco": "Corpo leve, final delicado.",
 };
 
-/** mapa editorial: curvas de nivel abstractas y los cuatro puntos de origen */
-function OriginMap({ active, onClose }: { active: number; onClose: () => void }) {
-  const lonMin = -46.32, lonMax = -46.08, latMin = -19.78, latMax = -19.56;
-  const px = (lon: number) => ((lon - lonMin) / (lonMax - lonMin)) * 100;
-  const py = (lat: number) => ((latMax - lat) / (latMax - latMin)) * 100;
-  const lines = Array.from({ length: 16 }, (_, k) => {
-    const r = 6 + k * 5.2;
-    let d = "";
-    for (let a = 0; a <= 360; a += 6) {
-      const rad = (a * Math.PI) / 180;
-      const wob = 1 + 0.12 * Math.sin(rad * 3 + k * 0.6) + 0.06 * Math.sin(rad * 7 - k);
-      d += `${a ? "L" : "M"}${(46 + Math.cos(rad) * r * wob * 1.25).toFixed(2)},${(52 + Math.sin(rad) * r * wob).toFixed(2)}`;
-    }
-    return d + "Z";
-  });
+/** mapa editorial a pantalla completa: se cierra con el botón, con Esc o tocando fuera de la información */
+function MapOverlay({ active, onClose, onPick }: { active: number; onClose: () => void; onPick: (i: number) => void }) {
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", k);
+    const prev = document.body.style.overflow; document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", k); document.body.style.overflow = prev; };
+  }, [onClose]);
   const p = PRODUCTS[active];
   return (
-    <div className="cc-map" role="dialog" aria-label={`Origem do café ${p.name}`}>
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="cc-map__lines" aria-hidden>
-        {lines.map((d, i) => <path key={i} d={d} vectorEffect="non-scaling-stroke" />)}
-      </svg>
-      {PRODUCTS.map((q, i) => (
-        <div key={q.n} className={`cc-map__pt${i === active ? " on" : ""}`} style={{ left: `${px(q.lonN)}%`, top: `${py(q.latN)}%` }}>
-          <i /><span>{q.n} · {q.name}</span>
-        </div>
-      ))}
-      <div className="cc-map__cross" style={{ left: `${px(p.lonN)}%`, top: `${py(p.latN)}%` }} aria-hidden />
+    <div className="cc-map" role="dialog" aria-modal="true" aria-label={`Origem do café ${p.name}`}>
+      <div className="cc-map__bg"><OriginMap active={active} cross onPick={onPick} /></div>
       <div className="cc-map__info">
         <span className="cc-tech">Campos Altos · Minas Gerais</span>
         <div className="cc-map__coords">{p.lat}<br />{p.lon}</div>
-        <p className="cc-italic">Altitude {p.altitude} · Cerrado Mineiro</p>
-        <span className="cc-note" style={{ color: "var(--bordo)" }}>Localização ilustrativa</span>
+        <p className="cc-italic">Nº {p.n} {p.name} · Altitude {p.altitude}</p>
+        <span className="cc-note" style={{ color: "var(--bordo)" }}>Localização ilustrativa · toque em outro lote</span>
       </div>
-      <button className="cc-map__close" onClick={onClose}>Fechar mapa ×</button>
+      <button className="cc-map__close" onClick={onClose} autoFocus>Voltar ao café ×</button>
     </div>
   );
 }
@@ -149,7 +135,7 @@ export default function Collection() {
         </aside>
       )}
 
-      {map && sel !== null && <OriginMap active={sel} onClose={() => setMap(false)} />}
+      {map && sel !== null && <MapOverlay active={sel} onClose={() => setMap(false)} onPick={pick} />}
     </section>
   );
 }
