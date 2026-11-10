@@ -32,13 +32,13 @@ export default function Contact() {
     <section className="contact" id="contacto" aria-label="Contacto">
       <div className="container contact__grid">
         <div>
-          <p className="label"><b>→</b> Diagnóstico gratis</p>
+          <p className="label">Diagnóstico gratis</p>
           <h2 className="h2">Let&apos;s find what<br /><span className="serif" style={{ color: "var(--mute)" }}>to automate first.</span></h2>
           <p className="lead">En una llamada de 30 minutos revisamos tus procesos y te decimos qué conviene automatizar primero, cuánto tiempo te ahorra y cuánto cuesta.</p>
           <ul className="trust">
             <li><Check /><div>Sin compromiso<small>Si no hay nada que valga la pena automatizar, te lo decimos.</small></div></li>
             <li><Check /><div>Respuesta en menos de 24 h<small>Hablás con personas, no con un formulario.</small></div></li>
-            <li><Check /><div>Hecho en Argentina<small>Trabajamos con empresas de todo el país.</small></div></li>
+            <li><Check /><div>Argentina y Brasil<small>Trabajamos con empresas de Argentina y Brasil, en español y portugués.</small></div></li>
             <li><Check /><div>Caso real: Tex Hub para Texbros<small>Un sistema a medida que centraliza toda su operación.</small></div></li>
           </ul>
           <a href={waUrl} target="_blank" rel="noopener" className="btn btn--line" style={{ marginTop: 30 }}>Prefiero escribir por WhatsApp <span className="arr">→</span></a>

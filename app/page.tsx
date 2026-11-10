@@ -1,6 +1,7 @@
 import Nav, { Logo } from "@/components/Nav";
 import ChaosStage from "@/components/ChaosStage";
 import Flow from "@/components/Flow";
+import Services from "@/components/Services";
 import Simulator from "@/components/Simulator";
 import Impact from "@/components/Impact";
 import Finale from "@/components/Finale";
@@ -17,6 +18,8 @@ export default function Home() {
         <ChaosStage />
         <Seam />
         <Flow />
+        <Seam />
+        <Services />
         <Seam />
         <Simulator />
         <Seam />

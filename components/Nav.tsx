@@ -7,10 +7,10 @@ import { sound } from "@/lib/sound";
 gsap.registerPlugin(ScrollTrigger);
 
 const CH = [
-  ["caos", "01–02", "Chaos → Control"],
-  ["flujo", "03", "Flujo"],
-  ["simulador", "04", "Simulador"],
-  ["impacto", "05", "Impacto"],
+  ["servicios", "Servicios"],
+  ["flujo", "Cómo funciona"],
+  ["simulador", "Simulador"],
+  ["impacto", "Calculadora"],
 ];
 
 export const Logo = () => (
@@ -23,7 +23,7 @@ export const Logo = () => (
 
 export default function Nav() {
   const bar = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState("caos");
+  const [active, setActive] = useState("");
   const [on, setOn] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -42,8 +42,8 @@ export default function Nav() {
       <div className="container nav__inner">
         <a href="#caos" className="logo"><Logo />NEXA</a>
         <nav className="chapters" aria-label="Escenas">
-          {CH.map(([id, n, label]) => (
-            <a key={id} href={`#${id}`} className={active === id ? "on" : ""}><i>{n}</i><span>{label}</span></a>
+          {CH.map(([id, label]) => (
+            <a key={id} href={`#${id}`} className={active === id ? "on" : ""}>{label}</a>
           ))}
         </nav>
         <button className={`icon-btn${on ? " on" : ""}`} onClick={() => sound.toggle()} aria-pressed={on} aria-label={on ? "Desactivar sonido" : "Activar sonido"} title="Sonido">

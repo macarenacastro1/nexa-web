@@ -61,7 +61,7 @@ export default function Impact() {
   return (
     <section className="impact" id="impacto" ref={root} aria-label="Calculadora de impacto">
       <div className="container">
-        <p className="label rv"><b>05</b> Impacto</p>
+        <p className="label rv">Calculadora de impacto</p>
         <h2 className="h2 rv">How much time is<br /><span className="serif" style={{ color: "var(--mute)" }}>chaos costing you?</span></h2>
         <p className="lead rv">Mové los controles con los números de tu empresa. Es una estimación orientativa: el número real lo vemos juntos en el diagnóstico.</p>
 

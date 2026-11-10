@@ -89,7 +89,7 @@ export default function Simulator() {
   return (
     <section className="sim" id="simulador" ref={root} aria-label="Simulador de automatizaciones">
       <div className="container">
-        <p className="label rv"><b>04</b> Simulador</p>
+        <p className="label rv">Simulador</p>
         <h2 className="h2 rv">Same process.<br /><span className="serif" style={{ color: "var(--mute)" }}>Two very different days.</span></h2>
         <p className="lead rv">Elegí un proceso de tu empresa y mirá cómo se hace a mano y cómo se hace solo.</p>
 

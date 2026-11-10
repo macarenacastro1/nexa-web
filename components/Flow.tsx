@@ -62,7 +62,7 @@ export default function Flow() {
         <div className="container">
           <div className="flow__head">
             <div>
-              <p className="label"><b>03</b> El flujo</p>
+              <p className="label">Cómo funciona</p>
               <h2 className="h2">From inbox to done.<br /><span className="serif" style={{ color: "var(--mute)" }}>Without anyone touching it.</span></h2>
             </div>
             <div className="flow__timer">Tiempo total<b>00:0{Math.min(6, Math.floor(secs))}<span style={{ color: "var(--mute-2)" }}>.{Math.floor((secs % 1) * 10)}</span></b>antes: 24 min a mano</div>
