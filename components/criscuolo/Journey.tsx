@@ -30,6 +30,7 @@ export default function Journey() {
     origin: useRef<HTMLDivElement>(null), bar: useRef<HTMLSpanElement>(null),
   };
   const [dark, setDark] = useState(false);
+  const [overDark, setOverDark] = useState(false);
   const active = useInView(root, "100px");
   const [step, setStep] = useState(0);
 
@@ -70,11 +71,23 @@ export default function Journey() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // la cabecera se vuelve clara al pasar sobre secciones oscuras (sensorial y final)
+  useEffect(() => {
+    const check = () => {
+      const y = 40;
+      setOverDark([...document.querySelectorAll<HTMLElement>(".cc-sens, .cc-final")].some((el) => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; }));
+    };
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    return () => { window.removeEventListener("scroll", check); window.removeEventListener("resize", check); };
+  }, []);
+
   const chapters = ["O início", "Da fruta ao grão", "A semente", "Origem"];
 
   return (
     <>
-      <header className={`cc-top${dark ? " cc-top--light" : ""}`}>
+      <header className={`cc-top${dark || overDark ? " cc-top--light" : ""}`}>
         <a href="#" className="cc-logo" aria-label="Criscuolo Coffee"><Mark /><span>CRISCUOLO</span></a>
         <nav className="cc-nav">
           <a href="#jornada">A jornada</a><a href="#cafes">Cafés</a><a href="#origem">Origem</a><a href="#contato">Contato</a>

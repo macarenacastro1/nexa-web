@@ -255,33 +255,69 @@ export function Brand() {
   );
 }
 
-/* ================= FINAL ================= */
+/* ================= FINAL · taza de línea con vapor ================= */
+function CupDrawing() {
+  // curvas de nivel suaves detrás de la taza, como eco del mapa de origem
+  const rings = Array.from({ length: 7 }, (_, k) => {
+    const r = 120 + k * 26; let d = "";
+    for (let a = 0; a <= 360; a += 8) {
+      const rad = (a * Math.PI) / 180, w = 1 + 0.05 * Math.sin(rad * 3 + k) + 0.03 * Math.sin(rad * 5 - k * 0.7);
+      d += `${a ? "L" : "M"}${(200 + Math.cos(rad) * r * w * 1.15).toFixed(1)},${(250 + Math.sin(rad) * r * w * 0.62).toFixed(1)}`;
+    }
+    return d + "Z";
+  });
+  return (
+    <svg className="cc-cup" viewBox="0 0 400 420" aria-label="Xícara de café">
+      <g className="cc-cup__rings">{rings.map((d, i) => <path key={i} d={d} pathLength={1} className="draw" />)}</g>
+      {/* plato */}
+      <path className="draw" pathLength={1} d="M50,330 C50,350 350,350 350,330 C350,312 50,312 50,330 Z" />
+      <path className="draw thin" pathLength={1} d="M110,330 C110,340 290,340 290,330" />
+      {/* cuerpo de la taza */}
+      <path className="draw strong" pathLength={1} d="M108,200 C108,262 132,312 200,318 C268,312 292,262 292,200" />
+      <path className="draw strong" pathLength={1} d="M108,200 C108,183 292,183 292,200 C292,217 108,217 108,200 Z" />
+      {/* café */}
+      <path className="cc-cup__coffee" d="M120,202 C120,190 280,190 280,202 C280,213 120,213 120,202 Z" />
+      <path className="draw thin" pathLength={1} d="M150,202 C170,196 200,208 230,200 S260,204 268,202" />
+      {/* asa */}
+      <path className="draw strong" pathLength={1} d="M290,222 C338,214 344,282 282,280" />
+      <path className="draw thin" pathLength={1} d="M290,236 C322,232 324,266 286,266" />
+      {/* vapor */}
+      <g className="cc-cup__steam">
+        {[0, 1, 2].map((j) => (
+          <path key={j} pathLength={1} style={{ animationDelay: `${j * 1.3}s` }}
+            d={`M${172 + j * 28},176 C${156 + j * 28},146 ${192 + j * 28},124 ${176 + j * 28},94 S${160 + j * 28},44 ${182 + j * 28},16`} />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
 export function Finale() {
   const root = useRef<HTMLElement>(null);
   useEffect(() => {
     const ctx = gsap.context(() => {
+      gsap.fromTo(".cc-cup .draw", { strokeDashoffset: 1 }, {
+        strokeDashoffset: 0, ease: "none", stagger: 0.04,
+        scrollTrigger: { trigger: root.current, start: "top 75%", end: "center 55%", scrub: 0.6 },
+      });
+      gsap.fromTo(".cc-cup__coffee", { opacity: 0 }, { opacity: 1, scrollTrigger: { trigger: root.current, start: "top 40%", end: "center 55%", scrub: 0.6 } });
       gsap.fromTo(".cc-final__copy > *", { opacity: 0, y: 30 }, { opacity: 1, y: 0, stagger: 0.14, duration: 1.4, ease: "power3.out", scrollTrigger: { trigger: root.current, start: "top 55%" } });
     }, root);
     return () => ctx.revert();
   }, []);
   return (
     <section className="cc-final" ref={root} aria-label="Toda xícara carrega uma origem">
-      <div className="cc-final__media">
-        <Photo k="final" alt="Xícara de café sobre pedra" tone="#2e241e" />
-        <svg className="cc-steam" viewBox="0 0 200 300" aria-hidden>
-          {[0, 1, 2].map((j) => (
-            <path key={j} d={`M${80 + j * 20},290 C${60 + j * 25},230 ${120 + j * 10},190 ${90 + j * 18},130 S${70 + j * 22},40 ${100 + j * 12},0`} style={{ animationDelay: `${j * 1.6}s` }} />
-          ))}
-        </svg>
-      </div>
       <div className="cc-final__copy">
+        <span className="cc-tech">Da fruta à xícara</span>
         <h2 className="cc-display cc-display--md">Toda xícara<br />carrega uma origem.</h2>
         <p className="cc-italic">Descubra Criscuolo Coffee.</p>
         <div className="cc-final__ctas">
           <a href="#cafes" className="cc-btn cc-btn--light">Conheça nossos cafés</a>
           <a href="#contato" className="cc-btn cc-btn--ghost cc-btn--light-ghost">Entre em contato</a>
         </div>
+        <span className="cc-final__coords">19°41′35″ S — 46°10′17″ W · Fazenda Granno</span>
       </div>
+      <div className="cc-final__art"><CupDrawing /></div>
     </section>
   );
 }
