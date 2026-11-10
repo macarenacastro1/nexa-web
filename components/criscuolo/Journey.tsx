@@ -42,7 +42,7 @@ export default function Journey() {
       set(r.hint.current, 1 - seg(p, 0.005, 0.04));
       const o = inOut(p, 0.27, 0.34, 0.44, 0.5);
       set(r.open.current, o, (1 - seg(p, 0.27, 0.34)) * 30);
-      const s = inOut(p, 0.52, 0.57, 0.61, 0.65);
+      const s = inOut(p, 0.55, 0.6, 0.66, 0.7);
       set(r.seed.current, s, (1 - seg(p, 0.52, 0.58)) * 16);
       const f = seg(p, 0.72, 0.83);
       if (r.field.current) { r.field.current.style.opacity = String(f); r.field.current.style.visibility = f < 0.01 ? "hidden" : "visible"; }
@@ -111,8 +111,8 @@ export default function Journey() {
 
           {/* semilla protagonista */}
           <div className="cc-seed" ref={r.seed}>
-            <span className="cc-tech">Semente em pergaminho</span>
-            <p className="cc-italic">Duas sementes, frente a frente, em cada fruto.</p>
+            <span className="cc-tech">Semente · Torra</span>
+            <p className="cc-italic">Da fruta ao grão.</p>
           </div>
 
           {/* 03 — origem */}

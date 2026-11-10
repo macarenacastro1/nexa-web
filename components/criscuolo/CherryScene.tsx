@@ -59,6 +59,8 @@ function Cherry() {
   const leftSeed = useRef<THREE.Mesh>(null);
   const shadow = useRef<THREE.Group>(null);
   const embedded = useRef<THREE.Object3D>(null);
+  const beansRef = useRef<THREE.Group>(null);
+  const beanRefs = useRef<(THREE.Mesh | null)[]>([]);
 
   const tex = useMemo(() => ({ skin: cherrySkin(), pulp: pulpFace(), seed: parchment() }), []);
   const geo = useMemo(() => ({ l: halfGeometry(true), r: halfGeometry(false), seed: seedGeometry(), disc: new THREE.CircleGeometry(1.012, 128) }), []);
@@ -72,8 +74,25 @@ function Cherry() {
       map: tex.seed.map, normalMap: tex.seed.normal, normalScale: new THREE.Vector2(0.5, 0.5),
       roughness: 0.52, clearcoat: 0.3, clearcoatRoughness: 0.45, envMapIntensity: 0.8,
     });
-    return { skin, pulp, seed, seedL: seed.clone() };
+    // grano tostado: misma fibra, tono marrón y brillo de aceites
+    const roasted = new THREE.MeshPhysicalMaterial({
+      map: tex.seed.map, normalMap: tex.seed.normal, normalScale: new THREE.Vector2(0.6, 0.6), color: new THREE.Color("#7a4629"),
+      roughness: 0.36, clearcoat: 0.6, clearcoatRoughness: 0.3, envMapIntensity: 0.9, transparent: true,
+    });
+    const roastedHero = roasted.clone(); roastedHero.transparent = false;
+    return { skin, pulp, seed, seedL: seed.clone(), roasted, roastedHero };
   }, [tex]);
+
+  // composición del hero: un grano protagonista y otros en profundidad
+  const beans = useMemo(() => {
+    const list = [{ p: new THREE.Vector3(0, 0, 0), r: new THREE.Euler(0.5, 2.6, 0.5), s: 1.25, d: 1 }];
+    const spots = [[-3.3, 1.2, -1.5], [3.1, 1.6, -2.4], [-2.4, -1.5, 0.6], [2.6, -1.2, 0.9], [-4.6, -0.2, -3.5], [4.8, 0.1, -3.8], [-1.2, 2.3, -3], [1.4, -2.4, -1.6], [0.6, 2.1, 1.3]];
+    spots.forEach(([x, y, z], i) => list.push({ p: new THREE.Vector3(x, y, z), r: new THREE.Euler(i * 1.7, i * 2.3, i * 0.9), s: 0.38 + ((i * 37) % 10) / 40, d: 0.4 + ((i * 13) % 10) / 16 }));
+    return list;
+  }, []);
+  const roastA = useMemo(() => new THREE.Color("#ffffff"), []);
+  const roastB = useMemo(() => new THREE.Color("#c8cc9a"), []);
+  const roastC = useMemo(() => new THREE.Color("#5c321b"), []);
 
   const tmp = useMemo(() => ({ p: new THREE.Vector3(), q: new THREE.Quaternion(), s: new THREE.Vector3(), tq: new THREE.Quaternion(), e: new THREE.Euler() }), []);
 
@@ -90,7 +109,9 @@ function Cherry() {
       group.current.position.y = Math.sin(t * 0.9) * 0.05 * (1 - open);
       group.current.rotation.y = ease(heroT) * Math.PI * 2 + Math.sin(t * 0.35) * 0.06 * (1 - heroT);
       const s = mobile ? 0.72 : 1;
-      group.current.scale.setScalar(s);
+      const cherryIn = ease(seg(p, 0.09, 0.22));
+      group.current.scale.setScalar(s * (0.001 + cherryIn * 0.999));
+      group.current.visible = cherryIn > 0.002;
     }
     if (tilt.current) {
       tilt.current.rotation.x += ((-pointer.y * 0.18 + 0.12) * (1 - open) - tilt.current.rotation.x) * 0.06;
@@ -128,6 +149,30 @@ function Cherry() {
       const target = mobile ? 1.05 : 1.25;
       hero.current.scale.setScalar(lerp(tmp.s.x, target, k));
     }
+
+    // GRANOS DEL HERO: flotan, reaccionan al cursor y se dispersan al bajar
+    const scatter = ease(seg(p, 0.05, 0.2));
+    mats.roasted.opacity = 1 - seg(p, 0.1, 0.19);
+    if (beansRef.current) {
+      beansRef.current.visible = scatter < 0.999;
+      beansRef.current.scale.setScalar(mobile ? 0.7 : 1);
+      beansRef.current.rotation.y += ((pointer.x * 0.25) - beansRef.current.rotation.y) * 0.05;
+      beansRef.current.rotation.x += ((-pointer.y * 0.15) - beansRef.current.rotation.x) * 0.05;
+    }
+    beans.forEach((b, i) => {
+      const m = beanRefs.current[i];
+      if (!m) return;
+      const away = i === 0 ? 0 : scatter * 2.4;
+      m.position.set(b.p.x * (1 + away), b.p.y * (1 + away) + Math.sin(t * (0.6 + b.d * 0.5) + i) * 0.08, b.p.z + (i === 0 ? scatter * 3 : 0));
+      m.rotation.set(b.r.x + t * 0.05 * b.d, b.r.y + t * 0.08 * (i === 0 ? 1.4 : b.d) + scatter * 2, b.r.z);
+      m.scale.setScalar(b.s * (i === 0 ? Math.max(0.0001, 1 - ease(seg(p, 0.04, 0.15))) : 1));
+    });
+
+    // TORRA: la semilla protagonista pasa de pergamino a verde y a grano tostado
+    const roast = seg(p, 0.54, 0.68);
+    if (roast < 0.5) mats.seed.color.lerpColors(roastA, roastB, roast * 2); else mats.seed.color.lerpColors(roastB, roastC, (roast - 0.5) * 2);
+    mats.seed.roughness = lerp(0.52, 0.36, roast);
+    mats.seed.clearcoat = lerp(0.3, 0.6, roast);
 
     // CÁMARA: se acerca a la cereza y luego entra en la textura de la semilla
     const cam = state.camera as THREE.PerspectiveCamera;
@@ -170,6 +215,11 @@ function Cherry() {
         </group>
       </group>
       <mesh ref={hero} geometry={geo.seed} material={mats.seed} />
+      <group ref={beansRef}>
+        {beans.map((b, i) => (
+          <mesh key={i} ref={(r) => { beanRefs.current[i] = r; }} geometry={geo.seed} material={i === 0 ? mats.roastedHero : mats.roasted} />
+        ))}
+      </group>
       <group ref={shadow}>
         <ContactShadows position={[0, -1.45, 0]} opacity={0.32} scale={7} blur={2.8} far={3} color="#3a1a14" />
       </group>

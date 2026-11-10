@@ -59,7 +59,7 @@
 
 /* 02 apertura */
 .cc-open { position: absolute; z-index: 4; left: 0; right: 0; top: clamp(88px, 11vh, 120px); text-align: center; display: grid; gap: 14px; justify-items: center; pointer-events: none; opacity: 0; }
-.cc-seed { position: absolute; z-index: 4; left: 50%; bottom: clamp(70px, 12vh, 120px); transform: translateX(-50%); text-align: center; display: grid; gap: 10px; justify-items: center; color: var(--bordo); pointer-events: none; opacity: 0; width: min(420px, 90vw); margin-left: max(-210px, -45vw); }
+.cc-seed { position: absolute; z-index: 4; left: 50%; bottom: clamp(24px, 4.5vh, 48px); transform: translateX(-50%); text-align: center; display: grid; gap: 10px; justify-items: center; color: var(--bordo); pointer-events: none; opacity: 0; width: min(420px, 90vw); margin-left: max(-210px, -45vw); }
 .cc-seed .cc-italic { font-size: 18px; }
 
 /* 03 origem */
