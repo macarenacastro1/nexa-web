@@ -114,7 +114,7 @@ export default function ChaosStage() {
         .to(".sheet .bad, .sheet .warn", { backgroundColor: "rgba(43,245,156,.16)", color: "#0b7a46", duration: 0.1 }, 0.03)
         .to(".note", { color: "#2bf59c", duration: 0.1 }, 0.04)
         .to(".note .t.bad", { opacity: 0, duration: 0.06 }, 0.04)
-        .to(".note .ok", { opacity: 1, duration: 0.08 }, 0.08)
+        .to(".note .good", { opacity: 1, duration: 0.08 }, 0.08)
         .to(".banners, .spawns, .tally, .nudge", { opacity: 0, duration: 0.1 }, 0.03)
         .to(".win-pos", { rotation: 0, scale: 0.97, duration: 0.1 }, 0.07)
         .to(".win-pos", { opacity: 0, scale: 0.9, filter: "blur(10px)", duration: 0.12, stagger: { each: 0.004, from: "random" } }, 0.18)
@@ -401,7 +401,7 @@ export default function ChaosStage() {
                         <path d={w.note.path} pathLength={1} vectorEffect="non-scaling-stroke" />
                       </svg>
                       <span className="t bad" style={w.note.at}>{w.note.text}</span>
-                      <span className="t ok" style={w.note.at}>{w.note.ok}</span>
+                      <span className="t good" style={w.note.at}>{w.note.ok}</span>
                     </div>
                   )}
                 </div>

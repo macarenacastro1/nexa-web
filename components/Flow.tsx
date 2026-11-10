@@ -105,7 +105,7 @@ export default function Flow() {
                         <>
                           <div className="ntf"><i>✓</i><div><strong>Administración</strong><small>Factura cargada y pago programado</small></div></div>
                           {local > 0.35 && <div className="ntf"><i>W</i><div><strong>WhatsApp · Dueño</strong><small>“Pago a Andes Textil listo para el 13/11”</small></div></div>}
-                          {local > 0.7 && <p className="big">Procesada en <b>6 segundos</b>.</p>}
+                          {local > 0.7 && <p className="done-sum">Procesada en <b>6 segundos</b>.</p>}
                         </>
                       )}
                     </div>
