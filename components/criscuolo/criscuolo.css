@@ -399,3 +399,49 @@
   .cc-cup { width: 82%; }
 }
 @media (prefers-reduced-motion: reduce) { .cc-cup__steam path { animation: none; opacity: .35; stroke-dasharray: none; } }
+
+/* ================= v3 · A MARCA: recorrido postal ================= */
+.cc-brand { display: none; }
+.cc-story { position: relative; height: 520vh; background: var(--cream); }
+.cc-story__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.cc-story__track { position: relative; height: 100%; display: flex; align-items: center; gap: clamp(60px, 7vw, 120px); padding: 0 clamp(40px, 6vw, 96px); width: max-content; will-change: transform; }
+.cc-story__intro { width: min(520px, 38vw); flex: none; display: grid; gap: 22px; color: var(--bordo); }
+.cc-story__hint { font-size: 10.5px; letter-spacing: .26em; text-transform: uppercase; margin-top: 12px; }
+.cc-story__route { position: absolute; left: min(520px, 38vw); right: 0; top: 50%; height: 120px; transform: translateY(-50%); width: calc(100% - min(520px, 38vw)); pointer-events: none; z-index: 0; }
+.cc-story__route path { fill: none; stroke: var(--bordo); stroke-width: 1.4; }
+.cc-story__route .base { stroke-opacity: .2; stroke-dasharray: 2 8; }
+.cc-story__route .done { stroke-dasharray: 1; stroke-dashoffset: 1; stroke-opacity: .65; }
+.cc-ch { position: relative; z-index: 1; flex: none; width: min(760px, 62vw); height: min(560px, 70vh); display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr auto; gap: 24px 40px; padding: 40px; background: rgba(244,239,229,.92); border: 1px solid rgba(80,31,38,.16); color: var(--bordo); transition: border-color .6s; }
+.cc-ch.on { border-color: rgba(80,31,38,.45); }
+.cc-ch__num { position: absolute; right: 28px; top: 4px; font-family: var(--serif); font-weight: 300; font-size: clamp(110px, 12vw, 190px); line-height: 1; opacity: .1; transition: opacity .8s var(--ease); }
+.cc-ch.on .cc-ch__num { opacity: .22; }
+.cc-ch__art { grid-column: 1; grid-row: 1 / 3; display: grid; place-items: center; border-right: 1px solid rgba(80,31,38,.14); padding-right: 30px; }
+.cc-ch__art svg { width: 100%; height: auto; }
+.cc-ch__art path { fill: none; stroke: var(--bordo); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.8s var(--ease); }
+.cc-ch.on .cc-ch__art path, .cc-ch.past .cc-ch__art path { stroke-dashoffset: 0; }
+.cc-ch__text { grid-column: 2; align-self: end; display: grid; gap: 14px; }
+.cc-ch__text .cc-display { font-size: clamp(32px, 3.4vw, 52px); }
+.cc-ch__body { margin: 0; font-family: var(--serif); font-style: italic; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.35; color: var(--brown); }
+.cc-ch__todo { margin: 0; padding: 10px 12px; border: 1px dashed rgba(80,31,38,.35); font-size: 12px; line-height: 1.45; color: var(--bordo); opacity: .75; }
+.cc-ch__todo::before { content: "Texto a completar · "; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 10px; }
+.cc-ch__stamp { position: absolute; left: calc(25% - 50px); bottom: -64px; width: 120px; aspect-ratio: 4 / 5; filter: drop-shadow(0 16px 18px rgba(48,37,31,.22)); transform: rotate(-4deg) translateY(16px); opacity: 0; transition: transform .8s var(--ease), opacity .8s var(--ease); }
+.cc-ch.on .cc-ch__stamp, .cc-ch.past .cc-ch__stamp { opacity: 1; transform: rotate(-4deg); }
+.cc-ch__stamp-in { position: absolute; inset: 12px; border: 1px solid color-mix(in srgb, currentColor 40%, transparent); display: grid; place-content: center; justify-items: center; gap: 6px; text-align: center; padding: 8px; }
+.cc-ch__stamp-in b { font-family: var(--serif); font-weight: 400; font-size: 40px; line-height: 1; }
+.cc-ch__stamp-in span { font-size: 8.5px; letter-spacing: .2em; text-transform: uppercase; }
+.cc-ch__stamp .cc-postmark { width: 110px; height: 110px; right: auto; left: -62px; top: -30px; }
+.cc-ch.on .cc-ch__stamp .cc-postmark circle, .cc-ch.on .cc-ch__stamp .cc-postmark path, .cc-ch.past .cc-ch__stamp .cc-postmark circle, .cc-ch.past .cc-ch__stamp .cc-postmark path { stroke-dashoffset: 0; transition: stroke-dashoffset .9s var(--ease) .5s; }
+.cc-ch.on .cc-ch__stamp .cc-postmark text, .cc-ch.past .cc-ch__stamp .cc-postmark text { opacity: .9; transition: opacity .4s 1s; }
+.cc-story__end { flex: none; width: min(460px, 36vw); display: grid; gap: 22px; justify-items: start; color: var(--bordo); padding-right: clamp(40px, 6vw, 96px); }
+
+@media (max-width: 760px) {
+  .cc-story { height: auto; }
+  .cc-story__sticky { position: relative; height: auto; overflow: visible; }
+  .cc-story__track { flex-direction: column; align-items: stretch; width: auto; gap: 90px; padding: 100px 22px 110px; transform: none !important; }
+  .cc-story__intro, .cc-story__end { width: auto; }
+  .cc-story__route { display: none; }
+  .cc-ch { width: auto; height: auto; grid-template-columns: 1fr; padding: 26px 22px 70px; }
+  .cc-ch__art { grid-row: auto; border-right: 0; padding: 0 30px; border-bottom: 1px solid rgba(80,31,38,.14); padding-bottom: 20px; }
+  .cc-ch__text { grid-column: 1; }
+  .cc-ch__num { font-size: 96px; }
+}

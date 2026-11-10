@@ -211,45 +211,109 @@ function Postmark() {
     </svg>
   );
 }
+/* ---- A marca: la historia como un recorrido postal en capítulos ---- */
+const CHAPTERS = [
+  {
+    n: "I", k: "A terra", t: "Onde tudo começa.", place: "Cerrado Mineiro",
+    body: "O solo, o clima e a altitude do Cerrado Mineiro dão ao café de Campos Altos o seu caráter.",
+    todo: "Espaço para a descrição da terra: a fazenda, a paisagem, o que torna esse lugar único.",
+    icon: "M10,92 C40,60 70,74 100,48 S150,30 190,52 M10,110 C50,84 90,96 130,74 S170,66 190,72 M10,128 C60,110 110,120 190,96 M120,40 a10,10 0 1,0 0.1,0",
+    stamp: { bg: "#4b2533", ink: "#f2f0e4" },
+  },
+  {
+    n: "II", k: "A família", t: "Tradição familiar.", place: "Gerações",
+    body: "Um saber passado de geração em geração, no cuidado com cada pé de café.",
+    todo: "Espaço para a história da família: quem começou, quando, e como o ofício passou adiante.",
+    icon: "M30,130 L30,80 L100,36 L170,80 L170,130 Z M30,80 L170,80 M80,130 L80,98 L120,98 L120,130 M50,96 L64,96 L64,110 L50,110 Z M136,96 L150,96 L150,110 L136,110 Z M100,36 L100,22",
+    stamp: { bg: "#1f3832", ink: "#f2f0e4" },
+  },
+  {
+    n: "III", k: "O café", t: "Fazenda Granno.", place: "Cafés especiais",
+    body: "Quatro variedades — Bourbon Vermelho, Arara, Catuaí e Topázio — cultivadas com o mesmo cuidado.",
+    todo: "Espaço para o processo da fazenda: colheita, secagem, seleção, o que define a qualidade.",
+    icon: "M40,140 C70,110 90,80 100,50 S130,10 160,6 M70,108 Q40,98 30,74 Q58,78 70,108 M88,80 Q118,72 128,46 Q100,52 88,80 M100,50 Q76,40 72,16 Q96,24 100,50 M74,118 a7,7 0 1,0 0.1,0 M86,124 a7,7 0 1,0 0.1,0 M80,134 a7,7 0 1,0 0.1,0",
+    stamp: { bg: "#aab384", ink: "#4a2232" },
+  },
+  {
+    n: "IV", k: "O mundo", t: "Excelência global.", place: "Do Cerrado para o mundo",
+    body: "Do Cerrado Mineiro para outras mesas, outras cidades, outros países.",
+    todo: "Espaço para os destinos, parceiros e o próximo capítulo da marca.",
+    icon: "M100,140 a62,62 0 1,1 0.1,0 M38,78 L162,78 M44,50 C80,60 120,60 156,50 M44,106 C80,96 120,96 156,106 M100,16 C70,40 70,116 100,140 M100,16 C130,40 130,116 100,140",
+    stamp: { bg: "#cfccc3", ink: "#4a2232" },
+  },
+];
+
 export function Brand() {
   const root = useRef<HTMLElement>(null);
+  const track = useRef<HTMLDivElement>(null);
+  const route = useRef<SVGPathElement>(null);
+  const [active, setActive] = useState(-1);
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo(".cc-stamp", { opacity: 0, y: 80, rotate: (i) => [-14, 10, -6][i] }, {
-        opacity: 1, y: 0, rotate: (i) => [-5, 3, -2][i], stagger: 0.15, duration: 1.2, ease: "power3.out",
-        scrollTrigger: { trigger: ".cc-brand__stamps", start: "top 75%" },
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 761px)", () => {
+        ScrollTrigger.create({
+          trigger: root.current, start: "top top", end: "bottom bottom", scrub: 0.6,
+          onUpdate: (st) => {
+            const el = track.current; if (!el) return;
+            const max = el.scrollWidth - window.innerWidth;
+            el.style.transform = `translate3d(${-st.progress * max}px,0,0)`;
+            if (route.current) route.current.style.strokeDashoffset = String(1 - st.progress);
+            // capítulo activo: el que está más cerca del centro de la pantalla
+            const cards = [...el.querySelectorAll<HTMLElement>(".cc-ch")];
+            let best = -1, bd = Infinity;
+            cards.forEach((c, i) => { const r = c.getBoundingClientRect(); const d = Math.abs(r.left + r.width / 2 - window.innerWidth / 2); if (d < bd && d < window.innerWidth * 0.3) { bd = d; best = i; } });
+            setActive(best);
+          },
+        });
       });
-      gsap.fromTo(".cc-postcard", { opacity: 0, y: 60, rotate: 6 }, { opacity: 1, y: 0, rotate: 2.5, duration: 1.4, ease: "power3.out", scrollTrigger: { trigger: ".cc-brand__stamps", start: "top 70%" } });
-      gsap.fromTo(".cc-brand__copy > *", { opacity: 0, y: 30 }, { opacity: 1, y: 0, stagger: 0.12, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: ".cc-brand__copy", start: "top 75%" } });
+      mm.add("(max-width: 760px)", () => {
+        gsap.utils.toArray<HTMLElement>(".cc-ch").forEach((c, i) => {
+          ScrollTrigger.create({ trigger: c, start: "top 60%", end: "bottom 40%", onToggle: (st) => st.isActive && setActive(i) });
+        });
+      });
     }, root);
     return () => ctx.revert();
   }, []);
   return (
-    <section className="cc-brand" ref={root} aria-label="A marca">
-      <div className="cc-brand__copy">
-        <span className="cc-tech">A marca</span>
-        <h2 className="cc-display cc-display--md">Mais do que café.<br />Uma história de origem.</h2>
-        <p className="cc-italic">Entre a terra, o tempo e o cuidado, cada grão carrega uma história que merece ser conhecida.</p>
-        <p className="cc-brand__sig">Tradição familiar. Excelência global.</p>
-      </div>
-      <div className="cc-brand__stamps">
-        <figure className="cc-postcard">
-          <Photo k="marcaPack" alt="A linha Criscuolo" tone="#501f26" />
-          <figcaption>Do Cerrado Mineiro para o mundo.</figcaption>
-          <Postmark />
-        </figure>
-        {STAMPS.map((s, j) => (
-          <div key={s.w} className={`cc-stamp s${j}`} tabIndex={0}>
-            <svg className="cc-stamp__shape" viewBox="0 0 100 125" preserveAspectRatio="none" aria-hidden><path d={STAMP_D} /></svg>
-            <div className="cc-stamp__in">
-              <svg viewBox="0 0 140 140" aria-hidden><path d={s.icon} /></svg>
-              <b>{s.w}</b>
-              <span>{s.s}</span>
-              <em>{s.v}</em>
-            </div>
-            <Postmark />
+    <section className="cc-story" ref={root} aria-label="A história da marca">
+      <div className="cc-story__sticky">
+        <div className="cc-story__track" ref={track}>
+          <div className="cc-story__intro">
+            <span className="cc-tech">A marca</span>
+            <h2 className="cc-display cc-display--md">Mais do que café.<br />Uma história de origem.</h2>
+            <p className="cc-italic">Entre a terra, o tempo e o cuidado, cada grão carrega uma história que merece ser conhecida.</p>
+            <span className="cc-story__hint">Siga o caminho →</span>
           </div>
-        ))}
+          <svg className="cc-story__route" preserveAspectRatio="none" viewBox="0 0 1000 100" aria-hidden>
+            <path d="M0,50 C120,20 200,80 320,50 S520,20 640,50 S860,80 1000,40" className="base" vectorEffect="non-scaling-stroke" />
+            <path ref={route} d="M0,50 C120,20 200,80 320,50 S520,20 640,50 S860,80 1000,40" className="done" pathLength={1} vectorEffect="non-scaling-stroke" />
+          </svg>
+          {CHAPTERS.map((c, i) => (
+            <article key={c.n} className={`cc-ch${active === i ? " on" : ""}${active > i ? " past" : ""}`}>
+              <div className="cc-ch__num" aria-hidden>{c.n}</div>
+              <div className="cc-ch__art">
+                <svg viewBox="0 0 200 150" aria-hidden><path d={c.icon} pathLength={1} /></svg>
+              </div>
+              <div className="cc-ch__text">
+                <span className="cc-tech">{c.n} · {c.k}</span>
+                <h3 className="cc-display">{c.t}</h3>
+                <p className="cc-ch__body">{c.body}</p>
+                <p className="cc-ch__todo">{c.todo}</p>
+              </div>
+              <div className="cc-ch__stamp" style={{ ["--sbg" as any]: c.stamp.bg, color: c.stamp.ink }}>
+                <svg className="cc-stamp__shape" viewBox="0 0 100 125" preserveAspectRatio="none" aria-hidden><path d={STAMP_D} /></svg>
+                <div className="cc-ch__stamp-in"><b>{c.n}</b><span>{c.place}</span></div>
+                <Postmark />
+              </div>
+            </article>
+          ))}
+          <div className="cc-story__end">
+            <span className="cc-tech">Próximo capítulo</span>
+            <h3 className="cc-display cc-display--md">Compre ou<br />seja parceiro.</h3>
+            <a href="#contato" className="cc-btn">Fale com a Criscuolo</a>
+          </div>
+        </div>
       </div>
     </section>
   );
