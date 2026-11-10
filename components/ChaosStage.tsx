@@ -431,7 +431,7 @@ export default function ChaosStage() {
           <div className="banner" key={b.id}>
             <span className="app-ico" style={{ background: b.tpl.color }}>{b.tpl.ico}</span>
             <div><strong>{b.tpl.app}<em>ahora</em></strong><small><b style={{ fontWeight: 600 }}>{b.tpl.title}:</b> {b.tpl.body}</small></div>
-            <button className="x" aria-label="Cerrar" onClick={() => setBanners((l) => l.filter((x) => x.id !== b.id))}>×</button>
+            <button className="x" aria-label="Cerrar" onClick={(e) => { e.stopPropagation(); setBanners((l) => l.filter((x) => x.id !== b.id)); multiply(); }}>×</button>
           </div>
         ))}
       </div>
