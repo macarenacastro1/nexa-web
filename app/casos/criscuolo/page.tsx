@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Journey, { Mark } from "@/components/criscuolo/Journey";
+import Collection from "@/components/criscuolo/Collection";
 import "@/components/criscuolo/criscuolo.css";
 
 export const metadata: Metadata = {
@@ -14,7 +15,8 @@ export default function Page() {
       {/* tipografía propia de la marca */}
       <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" />
       <Journey />
-      <section className="cc-next" id="cafes">
+      <Collection />
+      <section className="cc-next">
         <div>
           <span className="cc-tech" style={{ color: "var(--bordo)" }}>Próxima cena</span>
           <h2 className="cc-display cc-display--md" style={{ marginTop: 18 }}>A jornada do grão.</h2>
