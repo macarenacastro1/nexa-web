@@ -136,3 +136,39 @@ export function parchment() {
   g.putImageData(img, 0, 0);
   return { map: toTexture(c), normal: heightToNormal(height, W, H, 3) };
 }
+
+/**
+ * Grano tostado: marrón con variaciones, poros finos y la línea clara de cascarilla (silverskin)
+ * dentro del surco. El surco cae en u ≈ 0.75 de la geometría de la semilla.
+ */
+export function roastedBean(tone = 0) {
+  const W = 1024, H = 512, n = makeNoise(51 + tone * 7), n2 = makeNoise(63 + tone * 5);
+  const c = document.createElement("canvas"); c.width = W; c.height = H;
+  const g = c.getContext("2d")!; const img = g.createImageData(W, H);
+  const height = new Float32Array(W * H);
+  const base = [[118, 70, 40], [104, 60, 34], [128, 78, 44]][tone % 3];
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const u = x / W, v = y / H;
+    const mott = fbm(n, u * 10, v * 5, 4, 10);
+    const pore = fbm(n2, u * 160, v * 80, 2, 160);
+    const fib = fbm(n2, u * 40, v * 3, 2, 40);
+    // los extremos del grano tuestan un poco más
+    const ends = Math.pow(Math.abs(v - 0.5) * 2, 3) * 0.25;
+    const k = 0.78 + (mott - 0.5) * 0.42 - ends + (fib - 0.5) * 0.08 - (pore > 0.72 ? 0.12 : 0);
+    const i = (y * W + x) * 4;
+    img.data[i] = base[0] * k; img.data[i + 1] = base[1] * k; img.data[i + 2] = base[2] * k; img.data[i + 3] = 255;
+    height[y * W + x] = mott * 0.4 + fib * 0.3 - (pore > 0.72 ? 0.25 : 0);
+  }
+  g.putImageData(img, 0, 0);
+  // surco: bordes oscuros + cascarilla clara siguiendo la "S"
+  for (let y = Math.floor(H * 0.07); y < H * 0.93; y++) {
+    const v = y / H, th = Math.PI * v, st = Math.max(0.15, Math.sin(th));
+    const d = (-0.035 * Math.sin(0.84 * Math.cos(th) * 3.2)) / (0.6 * st);
+    const cx = (0.75 + d / (Math.PI * 2)) * W;
+    const w = (0.045 / (0.6 * st)) / (Math.PI * 2) * W;
+    const fadeEnds = Math.min(1, Math.sin(th) * 1.6);
+    g.fillStyle = `rgba(40,20,10,${0.55 * fadeEnds})`; g.fillRect(cx - w * 1.1, y, w * 2.2, 1);
+    g.fillStyle = `rgba(214,182,132,${0.85 * fadeEnds})`; g.fillRect(cx - w * 0.28 + Math.sin(y * 0.3) * w * 0.08, y, w * 0.56, 1);
+  }
+  return { map: toTexture(c), normal: heightToNormal(height, W, H, 2.6) };
+}

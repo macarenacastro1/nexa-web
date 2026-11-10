@@ -3,7 +3,7 @@ import { useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
 import * as THREE from "three";
-import { cherrySkin, pulpFace, parchment } from "./textures";
+import { cherrySkin, pulpFace, parchment, roastedBean } from "./textures";
 import { journey } from "./state";
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
@@ -62,7 +62,7 @@ function Cherry() {
   const beansRef = useRef<THREE.Group>(null);
   const beanRefs = useRef<(THREE.Mesh | null)[]>([]);
 
-  const tex = useMemo(() => ({ skin: cherrySkin(), pulp: pulpFace(), seed: parchment() }), []);
+  const tex = useMemo(() => ({ skin: cherrySkin(), pulp: pulpFace(), seed: parchment(), roast: [roastedBean(0), roastedBean(1), roastedBean(2)] }), []);
   const geo = useMemo(() => ({ l: halfGeometry(true), r: halfGeometry(false), seed: seedGeometry(), disc: new THREE.CircleGeometry(1.012, 128) }), []);
   const mats = useMemo(() => {
     const skin = new THREE.MeshPhysicalMaterial({
@@ -75,12 +75,12 @@ function Cherry() {
       roughness: 0.52, clearcoat: 0.3, clearcoatRoughness: 0.45, envMapIntensity: 0.8,
     });
     // grano tostado: misma fibra, tono marrón y brillo de aceites
-    const roasted = new THREE.MeshPhysicalMaterial({
-      map: tex.seed.map, normalMap: tex.seed.normal, normalScale: new THREE.Vector2(0.6, 0.6), color: new THREE.Color("#7a4629"),
-      roughness: 0.36, clearcoat: 0.6, clearcoatRoughness: 0.3, envMapIntensity: 0.9, transparent: true,
-    });
-    const roastedHero = roasted.clone(); roastedHero.transparent = false;
-    return { skin, pulp, seed, seedL: seed.clone(), roasted, roastedHero };
+    const roastMats = tex.roast.map((r) => new THREE.MeshPhysicalMaterial({
+      map: r.map, normalMap: r.normal, normalScale: new THREE.Vector2(0.55, 0.55),
+      roughness: 0.48, clearcoat: 0.32, clearcoatRoughness: 0.35, sheen: 0.25, sheenColor: new THREE.Color("#c08a5a"), envMapIntensity: 0.85, transparent: true,
+    }));
+    const roastedHero = roastMats[0].clone(); roastedHero.transparent = false;
+    return { skin, pulp, seed, seedL: seed.clone(), roastMats, roastedHero };
   }, [tex]);
 
   // composición del hero: un grano protagonista y otros en profundidad
@@ -152,7 +152,7 @@ function Cherry() {
 
     // GRANOS DEL HERO: flotan, reaccionan al cursor y se dispersan al bajar
     const scatter = ease(seg(p, 0.05, 0.2));
-    mats.roasted.opacity = 1 - seg(p, 0.1, 0.19);
+    mats.roastMats.forEach((m) => (m.opacity = 1 - seg(p, 0.1, 0.19)));
     if (beansRef.current) {
       beansRef.current.visible = scatter < 0.999;
       beansRef.current.scale.setScalar(mobile ? 0.7 : 1);
@@ -165,7 +165,8 @@ function Cherry() {
       const away = i === 0 ? 0 : scatter * 2.4;
       m.position.set(b.p.x * (1 + away), b.p.y * (1 + away) + Math.sin(t * (0.6 + b.d * 0.5) + i) * 0.08, b.p.z + (i === 0 ? scatter * 3 : 0));
       m.rotation.set(b.r.x + t * 0.05 * b.d, b.r.y + t * 0.08 * (i === 0 ? 1.4 : b.d) + scatter * 2, b.r.z);
-      m.scale.setScalar(b.s * (i === 0 ? Math.max(0.0001, 1 - ease(seg(p, 0.04, 0.15))) : 1));
+      const k = b.s * (i === 0 ? Math.max(0.0001, 1 - ease(seg(p, 0.04, 0.15))) : 1);
+      m.scale.set(k * (1 + (i % 3) * 0.04), k * (1 - (i % 2) * 0.05), k);
     });
 
     // TORRA: la semilla protagonista pasa de pergamino a verde y a grano tostado
@@ -217,7 +218,7 @@ function Cherry() {
       <mesh ref={hero} geometry={geo.seed} material={mats.seed} />
       <group ref={beansRef}>
         {beans.map((b, i) => (
-          <mesh key={i} ref={(r) => { beanRefs.current[i] = r; }} geometry={geo.seed} material={i === 0 ? mats.roastedHero : mats.roasted} />
+          <mesh key={i} ref={(r) => { beanRefs.current[i] = r; }} geometry={geo.seed} material={i === 0 ? mats.roastedHero : mats.roastMats[i % 3]} />
         ))}
       </group>
       <group ref={shadow}>
