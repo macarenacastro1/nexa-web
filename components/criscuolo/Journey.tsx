@@ -135,10 +135,10 @@ export default function Journey() {
               <dl className="cc-data">
                 <div><dt>Região</dt><dd>Cerrado Mineiro</dd></div>
                 <div><dt>Município</dt><dd>Campos Altos · MG</dd></div>
-                <div><dt>Altitude</dt><dd>1.080 — 1.220 m</dd></div>
-                <div><dt>Clima</dt><dd>Tropical de altitude</dd></div>
+                <div><dt>Fazenda</dt><dd>Granno</dd></div>
+                <div><dt>Café</dt><dd>100% Arábica</dd></div>
               </dl>
-              <p className="cc-note">Coordenadas e dados ilustrativos</p>
+              <p className="cc-note">Coordenadas ilustrativas</p>
             </div>
           </div>
         </div>

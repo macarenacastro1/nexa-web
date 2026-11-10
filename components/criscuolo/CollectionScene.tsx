@@ -5,7 +5,7 @@ import { Environment, Lightformer } from "@react-three/drei";
 import SoftShadow from "./SoftShadow";
 import * as THREE from "three";
 import { PRODUCTS } from "./products";
-import { pouchGeometry, pouchFront, pouchBack, paperNormal } from "./pouch";
+import { pouchGeometry, pouchFront, pouchBack, pouchSide, paperNormal } from "./pouch";
 
 export type Ctl = { selected: number | null; hover: number | null; dragY: number; dragging: boolean };
 
@@ -17,10 +17,12 @@ function Pouches({ ctl, onPick, onHover }: { ctl: React.MutableRefObject<Ctl>; o
   const geo = useMemo(pouchGeometry, []);
   const mats = useMemo(() => {
     const normal = paperNormal();
-    return PRODUCTS.map((p) => ({
-      front: new THREE.MeshStandardMaterial({ map: pouchFront(p), normalMap: normal, normalScale: new THREE.Vector2(0.12, 0.12), roughness: 0.8, envMapIntensity: 0.75 }),
-      back: new THREE.MeshStandardMaterial({ map: pouchBack(p), normalMap: normal, normalScale: new THREE.Vector2(0.12, 0.12), roughness: 0.8, envMapIntensity: 0.75 }),
-    }));
+    // orden de caras de la caja: +x, -x, +y, -y, frente (+z), dorso (-z)
+    return PRODUCTS.map((p) => {
+      const m = (map: THREE.Texture) => new THREE.MeshStandardMaterial({ map, normalMap: normal, normalScale: new THREE.Vector2(0.1, 0.1), roughness: 0.72, envMapIntensity: 0.8 });
+      const side = m(pouchSide(p)), plain = new THREE.MeshStandardMaterial({ color: p.bg, roughness: 0.75 });
+      return [side, side, plain, plain, m(pouchFront(p)), m(pouchBack(p))];
+    });
   }, []);
   const refs = useRef<(THREE.Group | null)[]>([]);
   const spin = useRef(0);
@@ -36,16 +38,16 @@ function Pouches({ ctl, onPick, onHover }: { ctl: React.MutableRefObject<Ctl>; o
     PRODUCTS.forEach((_, i) => {
       const g = refs.current[i];
       if (!g) return;
-      let x = (i - 1.5) * gap, y = 0.18 + Math.sin(t * 0.8 + i * 1.3) * 0.04, z = 0, ry = (i - 1.5) * -0.12, s = mobile ? 0.62 : 1;
+      let x = (i - 1.5) * gap, y = 0.12 + Math.sin(t * 0.8 + i * 1.3) * 0.03, z = 0, ry = 0.38 - i * 0.07, s = mobile ? 0.62 : 1;
       if (c.selected === null && mobile) {
         // en celular: grilla de 2 × 2
-        x = ((i % 2) - 0.5) * 1.22; y = (i < 2 ? 0.66 : -0.86) + Math.sin(t * 0.8 + i * 1.3) * 0.03; ry = ((i % 2) - 0.5) * -0.3; s = 0.56;
+        x = ((i % 2) - 0.5) * 1.22; y = (i < 2 ? 0.66 : -0.86) + Math.sin(t * 0.8 + i * 1.3) * 0.03; ry = 0.35; s = 0.54;
       }
       if (c.selected === null) {
         if (c.hover === i) { y += 0.12; ry *= 0.3; }
         ry += pointer.x * 0.15;
       } else if (c.selected === i) {
-        x = mobile ? 0 : -1.25; y = mobile ? 0.35 : 0.08; z = 1.1; ry = spin.current - 0.18; s = mobile ? 0.78 : 1.3;
+        x = mobile ? 0 : -1.25; y = mobile ? 0.35 : 0.05; z = 1.1; ry = spin.current + 0.3; s = mobile ? 0.74 : 1.22;
       } else {
         // las demás salen de cuadro hacia los costados
         const side = i < c.selected ? -1 : 1;
@@ -66,8 +68,7 @@ function Pouches({ ctl, onPick, onHover }: { ctl: React.MutableRefObject<Ctl>; o
           onPointerOver={(e) => { e.stopPropagation(); onHover(i); document.body.style.cursor = "pointer"; }}
           onPointerOut={() => { onHover(null); document.body.style.cursor = ""; }}
           onClick={(e) => { e.stopPropagation(); onPick(i); }}>
-          <mesh geometry={geo.front} material={mats[i].front} castShadow />
-          <mesh geometry={geo.back} material={mats[i].back} castShadow />
+          <mesh geometry={geo} material={mats[i]} />
         </group>
       ))}
     </>

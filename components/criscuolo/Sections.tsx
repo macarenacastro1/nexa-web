@@ -132,7 +132,7 @@ export function Brand() {
         <Photo k="marcaCampo" alt="A fazenda" tone="#7d8466" className="g1" />
         <Photo k="marcaMaos" alt="Mãos e grãos" tone="#8c6a4f" className="g2" />
         <Photo k="marcaProcesso" alt="O processo" tone="#b49a74" className="g3" />
-        <Photo k="marcaPack" alt="Embalagem" tone="#501f26" className="g4" />
+        <Photo k="marcaPack" alt="A linha Criscuolo" tone="#501f26" className="g4" />
       </div>
     </section>
   );

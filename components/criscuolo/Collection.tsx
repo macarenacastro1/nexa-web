@@ -12,10 +12,10 @@ gsap.registerPlugin(ScrollTrigger);
 const CollectionScene = dynamic(() => import("./CollectionScene"), { ssr: false });
 
 const NOTE_HINT: Record<string, string> = {
-  Chocolate: "Doçura profunda, final longo.", Caramelo: "Açúcares tostados, corpo sedoso.", Castanhas: "Textura amendoada e redonda.",
-  Mel: "Doçura floral e delicada.", "Frutas maduras": "Acidez suave, frutas amarelas.", Flores: "Aroma leve e perfumado.",
-  Cacau: "Amargor elegante, notas escuras.", "Frutas secas": "Uva-passa, ameixa, damasco.", "Açúcar mascavo": "Doçura rústica e quente.",
-  Jasmim: "Floral intenso e limpo.", "Frutas cítricas": "Acidez brilhante, bergamota.", "Chá branco": "Corpo leve, final delicado.",
+  "Chocolate ao leite": "Doçura redonda e cremosa.", Caramelo: "Açúcares tostados, final longo.", Castanhas: "Textura amendoada e macia.",
+  Mel: "Doçura floral e delicada.", "Frutas cítricas": "Acidez brilhante e fresca.",
+  "Chocolate amargo": "Intenso, com final seco.", Cacau: "Notas escuras e elegantes.", "Açúcar mascavo": "Doçura rústica e quente.",
+  "Amêndoas": "Suave, levemente tostado.",
 };
 
 /** mapa editorial a pantalla completa: se cierra con el botón, con Esc o tocando fuera de la información */
@@ -33,7 +33,7 @@ function MapOverlay({ active, onClose, onPick }: { active: number; onClose: () =
       <div className="cc-map__info">
         <span className="cc-tech">Campos Altos · Minas Gerais</span>
         <div className="cc-map__coords">{p.lat}<br />{p.lon}</div>
-        <p className="cc-italic">Nº {p.n} {p.name} · Altitude {p.altitude}</p>
+        <p className="cc-italic">Nº {p.n} {p.name} · Fazenda Granno</p>
         <span className="cc-note" style={{ color: "var(--bordo)" }}>Localização ilustrativa · toque em outro lote</span>
       </div>
       <button className="cc-map__close" onClick={onClose} autoFocus>Voltar ao café ×</button>
@@ -85,8 +85,8 @@ export default function Collection() {
     <section className={`cc-col${sel !== null ? " is-open" : ""}`} id="cafes" ref={root} aria-label="Coleção de cafés">
       <div className="cc-col__head">
         <span className="cc-tech">Coleção</span>
-        <h2 className="cc-display cc-display--md">Quatro cafés.<br />Quatro origens.</h2>
-        <p className="cc-italic">Cada lote carrega suas próprias coordenadas.</p>
+        <h2 className="cc-display cc-display--md">Quatro variedades.<br />Uma origem.</h2>
+        <p className="cc-italic">Fazenda Granno · Campos Altos, Minas Gerais.</p>
       </div>
 
       <div className="cc-col__stage" ref={stage} onPointerDown={onDown}>
@@ -107,13 +107,12 @@ export default function Collection() {
       {p && (
         <aside className="cc-spec" key={p.n} aria-live="polite">
           <button className="cc-spec__back" onClick={back}>← Ver coleção</button>
-          <span className="cc-tech">Nº {p.n} · Café especial</span>
+          <span className="cc-tech">Nº {p.n} · Variedade</span>
           <h3 className="cc-display cc-display--md">{p.name}</h3>
+          <p className="cc-italic" style={{ fontSize: 20, marginTop: -8 }}>{p.body}</p>
           <dl className="cc-spec__data">
-            <div><dt>Variedade</dt><dd>{p.variety}</dd></div>
-            <div><dt>Processo</dt><dd>{p.process}</dd></div>
-            <div><dt>Altitude</dt><dd>{p.altitude}</dd></div>
-            <div><dt>Torra</dt><dd>{p.roast}</dd></div>
+            <div><dt>Fazenda</dt><dd>Granno</dd></div>
+            <div><dt>Região</dt><dd>Campos Altos, MG</dd></div>
           </dl>
           <div className="cc-spec__notes">
             <span className="cc-tech">Notas sensoriais</span>
@@ -131,7 +130,7 @@ export default function Collection() {
             <button className="cc-btn" onClick={flip}>Ver verso</button>
             <button className="cc-btn cc-btn--ghost" onClick={toOrigin}>Explorar a origem</button>
           </div>
-          <p className="cc-note" style={{ color: "var(--bordo)" }}>Produto conceitual · dados ilustrativos</p>
+          <p className="cc-note" style={{ color: "var(--bordo)" }}>Coordenadas ilustrativas</p>
         </aside>
       )}
 

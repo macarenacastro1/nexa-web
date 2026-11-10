@@ -11,6 +11,6 @@ export const PHOTOS: Record<string, string | null> = {
   marcaCampo: null,   // paisaje de la fazenda
   marcaMaos: null,    // manos trabajando con granos
   marcaProcesso: null,// detalle del proceso
-  marcaPack: null,    // packaging real de la marca
+  marcaPack: "/criscuolo/pack.jpg", // packaging real de la marca (foto de la línea)
   final: null,        // taza sobre piedra o madera, luz natural
 };

@@ -129,7 +129,7 @@
 .cc-col__names li.on small, .cc-col__names button:hover small { opacity: .7; transform: none; }
 .cc-col__tip { position: absolute; z-index: 2; left: 50%; bottom: 0; transform: translateX(-50%); font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--bordo); opacity: .55; margin: 0; }
 
-.cc-spec { position: absolute; z-index: 4; right: clamp(20px, 6vw, 96px); top: 50%; transform: translateY(-50%); width: min(420px, 40vw); display: grid; gap: 22px; color: var(--brown); animation: ccIn .8s var(--ease) both; }
+.cc-spec { position: absolute; z-index: 4; right: clamp(20px, 6vw, 96px); top: 50%; transform: translateY(-50%); width: min(420px, 40vw); display: grid; gap: 18px; color: var(--brown); animation: ccIn .8s var(--ease) both; }
 @keyframes ccIn { from { opacity: 0; transform: translateY(calc(-50% + 24px)); } to { opacity: 1; transform: translateY(-50%); } }
 .cc-spec__back { justify-self: start; background: none; border: 0; padding: 0; cursor: pointer; color: var(--bordo); font-size: 11px; letter-spacing: .24em; text-transform: uppercase; font-weight: 500; }
 .cc-spec .cc-tech { color: var(--bordo); }
