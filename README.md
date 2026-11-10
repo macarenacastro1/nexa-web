@@ -4,14 +4,15 @@ No es una landing tradicional: es una **demo interactiva** de lo que hace la emp
 El visitante entra a una empresa caótica y la transforma con un movimiento.
 
 ## Recorrido
-1. **El problema**: un escritorio lleno de mails, planillas, chats, alertas y pendientes que no paran.
-2. **La transformación**: el visitante arrastra el slider de *Caos* a *Control*. Las ventanas se ordenan, se conectan y se convierten en un panel que funciona solo (con sonido opcional).
-3. **La inteligencia**: escena 3D (React Three Fiber) del "cerebro" que conecta WhatsApp, web, mails, planillas, redes, pagos, CRM y stock. Avanza con el scroll.
-4. **Tu negocio**: cuatro áreas (Ventas, Atención, Marketing, Operaciones), cada una con su flujo de automatización animado.
-5. **El impacto**: calculadora de ahorro, "Menos caos. Más negocio." y formulario de contacto.
+1. **Chaos** — un escritorio caótico: mails, planillas, WhatsApp, facturas, alertas y sistemas desconectados que flotan y reaccionan al cursor. Las ventanas se pueden arrastrar, los post-its también, y al cerrar una notificación llegan dos nuevas. Anotaciones a mano marcan los errores.
+2. **Control** — el slider "Take control of your business": las ventanas se frenan, se fragmentan en partículas, forman una estructura conectada y terminan en un panel automatizado. Es reversible.
+3. **Flujo** — RECEIVE → UNDERSTAND → EXECUTE → COMPLETE, guiado por el scroll: una factura llega por mail, la IA extrae los datos, se carga en el ERP y todos quedan avisados.
+4. **Simulador** — cinco procesos (facturas, ventas, operaciones, atención, integración): el trabajo manual y el automatizado, uno al lado del otro.
+5. **Impacto** — calculadora de horas ahorradas con gráficos. Los resultados se pueden enviar por WhatsApp.
+6. **Cierre** — estructura luminosa en 3D, "Stop managing chaos. Start building the future." y CTA "LET'S AUTOMATE".
 
 ## Stack
-Next.js 15 (export estático) · React 19 · GSAP + ScrollTrigger · Three.js + React Three Fiber + Drei.
+Next.js 15 (export estático) · React 19 · GSAP + ScrollTrigger · Three.js + React Three Fiber · Canvas 2D para las partículas.
 
 ## Desarrollo
 ```bash

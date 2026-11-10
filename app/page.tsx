@@ -1,9 +1,13 @@
-import Nav from "@/components/Nav";
+import Nav, { Logo } from "@/components/Nav";
 import ChaosStage from "@/components/ChaosStage";
-import Intelligence from "@/components/Intelligence";
-import Business from "@/components/Business";
+import Flow from "@/components/Flow";
+import Simulator from "@/components/Simulator";
 import Impact from "@/components/Impact";
+import Finale from "@/components/Finale";
+import Contact from "@/components/Contact";
 import { CONFIG, waUrl } from "@/lib/config";
+
+const Seam = () => <div className="seam" aria-hidden><i /></div>;
 
 export default function Home() {
   return (
@@ -11,14 +15,19 @@ export default function Home() {
       <Nav />
       <main>
         <ChaosStage />
-        <Intelligence />
-        <Business />
+        <Seam />
+        <Flow />
+        <Seam />
+        <Simulator />
+        <Seam />
         <Impact />
+        <Finale />
+        <Contact />
       </main>
       <footer className="footer">
         <div className="container">
-          <span className="logo" style={{ fontSize: 15 }}><span className="logo__mark" style={{ width: 22, height: 22, fontSize: 12 }}>N</span>{CONFIG.brandFull}</span>
-          <span>© {new Date().getFullYear()}</span>
+          <span className="logo" style={{ fontSize: 13 }}><Logo />{CONFIG.brand}</span>
+          <span>© {new Date().getFullYear()} {CONFIG.brandFull} · Automatización e IA para empresas</span>
           <nav>
             <a href="#">Instagram</a>
             <a href="#">LinkedIn</a>

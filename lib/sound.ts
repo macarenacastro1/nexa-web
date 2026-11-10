@@ -26,6 +26,8 @@ export const sound = {
     o.start(t);
     o.stop(t + dur + 0.05);
   },
+  ding() { this.tone(1318.5, 0, 0.35, 0.03); this.tone(1975.5, 0.06, 0.4, 0.018); },
+  pop() { this.tone(420, 0, 0.12, 0.04, "triangle"); this.tone(640, 0.05, 0.12, 0.03, "triangle"); },
   tick() { this.tone(1800, 0, 0.05, 0.015, "triangle"); },
   // Acorde suave cuando "todo encaja"
   chime() {

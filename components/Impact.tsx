@@ -2,147 +2,108 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { waUrl } from "@/lib/config";
+import { CONFIG } from "@/lib/config";
 import { sound } from "@/lib/sound";
 
 gsap.registerPlugin(ScrollTrigger);
+const nf = (n: number, d = 0) => n.toLocaleString("es-AR", { maximumFractionDigits: d, minimumFractionDigits: d });
 
-function Animated({ value, prefix = "", suffix = "" }: { value: number; prefix?: string; suffix?: string }) {
-  const ref = useRef<HTMLElement>(null);
+function Num({ value, dec = 0 }: { value: number; dec?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
   const cur = useRef({ v: 0 });
   useEffect(() => {
-    gsap.to(cur.current, {
-      v: value, duration: 0.8, ease: "power3.out", overwrite: true,
-      onUpdate: () => { if (ref.current) ref.current.textContent = prefix + Math.round(cur.current.v).toLocaleString("es-AR") + suffix; },
-    });
-  }, [value, prefix, suffix]);
-  return <b ref={ref}>{prefix}0{suffix}</b>;
+    gsap.to(cur.current, { v: value, duration: 0.8, ease: "power3.out", overwrite: true, onUpdate: () => { if (ref.current) ref.current.textContent = nf(cur.current.v, dec); } });
+  }, [value, dec]);
+  return <span ref={ref}>0</span>;
 }
 
-function Range({ label, value, min, max, step = 1, unit = "", hint, onChange }: { label: string; value: number; min: number; max: number; step?: number; unit?: string; hint: string; onChange: (v: number) => void }) {
+function Range({ label, value, min, max, step = 1, fmt, hint, onChange }: { label: string; value: number; min: number; max: number; step?: number; fmt: (v: number) => string; hint: string; onChange: (v: number) => void }) {
   const p = ((value - min) / (max - min)) * 100;
   return (
     <div className="range">
-      <label>{label}<b>{unit === "$" ? `US$ ${value}` : `${value}${unit}`}</b></label>
-      <input type="range" min={min} max={max} step={step} value={value} style={{ ["--p" as any]: `${p}%` }}
-        aria-label={label} onChange={(e) => { onChange(+e.target.value); sound.tick(); }} />
+      <label>{label}<b>{fmt(value)}</b></label>
+      <input type="range" min={min} max={max} step={step} value={value} aria-label={label} style={{ ["--p" as any]: `${p}%` }}
+        onChange={(e) => { onChange(+e.target.value); sound.tick(); }} />
       <small>{hint}</small>
     </div>
   );
 }
 
-const AUTOMATION = 0.7; // % de tareas repetitivas que se pueden automatizar
-
 export default function Impact() {
   const root = useRef<HTMLElement>(null);
-  const [people, setPeople] = useState(5);
-  const [hours, setHours] = useState(12);
-  const [cost, setCost] = useState(8);
-  const [toast, setToast] = useState("");
+  const [tasks, setTasks] = useState(150);
+  const [mins, setMins] = useState(10);
+  const [pct, setPct] = useState(60);
 
-  const hoursMonth = people * hours * 4.33 * AUTOMATION;
-  const yearly = hoursMonth * 12 * cost;
-  const fte = hoursMonth / 160;
+  const manualH = (tasks * mins) / 60; // horas / semana
+  const savedW = manualH * (pct / 100);
+  const savedM = savedW * 4.33;
+  const savedY = savedW * 48;
+  const days = savedM / 8;
+
+  // curva acumulada de 12 semanas (adopción gradual: rampa en las primeras 4)
+  const weeks = Array.from({ length: 12 }, (_, i) => savedW * Math.min(1, (i + 1) / 4));
+  const cum = weeks.reduce<number[]>((a, v) => [...a, (a[a.length - 1] || 0) + v], []);
+  const maxC = Math.max(1, cum[cum.length - 1]);
+  const pts = cum.map((v, i) => [(i / 11) * 400, 130 - (v / maxC) * 112]);
+  const line = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".impact .reveal", {
-        opacity: 0, y: 36, duration: 1, stagger: 0.1, ease: "power3.out",
-        scrollTrigger: { trigger: ".calc", start: "top 80%" },
-      });
-      gsap.from(".finale h2 .w", {
-        yPercent: 110, opacity: 0, duration: 1.1, stagger: 0.08, ease: "power4.out",
-        scrollTrigger: { trigger: ".finale", start: "top 70%" },
-      });
-      gsap.from(".finale p, .finale .ctas, .contact > *", {
-        opacity: 0, y: 30, duration: 1, stagger: 0.12, ease: "power3.out",
-        scrollTrigger: { trigger: ".finale", start: "top 55%" },
-      });
+      gsap.from(".impact .rv", { opacity: 0, y: 30, stagger: 0.08, duration: 1, ease: "power3.out", scrollTrigger: { trigger: root.current, start: "top 70%" } });
     }, root);
     return () => ctx.revert();
   }, []);
 
-  const submit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    let ok = true;
-    form.querySelectorAll<HTMLInputElement>("input, select, textarea").forEach((f) => {
-      const valid = f.checkValidity() && f.value.trim() !== "";
-      f.closest(".field")!.classList.toggle("err", !valid);
-      const s = f.closest(".field")!.querySelector("small");
-      if (s) s.textContent = valid ? "" : "Completá este campo";
-      if (!valid) ok = false;
-    });
-    if (!ok) return;
-    form.reset();
-    sound.chime();
-    setToast("¡Gracias! Te respondemos en menos de 24 hs ✨");
-    setTimeout(() => setToast(""), 3500);
-  };
+  const waMsg = `Hola NEXA! Usé la calculadora: ${tasks} tareas manuales por semana, ${mins} min cada una, ${pct}% automatizable. Me da ~${nf(savedW)} h/semana ahorradas. ¿Podemos verlo en un diagnóstico?`;
+  const wa = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(waMsg)}`;
 
   return (
-    <section className="impact" id="impacto" ref={root} aria-label="El impacto">
+    <section className="impact" id="impacto" ref={root} aria-label="Calculadora de impacto">
       <div className="container">
-        <p className="eyebrow reveal">05 · El impacto</p>
-        <h2 className="h2 reveal">¿Cuánto te está<br />costando el caos?</h2>
-        <p className="lead reveal">Mové los controles y calculá cuánto tiempo y dinero podrías recuperar.</p>
+        <p className="label rv"><b>05</b> Impacto</p>
+        <h2 className="h2 rv">How much time is<br /><span className="serif" style={{ color: "var(--mute)" }}>chaos costing you?</span></h2>
+        <p className="lead rv">Mové los controles con los números de tu empresa. Es una estimación orientativa: el número real lo vemos juntos en el diagnóstico.</p>
 
         <div className="calc">
-          <div className="calc__in reveal">
-            <Range label="Personas en tu equipo" value={people} min={1} max={50} hint="Incluyéndote a vos." onChange={setPeople} />
-            <Range label="Horas por semana en tareas repetitivas" value={hours} min={1} max={30} unit=" h" hint="Por persona: responder lo mismo, cargar datos, pasar planillas…" onChange={setHours} />
-            <Range label="Costo por hora de trabajo" value={cost} min={3} max={50} unit="$" hint="Promedio aproximado, en dólares." onChange={setCost} />
+          <div className="calc__in rv">
+            <Range label="Tareas manuales por semana" value={tasks} min={10} max={600} step={10} fmt={(v) => nf(v)} hint="Responder mensajes, cargar datos, pasar planillas, armar reportes…" onChange={setTasks} />
+            <Range label="Minutos por tarea" value={mins} min={1} max={60} fmt={(v) => `${v} min`} hint="Tiempo promedio que lleva cada una." onChange={setMins} />
+            <Range label="Porcentaje automatizable" value={pct} min={10} max={90} step={5} fmt={(v) => `${v}%`} hint="En promedio, entre 50% y 70% de las tareas repetitivas se pueden automatizar." onChange={setPct} />
+            <p className="calc__total">Hoy tu equipo dedica <b>{nf(manualH, 1)} horas por semana</b> a tareas manuales.</p>
           </div>
-          <div className="calc__out reveal">
-            <div className="big"><small>Horas que recuperás por mes</small><Animated value={hoursMonth} suffix=" h" /></div>
-            <div className="out-row">
-              <div><Animated value={yearly} prefix="US$ " /><small>ahorro estimado por año</small></div>
-              <div><b>{fte.toFixed(1).replace(".", ",")}</b><small>personas de tiempo completo liberadas</small></div>
+
+          <div className="calc__out rv">
+            <div className="big"><small>Horas que podrías recuperar por semana</small><b><Num value={savedW} /><span className="u">h</span></b></div>
+            <div className="split">
+              <div className="split__bar"><i style={{ width: `${pct}%` }} /><i style={{ width: `${100 - pct}%` }} /></div>
+              <div className="split__leg"><span>Automatizable · {nf(savedW, 1)} h</span><span>Sigue manual · {nf(manualH - savedW, 1)} h</span></div>
             </div>
-            <p className="calc__note">Estimación basada en automatizar el 70% de las tareas repetitivas. Lo confirmamos en el diagnóstico gratis.</p>
-            <a href="#contacto" className="btn btn--primary" style={{ justifySelf: "start" }}>Quiero recuperar ese tiempo</a>
+            <div className="out-row">
+              <div><b><Num value={savedM} /> h</b><small>por mes</small></div>
+              <div><b><Num value={savedY} /> h</b><small>por año</small></div>
+              <div><b><Num value={days} dec={1} /></b><small>jornadas de 8 h por mes</small></div>
+            </div>
+            <div>
+              <svg className="cumul" viewBox="0 0 400 140" preserveAspectRatio="none" aria-label="Horas acumuladas en 12 semanas">
+                <defs>
+                  <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#2bf59c" stopOpacity=".28" /><stop offset="1" stopColor="#2bf59c" stopOpacity="0" /></linearGradient>
+                  <linearGradient id="cl" x1="0" x2="1"><stop offset="0" stopColor="#4c8dff" /><stop offset=".5" stopColor="#2de2d0" /><stop offset="1" stopColor="#2bf59c" /></linearGradient>
+                </defs>
+                {[18, 55, 92, 129].map((y) => <line key={y} x1="0" x2="400" y1={y} y2={y} stroke="rgba(255,255,255,.05)" />)}
+                <path d={`${line} L400,140 L0,140 Z`} fill="url(#cg)" style={{ transition: "d .6s" }} />
+                <path d={line} fill="none" stroke="url(#cl)" strokeWidth="2.2" style={{ transition: "d .6s" }} />
+                <circle cx={pts[11][0] - 3} cy={pts[11][1]} r="4" fill="#2bf59c" />
+              </svg>
+              <div className="split__leg" style={{ marginTop: 6 }}><span style={{ visibility: "hidden" }} />Horas acumuladas en las primeras 12 semanas: <b style={{ color: "var(--text)", fontWeight: 500 }}>{nf(maxC)} h</b></div>
+            </div>
+            <p className="calc__note">Estimación con fines ilustrativos, no una garantía. Supone una adopción gradual durante el primer mes.</p>
+            <div className="calc__cta">
+              <a href={wa} target="_blank" rel="noopener" className="btn btn--solid">Recibir este análisis por WhatsApp <span className="arr">→</span></a>
+            </div>
           </div>
         </div>
       </div>
-
-      <div className="finale">
-        <div className="finale__glow" />
-        <h2>
-          <span style={{ display: "inline-block", overflow: "hidden", paddingBottom: ".2em", marginBottom: "-.12em" }}><span className="w">Menos</span> <span className="w">caos.</span></span><br />
-          <span style={{ display: "inline-block", overflow: "hidden", paddingBottom: ".2em", marginBottom: "-.12em" }}><span className="w grad">Más</span> <span className="w grad">negocio.</span></span>
-        </h2>
-        <p>Agendá una llamada de 30 minutos. Detectamos qué automatizar primero, sin compromiso.</p>
-        <div className="ctas">
-          <a href="#contacto" className="btn btn--primary">Agendar llamada gratis</a>
-          <a href={waUrl} target="_blank" rel="noopener" className="btn btn--ghost">Escribinos por WhatsApp</a>
-        </div>
-      </div>
-
-      <div className="container contact" id="contacto">
-        <div>
-          <p className="eyebrow">Contacto</p>
-          <h2 className="h2" style={{ fontSize: "clamp(34px,4.6vw,56px)" }}>Empecemos<br />tu proyecto.</h2>
-          <p className="lead">Contanos qué te gustaría automatizar y te respondemos en menos de 24 hs.</p>
-        </div>
-        <form className="form" onSubmit={submit} noValidate>
-          <div className="field"><label htmlFor="f-n">Nombre</label><input id="f-n" required autoComplete="name" /><small /></div>
-          <div className="field"><label htmlFor="f-e">Email</label><input id="f-e" type="email" required autoComplete="email" /><small /></div>
-          <div className="field"><label htmlFor="f-w">WhatsApp</label><input id="f-w" type="tel" required placeholder="+54 9 11 …" autoComplete="tel" /><small /></div>
-          <div className="field"><label htmlFor="f-s">Servicio de interés</label>
-            <select id="f-s" required defaultValue="">
-              <option value="" disabled>Elegí una opción</option>
-              <option>Página web inteligente</option>
-              <option>Bot de WhatsApp</option>
-              <option>Imágenes y contenido con IA</option>
-              <option>Sistema a medida</option>
-              <option>No sé, quiero asesoramiento</option>
-            </select><small />
-          </div>
-          <div className="field field--full"><label htmlFor="f-m">¿Qué te gustaría automatizar?</label><textarea id="f-m" rows={4} required /><small /></div>
-          <button className="btn btn--primary field--full" type="submit">Enviar</button>
-        </form>
-      </div>
-      <div className={`toast${toast ? " show" : ""}`} role="status">{toast}</div>
     </section>
   );
 }
