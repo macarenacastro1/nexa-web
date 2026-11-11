@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { CALC_KEY, type CalcSummary } from "@/lib/config";
+import { CALC_KEY, track, type CalcSummary } from "@/lib/config";
 import { sound } from "@/lib/sound";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -59,6 +59,7 @@ export default function Impact() {
     const summary: CalcSummary = { tasks, mins, pct, hours_week: Math.round(savedW * 10) / 10 };
     try { sessionStorage.setItem(CALC_KEY, JSON.stringify(summary)); } catch { /* sin almacenamiento */ }
     window.dispatchEvent(new CustomEvent<CalcSummary>(CALC_KEY, { detail: summary }));
+    track("calculator_to_diagnosis", { hours_week: summary.hours_week });
   };
 
   return (

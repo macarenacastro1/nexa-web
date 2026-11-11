@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { CALC_KEY, CONFIG, CONSENT_VERSION, LEAD_ENDPOINT, type CalcSummary } from "@/lib/config";
+import { CALC_KEY, CONFIG, CONSENT_VERSION, LEAD_ENDPOINT, track, type CalcSummary } from "@/lib/config";
 import { sound } from "@/lib/sound";
 
 const Check = () => (
@@ -84,6 +84,7 @@ export default function Contact() {
       });
       if (res.status === 429) throw new Error("Recibimos varias consultas seguidas. Probá de nuevo en un rato o escribinos por mail.");
       if (!res.ok) throw new Error("No pudimos enviar tu consulta.");
+      track("generate_lead", { form: "diagnostico", topic: v("f-s") || "sin tema" });
       form.reset();
       try { sessionStorage.removeItem(CALC_KEY); } catch { /* nada */ }
       sound.chime();
@@ -109,7 +110,7 @@ export default function Contact() {
             <li><Check /><div>Argentina y Brasil<small>Trabajamos con empresas de Argentina y Brasil, en español y portugués.</small></div></li>
             <li><Check /><div>Caso real: Tex Hub para Texbros<small>Un sistema a medida que centraliza toda su operación.</small></div></li>
           </ul>
-          <a href={`mailto:${CONFIG.contactEmail}`} className="btn btn--line" style={{ marginTop: 30 }}>Prefiero escribir por mail <span className="arr">→</span></a>
+          <a href={`mailto:${CONFIG.contactEmail}`} onClick={() => track("contact_email_click")} className="btn btn--line" style={{ marginTop: 30 }}>Prefiero escribir por mail <span className="arr">→</span></a>
         </div>
         <form className="form" onSubmit={submit} noValidate>
           <h3>Agendá tu diagnóstico<small>Completá tus datos y te contactamos.</small></h3>

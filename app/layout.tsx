@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
+import { GA_MEASUREMENT_ID } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "NEXA · Automatización e IA para empresas",
@@ -24,7 +26,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2307080a'/%3E%3Cpath d='M9 23V9l14 14V9' stroke='%232de2c8' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Google Analytics (etiqueta de Google) */}
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+window.gtag = gtag;
+gtag('js', new Date());
+gtag('config', '${GA_MEASUREMENT_ID}');`}
+        </Script>
+      </body>
     </html>
   );
 }
