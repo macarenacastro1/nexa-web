@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { CONFIG } from "@/lib/config";
+import { CALC_KEY, type CalcSummary } from "@/lib/config";
 import { sound } from "@/lib/sound";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -55,8 +55,11 @@ export default function Impact() {
     return () => ctx.revert();
   }, []);
 
-  const waMsg = `Hola NEXA! Usé la calculadora: ${tasks} tareas manuales por semana, ${mins} min cada una, ${pct}% automatizable. Me da ~${nf(savedW)} h/semana ahorradas. ¿Podemos verlo en un diagnóstico?`;
-  const wa = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(waMsg)}`;
+  const toDiagnosis = () => {
+    const summary: CalcSummary = { tasks, mins, pct, hours_week: Math.round(savedW * 10) / 10 };
+    try { sessionStorage.setItem(CALC_KEY, JSON.stringify(summary)); } catch { /* sin almacenamiento */ }
+    window.dispatchEvent(new CustomEvent<CalcSummary>(CALC_KEY, { detail: summary }));
+  };
 
   return (
     <section className="impact" id="impacto" ref={root} aria-label="Calculadora de impacto">
@@ -99,7 +102,7 @@ export default function Impact() {
             </div>
             <p className="calc__note">Estimación con fines ilustrativos, no una garantía. Supone una adopción gradual durante el primer mes.</p>
             <div className="calc__cta">
-              <a href={wa} target="_blank" rel="noopener" className="btn btn--solid">Recibir este análisis por WhatsApp <span className="arr">→</span></a>
+              <a href="#contacto" onClick={toDiagnosis} className="btn btn--solid">Quiero ver esto en un diagnóstico <span className="arr">→</span></a>
             </div>
           </div>
         </div>
