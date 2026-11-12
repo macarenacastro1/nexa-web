@@ -1,13 +1,13 @@
 "use client";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { sound } from "@/lib/sound";
-import { WINDOWS, NOTIFS, type Tpl } from "./chaos/windows";
+import { getWindows, getNotifs, type Tpl, type Pick } from "./chaos/windows";
+import { locale, useL, useLang } from "@/lib/i18n";
 
 gsap.registerPlugin(ScrollTrigger);
 const useIso = typeof window !== "undefined" ? useLayoutEffect : useEffect;
-const fmt = (n: number) => Math.round(n).toLocaleString("es-AR");
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const seg = (p: number, a: number, b: number) => clamp((p - a) / (b - a));
 const ease = (t: number) => t * t * (3 - 2 * t);
@@ -27,6 +27,13 @@ const pickPos = () => {
 };
 
 export default function ChaosStage() {
+  const { lang } = useLang();
+  const L = useL();
+  const fmt = (n: number) => Math.round(n).toLocaleString(locale(lang));
+  const WINDOWS = useMemo(() => getWindows(L), [L]);
+  const NOTIFS = useMemo(() => getNotifs(L), [L]);
+  const notifsRef = useRef(NOTIFS);
+  notifsRef.current = NOTIFS;
   const root = useRef<HTMLElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const tl = useRef<gsap.core.Timeline | null>(null);
@@ -59,7 +66,8 @@ export default function ChaosStage() {
     let n = 0;
     const b = setInterval(() => {
       if (!visible.current || document.hidden) return;
-      const tpl = NOTIFS[(n++ * 5) % NOTIFS.length];
+      const list = notifsRef.current;
+      const tpl = list[(n++ * 5) % list.length];
       const id = uid++;
       setBanners((l) => [{ id, tpl }, ...l].slice(0, 3));
       setArrived((x) => x + 1);
@@ -75,7 +83,8 @@ export default function ChaosStage() {
     setCloses((c) => c + 1);
     setArrived((a) => a + 2);
     setSpawns((s) => {
-      const add: Spawn[] = [0, 1].map(() => ({ id: uid++, tpl: NOTIFS[Math.floor(Math.random() * NOTIFS.length)], ...pickPos(), r: rand(-6, 6) }));
+      const list = notifsRef.current;
+      const add: Spawn[] = [0, 1].map(() => ({ id: uid++, tpl: list[Math.floor(Math.random() * list.length)], ...pickPos(), r: rand(-6, 6) }));
       return [...s, ...add].slice(-16);
     });
   }, []);
@@ -111,7 +120,7 @@ export default function ChaosStage() {
       const t = gsap.timeline({ paused: true, defaults: { ease: "power2.inOut" } });
       t.to(".copy-chaos", { opacity: 0, y: -24, scale: 0.97, duration: 0.12 }, 0)
         .to(".win .badge, .alert-win .ico, .stamp, .x", { opacity: 0, scale: 0.3, duration: 0.1, stagger: 0.002 }, 0.02)
-        .to(".sheet .bad, .sheet .warn", { backgroundColor: "rgba(43,245,156,.16)", color: "#0b7a46", duration: 0.1 }, 0.03)
+        .to(".sheet .bad, .sheet .warn", { backgroundColor: "rgba(43,245,156,.16)", color: "#2bf59c", duration: 0.1 }, 0.03)
         .to(".note", { color: "#2bf59c", duration: 0.1 }, 0.04)
         .to(".note .t.bad", { opacity: 0, duration: 0.06 }, 0.04)
         .to(".note .good", { opacity: 1, duration: 0.08 }, 0.08)
@@ -379,7 +388,7 @@ export default function ChaosStage() {
   };
 
   return (
-    <section className={`stage${done ? " done" : ""}`} ref={root} id="caos" aria-label="Del caos al control">
+    <section className={`stage${done ? " done" : ""}`} ref={root} id="caos" aria-label={L("Del caos al control", "Do caos ao controle")}>
       <div className="stage__bg stage__bg--chaos" />
       <div className="stage__bg stage__bg--calm" />
       <div className="stage__grid" />
@@ -393,7 +402,7 @@ export default function ChaosStage() {
                 <div className="win-drag">
                   {w.node}
                   {(w.kind === "toast" || w.kind === "alert") && (
-                    <button className="x" aria-label="Cerrar notificación" onClick={(e) => { e.stopPropagation(); closeWin(w.id); }}>×</button>
+                    <button className="x" aria-label={L("Cerrar notificación", "Fechar notificação")} onClick={(e) => { e.stopPropagation(); closeWin(w.id); }}>×</button>
                   )}
                   {w.note && (
                     <div className={`note${notesOn ? " drawn" : ""}`} style={{ inset: 0, ["--d" as any]: `${w.note.d || 0}s` }} aria-hidden>
@@ -414,9 +423,9 @@ export default function ChaosStage() {
             <div key={s.id} className="spawn" style={{ left: `${s.x}%`, top: `${s.y}%`, transform: `rotate(${s.r}deg)` }}>
               <div className="win toast-win">
                 <span className="app-ico" style={{ background: s.tpl.color }}>{s.tpl.ico}</span>
-                <div><strong>{s.tpl.title}</strong><small>{s.tpl.body}</small><em>{s.tpl.app} · ahora</em></div>
+                <div><strong>{s.tpl.title}</strong><small>{s.tpl.body}</small><em>{s.tpl.app} · {L("ahora", "agora")}</em></div>
               </div>
-              <button className="x" aria-label="Cerrar notificación" onClick={(e) => { e.stopPropagation(); closeSpawn(s.id); }}>×</button>
+              <button className="x" aria-label={L("Cerrar notificación", "Fechar notificação")} onClick={(e) => { e.stopPropagation(); closeSpawn(s.id); }}>×</button>
             </div>
           ))}
         </div>
@@ -430,43 +439,43 @@ export default function ChaosStage() {
         {banners.map((b) => (
           <div className="banner" key={b.id}>
             <span className="app-ico" style={{ background: b.tpl.color }}>{b.tpl.ico}</span>
-            <div><strong>{b.tpl.app}<em>ahora</em></strong><small><b style={{ fontWeight: 600 }}>{b.tpl.title}:</b> {b.tpl.body}</small></div>
-            <button className="x" aria-label="Cerrar" onClick={(e) => { e.stopPropagation(); setBanners((l) => l.filter((x) => x.id !== b.id)); multiply(); }}>×</button>
+            <div><strong>{b.tpl.app}<em>{L("ahora", "agora")}</em></strong><small><b style={{ fontWeight: 600 }}>{b.tpl.title}:</b> {b.tpl.body}</small></div>
+            <button className="x" aria-label={L("Cerrar", "Fechar")} onClick={(e) => { e.stopPropagation(); setBanners((l) => l.filter((x) => x.id !== b.id)); multiply(); }}>×</button>
           </div>
         ))}
       </div>
 
       <div className="tally" role="status">
-        <span className="live">{fmt(unread)} sin leer</span>
-        <span>Cerraste <b>{closes}</b></span>
-        <span className="in">Llegaron <b>{arrived}</b></span>
+        <span className="live">{fmt(unread)} {L("sin leer", "não lidas")}</span>
+        <span>{L("Cerraste", "Você fechou")} <b>{closes}</b></span>
+        <span className="in">{L("Llegaron", "Chegaram")} <b>{arrived}</b></span>
       </div>
 
       <div className="stage__copy">
         <div className="copy-chaos">
-          <h1 className="display">Your business is<br />working hard.<span className="l2">But is it working <span className="serif">smart?</span></span></h1>
-          <p>Mails, planillas, chats y facturas que no paran. <b>Probá cerrar alguna.</b></p>
+          <h1 className="display">{L("Tu empresa", "Sua empresa")}<br />{L("trabaja mucho.", "trabalha muito.")}<span className="l2">{L("¿Pero trabaja", "Mas com")} <span className="serif">{L("inteligente?", "inteligência?")}</span></span></h1>
+          <p>{L("Mails, planillas, chats y facturas que no paran.", "E-mails, planilhas, chats e boletos que não param.")} <b>{L("Probá cerrar alguna.", "Tente fechar alguma.")}</b></p>
         </div>
       </div>
 
       <div className={`dash-wrap${done ? " live" : ""}`} aria-hidden={!calm} onPointerMove={onSpot}>
         <div style={{ width: "min(1080px,100%)" }}>
-          <div className="dash-title"><h2>Now it&apos;s working <span className="serif ctrl">smart.</span></h2></div>
-          <Dashboard />
+          <div className="dash-title"><h2>{L("Ahora trabaja", "Agora trabalha com")} <span className="serif ctrl">{L("inteligente.", "inteligência.")}</span></h2></div>
+          <Dashboard L={L} />
         </div>
       </div>
 
       <div className="nudge" aria-hidden>
-        Cerrar ventanas no arregla nada. Probá esto
+        {L("Cerrar ventanas no arregla nada. Probá esto", "Fechar janelas não resolve nada. Tente isto")}
         <svg viewBox="0 0 40 44"><path d="M20 2 C 16 14, 24 24, 20 40 M 11 31 L 20 41 L 29 31" /></svg>
       </div>
 
       <div className={`morph${touched ? " touched" : ""}`}>
-        <p className="morph__hint">Take control <span className="serif">of your business.</span></p>
+        <p className="morph__hint">{L("Tomá el control", "Assuma o controle")} <span className="serif">{L("de tu empresa.", "da sua empresa.")}</span></p>
         <div className="morph__track" ref={trackRef} onPointerDown={onDown}>
           <div className="morph__fill" ref={fillRef} />
-          <div className="morph__labels"><span>CHAOS</span><span>CONTROL</span></div>
-          <div className="morph__handle" ref={handleRef} role="slider" tabIndex={0} aria-label="Transformar el caos en control"
+          <div className="morph__labels"><span>{L("CAOS", "CAOS")}</span><span>{L("CONTROL", "CONTROLE")}</span></div>
+          <div className="morph__handle" ref={handleRef} role="slider" tabIndex={0} aria-label={L("Transformar el caos en control", "Transformar o caos em controle")}
             aria-valuemin={0} aria-valuemax={100} aria-valuenow={0} onKeyDown={onKey} onPointerDown={onDown}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </div>
@@ -474,14 +483,14 @@ export default function ChaosStage() {
       </div>
 
       <div className="stage__end">
-        <a href="#flujo" className="btn btn--solid">Ver cómo funciona <span className="arr">↓</span></a>
-        <button className="btn btn--line" onClick={reset}>↺ Volver al caos</button>
+        <a href="#flujo" className="btn btn--solid">{L("Ver cómo funciona", "Ver como funciona")} <span className="arr">↓</span></a>
+        <button className="btn btn--line" onClick={reset}>↺ {L("Volver al caos", "Voltar ao caos")}</button>
       </div>
     </section>
   );
 }
 
-function Dashboard() {
+function Dashboard({ L }: { L: Pick }) {
   const icons = [
     <path key="a" d="M3 12l9-8 9 8M5 10v10h14V10" />,
     <path key="b" d="M4 19V9M10 19V5M16 19v-7M22 19H2" />,
@@ -489,7 +498,7 @@ function Dashboard() {
     <path key="d" d="M4 4h16v16H4zM4 10h16M10 4v16" />,
     <path key="e" d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1" />,
   ];
-  const pipes = [["Email", "IA", "ERP", "Aviso"], ["WhatsApp", "IA", "Pedido", "Stock"], ["Web", "IA", "CRM", "Seguimiento"], ["Planilla", "Sync", "Tienda", "Reporte"]];
+  const pipes = [["Email", "IA", "ERP", L("Aviso", "Aviso")], ["WhatsApp", "IA", L("Pedido", "Pedido"), L("Stock", "Estoque")], ["Web", "IA", "CRM", L("Seguimiento", "Follow-up")], [L("Planilla", "Planilha"), "Sync", L("Tienda", "Loja"), L("Reporte", "Relatório")]];
   return (
     <div className="dash">
       <aside className="dash__side">
@@ -501,19 +510,19 @@ function Dashboard() {
       </aside>
       <div className="dash__main">
         <div className="dash__top">
-          <h3>Centro de operaciones</h3>
-          <span className="pill-live">LIVE</span>
-          <small>12 procesos conectados · 0 pendientes</small>
+          <h3>{L("Centro de operaciones", "Central de operações")}</h3>
+          <span className="pill-live">{L("EN VIVO", "AO VIVO")}</span>
+          <small>{L("12 procesos conectados · 0 pendientes", "12 processos conectados · 0 pendências")}</small>
         </div>
         <div className="kpis">
-          <div className="kpi spot"><small>Facturas procesadas</small><b data-count="312">0</b><em>sin carga manual</em></div>
-          <div className="kpi spot"><small>Consultas resueltas por IA</small><b data-count="1284">0</b><em>al instante</em></div>
-          <div className="kpi spot"><small>Tiempo de respuesta</small><b data-count="4" data-suf=" s">0</b><em>antes: 6 h</em></div>
-          <div className="kpi spot"><small>Horas liberadas / semana</small><b data-count="46" data-suf=" h">0</b><em>para hacer crecer el negocio</em></div>
+          <div className="kpi spot"><small>{L("Facturas procesadas", "Notas processadas")}</small><b data-count="312">0</b><em>{L("sin carga manual", "sem lançamento manual")}</em></div>
+          <div className="kpi spot"><small>{L("Consultas resueltas por IA", "Atendimentos resolvidos por IA")}</small><b data-count="1284">0</b><em>{L("al instante", "na hora")}</em></div>
+          <div className="kpi spot"><small>{L("Tiempo de respuesta", "Tempo de resposta")}</small><b data-count="4" data-suf=" s">0</b><em>{L("antes: 6 h", "antes: 6 h")}</em></div>
+          <div className="kpi spot"><small>{L("Horas liberadas / semana", "Horas liberadas / semana")}</small><b data-count="46" data-suf=" h">0</b><em>{L("para hacer crecer el negocio", "para fazer o negócio crescer")}</em></div>
         </div>
         <div className="dash__grid">
           <div className="panel spot">
-            <h4><span>Operaciones automatizadas</span><span className="ok">▲ 38%</span></h4>
+            <h4><span>{L("Operaciones automatizadas", "Operações automatizadas")}</span><span className="ok">▲ 38%</span></h4>
             <svg className="chart" viewBox="0 0 400 124" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#2de2d0" stopOpacity=".35" /><stop offset="1" stopColor="#2de2d0" stopOpacity="0" /></linearGradient>
@@ -525,7 +534,7 @@ function Dashboard() {
             </svg>
           </div>
           <div className="panel spot">
-            <h4><span>Flujos activos</span><span className="ok">4/4 OK</span></h4>
+            <h4><span>{L("Flujos activos", "Fluxos ativos")}</span><span className="ok">4/4 OK</span></h4>
             <div className="pipes">
               {pipes.map((p) => (
                 <div className="pipe-wrap pipe" key={p[0]}>

@@ -613,3 +613,74 @@ button { font-family: inherit; color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
 }
+
+/* =====================================================================
+   Rediseño Nexa (2026-11): logo, idioma y ventanas del caos con la
+   estética de Nexa OS. Mantiene la mecánica (arrastrar, cerrar, nexo).
+   ===================================================================== */
+.logo svg { width: 28px; height: 28px; }
+.logo-glow { filter: drop-shadow(0 0 5px rgba(45, 226, 208, .55)) drop-shadow(0 0 12px rgba(76, 141, 255, .22)); }
+
+.lang { display: inline-flex; padding: 3px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--g1); margin-left: auto; }
+.lang button { border: 0; background: transparent; color: var(--mute); font: 500 11.5px var(--mono); letter-spacing: .08em; padding: 0 10px; min-height: 28px; border-radius: 999px; cursor: pointer; transition: background .3s var(--ease), color .3s; }
+.lang button:hover { color: var(--text); }
+.lang button.on { background: var(--text); color: #050607; }
+.lang + .icon-btn { margin-left: 4px; }
+
+/* Ventanas: panel oscuro de Nexa, borde fino, título en mono */
+.win { background: rgba(13, 15, 18, .94); border-color: rgba(255, 255, 255, .08); border-radius: 14px; color: var(--text);
+  box-shadow: 0 34px 70px -24px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.04); }
+.win-pos:hover .win { box-shadow: 0 44px 90px -24px rgba(0,0,0,.95), 0 0 0 1px rgba(255,107,91,.35); }
+.win--light { background: rgba(17, 20, 24, .95); color: var(--text); border-color: rgba(255,255,255,.08); }
+.win__bar, .win--light .win__bar { background: transparent; border-color: var(--line); padding: 9px 12px; }
+.win__bar span { font: 500 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--mute); opacity: 1; margin-left: 6px; }
+.win__bar .tl { gap: 5px; }
+.win__bar .tl i { width: 8px; height: 8px; background: var(--coral); }
+.win__bar .tl i:nth-child(2), .win__bar .tl i:nth-child(3) { background: rgba(255,255,255,.16); }
+.badge { background: var(--coral); color: #07080a; font-family: var(--mono); font-size: 10.5px; }
+.x, .win--light .x { background: rgba(255,255,255,.08); color: var(--text); }
+.x:hover { background: var(--coral); color: #07080a; }
+
+.mail-row, .win--light .mail-row { border-color: var(--line); }
+.mail-row .dot { background: var(--blue); box-shadow: 0 0 8px rgba(76,141,255,.6); }
+.mail-row small, .chat-row small { color: var(--mute); opacity: 1; }
+.mail-row time { font-family: var(--mono); color: var(--mute-2); opacity: 1; }
+
+.sheet > span { border-color: var(--line); color: #cfd2d6; }
+.sheet > span.h { background: rgba(255,255,255,.03); color: var(--mute-2); }
+.sheet > span.bad { background: rgba(255,107,91,.14); color: var(--coral-2); }
+.sheet > span.warn { background: rgba(255,181,71,.14); color: var(--amber); }
+
+.app-ico { border-radius: 10px; font-family: var(--mono); font-size: 11px; color: #07080a; }
+.toast-win small { color: var(--mute); opacity: 1; }
+.toast-win em { font-family: var(--mono); color: var(--mute-2); opacity: 1; }
+
+.alert-win .ico { background: rgba(255,107,91,.12); box-shadow: 0 0 0 1px rgba(255,107,91,.3); }
+.alert-win p { color: var(--mute); opacity: 1; }
+.alert-win .btns span { background: rgba(255,255,255,.05); border: 1px solid var(--line-2); border-radius: 999px; font-size: 11.5px; }
+.alert-win .btns span:last-child { background: var(--text); color: #050607; border-color: var(--text); }
+
+.invoice .row { border-color: var(--line-2); }
+.invoice .row span { color: var(--mute); }
+.stamp { border-color: var(--coral); color: var(--coral); }
+.sys .n { background: rgba(255,255,255,.03); border: 1px solid var(--line); }
+
+/* Post-its: mismo gesto a mano, en los colores de Nexa */
+.sticky { background: rgba(255, 181, 71, .14); color: #ffd18a; border: 1px solid rgba(255, 181, 71, .35);
+  box-shadow: 0 22px 40px -16px rgba(0,0,0,.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.sticky::before { background: rgba(255,255,255,.14); box-shadow: none; }
+.sticky--pink { background: rgba(255, 107, 91, .14); color: var(--coral-2); border-color: rgba(255, 107, 91, .35); }
+.sticky--blue { background: rgba(76, 141, 255, .14); color: #9cc0ff; border-color: rgba(76, 141, 255, .35); }
+
+.cal span { background: rgba(255,255,255,.04); color: #cfd2d6; }
+.cal span.d { color: var(--mute); }
+.cal span.ev { background: rgba(76,141,255,.28); }
+.cal span.ev2 { background: rgba(255,107,91,.3); }
+.cal span.ev3 { background: rgba(255,181,71,.28); }
+.chat-row .av { color: #07080a; font-family: var(--mono); font-size: 10.5px; }
+.chat-row .badge { background: var(--green); }
+.typing i { background: var(--green); }
+@media (max-width: 640px) {
+  .nav .btn--sm { display: none; }
+  .lang button { padding: 0 9px; }
+}

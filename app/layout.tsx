@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
 import { GA_MEASUREMENT_ID } from "@/lib/config";
+import { LangProvider } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "NEXA · Automatización e IA para empresas",
@@ -13,7 +14,7 @@ export const viewport: Viewport = { themeColor: "#07080a" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
+    <html lang="es-AR">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -27,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        {children}
+        <LangProvider>{children}</LangProvider>
         {/* Google Analytics (etiqueta de Google) */}
         <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
         <Script id="google-analytics" strategy="afterInteractive">
