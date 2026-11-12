@@ -33,6 +33,11 @@ export default function ChaosStage() {
   const WINDOWS = useMemo(() => getWindows(L), [L]);
   const NOTIFS = useMemo(() => getNotifs(L), [L]);
   const notifsRef = useRef(NOTIFS);
+  const eyebrow = L("NEXA / Estudio de tecnología y diseño", "NEXA / Estúdio de tecnologia e design");
+  const subtitle = L(
+    "Diseñamos experiencias web, sistemas a medida y automatizaciones para mejorar la forma en que vendés y trabajás.",
+    "Criamos experiências web, sistemas sob medida e automações para melhorar a forma como você vende e trabalha.",
+  );
   notifsRef.current = NOTIFS;
   const root = useRef<HTMLElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -47,6 +52,13 @@ export default function ChaosStage() {
   const lastTick = useRef(0);
   const visible = useRef(true);
   const anim = useRef<gsap.core.Tween | null>(null);
+  // Movimiento reducido y pantallas chicas: menos animación y menos notificaciones.
+  const reduceRef = useRef(false);
+  const smallRef = useRef(false);
+  useEffect(() => {
+    reduceRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    smallRef.current = window.matchMedia("(max-width: 720px)").matches;
+  }, []);
 
   const [closed, setClosed] = useState<Set<string>>(new Set());
   const [spawns, setSpawns] = useState<Spawn[]>([]);
@@ -69,7 +81,7 @@ export default function ChaosStage() {
       // así se entiende que son parte del caos y que se pueden cerrar.
       const list = notifsRef.current;
       const tpl = list[(n++ * 5) % list.length];
-      setSpawns((sp) => [...sp, { id: uid++, tpl, ...pickPos(), r: rand(-6, 6) }].slice(-16));
+      setSpawns((sp) => [...sp, { id: uid++, tpl, ...pickPos(), r: rand(-6, 6) }].slice(smallRef.current ? -3 : -12));
       setArrived((x) => x + 1);
       sound.ding();
     }, 4200);
@@ -84,7 +96,7 @@ export default function ChaosStage() {
     setSpawns((s) => {
       const list = notifsRef.current;
       const add: Spawn[] = [0, 1].map(() => ({ id: uid++, tpl: list[Math.floor(Math.random() * list.length)], ...pickPos(), r: rand(-6, 6) }));
-      return [...s, ...add].slice(-16);
+      return [...s, ...add].slice(smallRef.current ? -4 : -16);
     });
   }, []);
   const closeWin = (id: string) => { setClosed((c) => new Set(c).add(id)); multiply(); };
@@ -290,7 +302,7 @@ export default function ChaosStage() {
       const p = prog.current;
       g.clearRect(0, 0, cv.clientWidth, cv.clientHeight);
       const P = parts.current;
-      if (!P || p <= 0.15 || p >= 0.9) return;
+      if (!P || p <= 0.15 || p >= 0.9 || reduceRef.current) return;
       const t = now / 1000;
       const appear = seg(p, 0.16, 0.3), go1 = ease(seg(p, 0.24, 0.5)), go2 = ease(seg(p, 0.58, 0.78));
       const fade = 1 - seg(p, 0.74, 0.88), alpha = appear * fade;
@@ -365,7 +377,8 @@ export default function ChaosStage() {
   const animateTo = (target: number, duration = 0.9) => {
     const o = { p: prog.current };
     anim.current?.kill();
-    anim.current = gsap.to(o, { p: clamp(target), duration, ease: "power2.inOut", onUpdate: () => apply(o.p) });
+    const d = reduceRef.current ? Math.min(duration, 0.25) : duration;
+    anim.current = gsap.to(o, { p: clamp(target), duration: d, ease: "power2.inOut", onUpdate: () => apply(o.p) });
   };
   const celebrate = () => {
     root.current!.querySelectorAll<HTMLElement>("[data-count]").forEach((n) => {
@@ -384,11 +397,20 @@ export default function ChaosStage() {
     if (doneRef.current) return;
     e.stopPropagation();
     setTouched(true);
-    if (e.currentTarget === trackRef.current && e.target === trackRef.current) animateTo(fromEvent(e.clientX), 0.6);
-    const move = (ev: PointerEvent) => { anim.current?.kill(); apply(fromEvent(ev.clientX)); };
+    // Tocar la barra o el botón (sin arrastrar) hace la transición completa.
+    const startX = e.clientX;
+    let dragged = false;
+    const move = (ev: PointerEvent) => {
+      if (!dragged && Math.abs(ev.clientX - startX) < 6) return;
+      dragged = true;
+      anim.current?.kill();
+      apply(fromEvent(ev.clientX));
+    };
     const up = () => {
       window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up);
-      if (prog.current > 0.72 && prog.current < 1) animateTo(1, 0.7);
+      if (!dragged) animateTo(1, 1.4);
+      else if (prog.current > 0.6 && prog.current < 1) animateTo(1, 0.7);
+      else if (prog.current < 0.6) animateTo(0, 0.6);
     };
     window.addEventListener("pointermove", move); window.addEventListener("pointerup", up);
   };
@@ -396,7 +418,8 @@ export default function ChaosStage() {
     if (doneRef.current) return;
     if (e.key === "ArrowRight" || e.key === "ArrowUp") { setTouched(true); animateTo(prog.current + 0.1, 0.3); }
     if (e.key === "ArrowLeft" || e.key === "ArrowDown") animateTo(prog.current - 0.1, 0.3);
-    if (e.key === "Enter" || e.key === " " || e.key === "End") { e.preventDefault(); setTouched(true); animateTo(1, 1.6); }
+    if (e.key === "Enter" || e.key === " " || e.key === "End") { e.preventDefault(); setTouched(true); animateTo(1, 1.4); }
+    if (e.key === "Home") { e.preventDefault(); animateTo(0, 0.6); }
   };
   const reset = () => {
     doneRef.current = false; setDone(false);
@@ -404,7 +427,8 @@ export default function ChaosStage() {
     gsap.to(".morph", { opacity: 1, y: 0, duration: 0.4, pointerEvents: "auto" });
     setClosed(new Set()); setSpawns([]); setCloses(0); setArrived(0); setUnread(1284);
     gsap.set(".nudge", { opacity: 0 });
-    animateTo(0, 1.6);
+    animateTo(0, 1.2);
+    setTimeout(() => handleRef.current?.focus({ preventScroll: true }), 400);
   };
 
   // spotlight on dashboard cards
@@ -473,14 +497,19 @@ export default function ChaosStage() {
 
       <div className="stage__copy">
         <div className="copy-chaos">
-          <h1 className="display">{L("Tu empresa", "Sua empresa")}<br />{L("trabaja mucho.", "trabalha muito.")}<span className="l2">{L("¿Pero trabaja", "Mas com")} <span className="serif">{L("inteligente?", "inteligência?")}</span></span></h1>
-          <p>{L("Mails, planillas, chats y facturas que no paran.", "E-mails, planilhas, chats e boletos que não param.")} <b>{L("Probá cerrar alguna.", "Tente fechar alguma.")}</b></p>
+          <p className="hero-eyebrow">{eyebrow}</p>
+          <h1 className="display">{L("Tu negocio puede", "Seu negócio pode")}<span className="l2">{L("funcionar", "funcionar")} <span className="serif">{L("mejor.", "melhor.")}</span></span></h1>
+          <p className="hero-sub">{subtitle}</p>
         </div>
       </div>
 
       <div className={`dash-wrap${done ? " live" : ""}`} aria-hidden={!calm} onPointerMove={onSpot}>
         <div style={{ width: "min(1080px,100%)" }}>
-          <div className="dash-title"><h2>{L("Ahora trabaja", "Agora trabalha com")} <span className="serif ctrl">{L("inteligente.", "inteligência.")}</span></h2></div>
+          <div className="dash-title">
+            <p className="hero-eyebrow">{eyebrow}</p>
+            <h2>{L("Cuando todo se conecta,", "Quando tudo se conecta,")} <span className="serif ctrl">{L("todo cambia.", "tudo muda.")}</span></h2>
+            <p className="hero-sub">{subtitle}</p>
+          </div>
           <Dashboard L={L} />
         </div>
       </div>
@@ -491,11 +520,11 @@ export default function ChaosStage() {
       </div>
 
       <div className={`morph${touched ? " touched" : ""}`}>
-        <p className="morph__hint">{L("Tomá el control", "Assuma o controle")} <span className="serif">{L("de tu empresa.", "da sua empresa.")}</span></p>
+        <p className="morph__hint" id="morph-hint">{L("Deslizá o tocá para ver el cambio", "Deslize ou toque para ver a mudança")}</p>
         <div className="morph__track" ref={trackRef} onPointerDown={onDown}>
           <div className="morph__fill" ref={fillRef} />
           <div className="morph__labels"><span>{L("CAOS", "CAOS")}</span><span>{L("CONTROL", "CONTROLE")}</span></div>
-          <div className="morph__handle" ref={handleRef} role="slider" tabIndex={0} aria-label={L("Transformar el caos en control", "Transformar o caos em controle")}
+          <div className="morph__handle" ref={handleRef} role="slider" tabIndex={0} aria-label={L("Pasar del caos al control", "Passar do caos ao controle")} aria-describedby="morph-hint" aria-valuetext={calm ? L("Control", "Controle") : L("Caos", "Caos")}
             aria-valuemin={0} aria-valuemax={100} aria-valuenow={0} onKeyDown={onKey} onPointerDown={onDown}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </div>
@@ -503,8 +532,8 @@ export default function ChaosStage() {
       </div>
 
       <div className="stage__end">
-        <a href="#flujo" className="btn btn--solid">{L("Ver cómo funciona", "Ver como funciona")} <span className="arr">↓</span></a>
-        <button className="btn btn--line" onClick={reset}>↺ {L("Volver al caos", "Voltar ao caos")}</button>
+        <a href="#servicios" className="btn btn--solid">{L("Explorar soluciones", "Explorar soluções")} <span className="arr">↓</span></a>
+        <button className="btn btn--ghost" onClick={reset}>↺ {L("Volver al caos", "Voltar ao caos")}</button>
       </div>
     </section>
   );
@@ -531,18 +560,18 @@ function Dashboard({ L }: { L: Pick }) {
       <div className="dash__main">
         <div className="dash__top">
           <h3>{L("Centro de operaciones", "Central de operações")}</h3>
-          <span className="pill-live">{L("EN VIVO", "AO VIVO")}</span>
-          <small>{L("12 procesos conectados · 0 pendientes", "12 processos conectados · 0 pendências")}</small>
+          <span className="pill-live">{L("DEMO INTERACTIVA", "DEMO INTERATIVA")}</span>
+          <small>{L("Datos ilustrativos · no son resultados de clientes", "Dados ilustrativos · não são resultados de clientes")}</small>
         </div>
         <div className="kpis">
-          <div className="kpi spot"><small>{L("Facturas procesadas", "Notas processadas")}</small><b data-count="312">0</b><em>{L("sin carga manual", "sem lançamento manual")}</em></div>
-          <div className="kpi spot"><small>{L("Consultas resueltas por IA", "Atendimentos resolvidos por IA")}</small><b data-count="1284">0</b><em>{L("al instante", "na hora")}</em></div>
-          <div className="kpi spot"><small>{L("Tiempo de respuesta", "Tempo de resposta")}</small><b data-count="4" data-suf=" s">0</b><em>{L("antes: 6 h", "antes: 6 h")}</em></div>
-          <div className="kpi spot"><small>{L("Horas liberadas / semana", "Horas liberadas / semana")}</small><b data-count="46" data-suf=" h">0</b><em>{L("para hacer crecer el negocio", "para fazer o negócio crescer")}</em></div>
+          <div className="kpi spot"><small>{L("Procesos conectados", "Processos conectados")}</small><b data-count="12">0</b><em>{L("ventas, stock, facturación", "vendas, estoque, faturamento")}</em></div>
+          <div className="kpi spot"><small>{L("Fuentes centralizadas", "Fontes centralizadas")}</small><b data-count="6">0</b><em>{L("mail, WhatsApp, web, planillas", "e-mail, WhatsApp, site, planilhas")}</em></div>
+          <div className="kpi spot"><small>{L("Pedidos con seguimiento", "Pedidos com acompanhamento")}</small><b data-count="48">0</b><em>{L("estado visible para todo el equipo", "status visível para toda a equipe")}</em></div>
+          <div className="kpi spot"><small>{L("Pasos manuales en este flujo", "Etapas manuais neste fluxo")}</small><b data-count="0">0</b><em>{L("las tareas repetitivas corren solas", "as tarefas repetitivas rodam sozinhas")}</em></div>
         </div>
         <div className="dash__grid">
           <div className="panel spot">
-            <h4><span>{L("Operaciones automatizadas", "Operações automatizadas")}</span><span className="ok">▲ 38%</span></h4>
+            <h4><span>{L("Actividad del día", "Atividade do dia")}</span><span className="ok">{L("ilustrativo", "ilustrativo")}</span></h4>
             <svg className="chart" viewBox="0 0 400 124" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#2de2d0" stopOpacity=".35" /><stop offset="1" stopColor="#2de2d0" stopOpacity="0" /></linearGradient>

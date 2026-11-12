@@ -7,11 +7,12 @@ import { useL, useLang } from "@/lib/i18n";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Navegación del brief: Servicios / Proyectos / Cómo trabajamos.
+// "Proyectos" se agrega cuando exista esa sección (no se enlaza a algo vacío).
+// Simulador y Calculadora siguen en la página, dentro de su sección.
 const CH: [string, string, string][] = [
   ["servicios", "Servicios", "Serviços"],
-  ["flujo", "Cómo funciona", "Como funciona"],
-  ["simulador", "Simulador", "Simulador"],
-  ["impacto", "Calculadora", "Calculadora"],
+  ["flujo", "Cómo trabajamos", "Como trabalhamos"],
 ];
 
 /** Logo oficial de NEXA: la N dentro del cuadrado redondeado, con brillo neón. */
@@ -70,7 +71,7 @@ export default function Nav() {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6" /></svg>
           )}
         </button>
-        <a href="#contacto" className="btn btn--solid btn--sm">{L("Agendar diagnóstico", "Agendar diagnóstico")}</a>
+        <a href="#contacto" className="btn btn--solid btn--sm">{L("Hablemos de tu proyecto", "Vamos falar do seu projeto")}</a>
       </div>
       <div className="nav__progress" ref={bar} />
     </header>
