@@ -8,7 +8,7 @@ import type { Pick } from "./chaos/windows";
 gsap.registerPlugin(ScrollTrigger);
 
 type Step = [string, number, string?]; // texto, duración (min manual / seg auto), problema opcional
-type Proc = { key: string; tab: string; manual: Step[]; auto: Step[]; result: string; caseNote?: boolean };
+type Proc = { key: string; tab: string; manual: Step[]; auto: Step[]; result: string };
 
 const getProcs = (L: Pick): Proc[] => [
   {
@@ -46,7 +46,6 @@ const getProcs = (L: Pick): Proc[] => [
       [["Os sistemas reportam sozinhos", 1], ["Tudo é consolidado", 2], ["Painel atualizado", 1], ["Alerta só se houver desvios", 0.5]],
     ),
     result: L("Reporte al día, en tiempo real, sin pedirle nada a nadie.", "Relatório em dia, em tempo real, sem pedir nada a ninguém."),
-    caseNote: true,
   },
   {
     key: "aten", tab: L("Atención al cliente", "Atendimento ao cliente"),
@@ -71,7 +70,6 @@ const getProcs = (L: Pick): Proc[] => [
       [["Mudança detectada", 0.3], ["Dados normalizados", 1], ["ERP sincronizado", 1.2], ["Loja atualizada", 1], ["Registro de auditoria", 0.5]],
     ),
     result: L("Tienda, ERP y stock hablando entre sí, siempre iguales.", "Loja, ERP e estoque conversando entre si, sempre iguais."),
-    caseNote: true,
   },
 ];
 
@@ -118,12 +116,11 @@ export default function Simulator() {
   };
   const mi = stepAt(proc.manual, mTotal, mt);
   const ai = stepAt(proc.auto, aTotal, at);
-  const saving = 1 - aTotal / 60 / mTotal;
 
   return (
     <section className="sim" id="simulador" ref={root} aria-label={L("Simulador de automatizaciones", "Simulador de automações")}>
       <div className="container">
-        <p className="label rv">Simulador</p>
+        <p className="label rv">{L("Simulador · ejemplo", "Simulador · exemplo")}</p>
         <h2 className="h2 rv">{L("Mismo proceso.", "Mesmo processo.")}<br /><span className="serif ctrl">{L("Dos días muy distintos.", "Dois dias muito diferentes.")}</span></h2>
         <p className="lead rv">{L("Elegí un proceso de tu empresa y mirá cómo se hace a mano y cómo se hace solo.", "Escolha um processo da sua empresa e veja como é feito à mão e como é feito sozinho.")}</p>
 
@@ -138,7 +135,7 @@ export default function Simulator() {
         <div className="race rv">
           <div className="lane lane--manual">
             <div className="lane__head">
-              <h3>{L("A MANO", "MANUAL")}</h3>
+              <h3>{L("A mano", "Manual")}</h3>
               <div className="clock">{mmss(mt * mTotal)}<small>min · {mTotal} {L("en total", "no total")}</small></div>
             </div>
             <div className="lane__bar"><i style={{ width: `${mt * 100}%` }} /></div>
@@ -156,7 +153,7 @@ export default function Simulator() {
 
           <div className="lane lane--auto">
             <div className="lane__head">
-              <h3>{L("AUTOMATIZADO", "AUTOMATIZADO")}</h3>
+              <h3>{L("Automatizado", "Automatizado")}</h3>
               <div className="clock">00:{String(Math.round(at * aTotal)).padStart(2, "0")}<small>{L("seg", "seg")} · {aTotal} {L("en total", "no total")}</small></div>
             </div>
             <div className="lane__bar"><i style={{ width: `${at * 100}%` }} /></div>
@@ -176,12 +173,9 @@ export default function Simulator() {
         <div className="sim__sum rv">
           <div><small>{L("A mano", "Manual")}</small><b>{mTotal} min</b></div>
           <div className="g"><small>{L("Automatizado", "Automatizado")}</small><b>{aTotal} s</b></div>
-          <div className="g"><small>{L("Menos tiempo", "Menos tempo")}</small><b>{(saving * 100).toFixed(1).replace(".", ",")}%</b></div>
           <button className="btn btn--line btn--sm" onClick={() => setRun((r) => r + 1)}>↺ {L("Volver a simular", "Simular de novo")}</button>
         </div>
-        {proc.caseNote && (
-          <p className="sim__case">{L("Caso real: así funciona", "Case real: é assim que funciona")} <a href="#contacto">{L("Tex Hub, el sistema que desarrollamos para Texbros", "o Tex Hub, sistema que desenvolvemos para a Texbros")}</a>.</p>
-        )}
+        <p className="sim__case">{L("Tiempos de ejemplo para un caso típico, con fines ilustrativos. Cada proceso es distinto: lo medimos juntos antes de proponer una solución.", "Tempos de exemplo para um caso típico, com fins ilustrativos. Cada processo é diferente: medimos juntos antes de propor uma solução.")}</p>
       </div>
     </section>
   );

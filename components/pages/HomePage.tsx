@@ -1,38 +1,38 @@
 import ScrollRefresh from "@/components/ScrollRefresh";
 import Nav from "@/components/Nav";
 import ChaosStage from "@/components/ChaosStage";
-import Flow from "@/components/Flow";
 import Services from "@/components/Services";
-import Simulator from "@/components/Simulator";
-import Impact from "@/components/Impact";
+import Projects from "@/components/projects";
+import Process from "@/components/Process";
 import Finale from "@/components/Finale";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
 const Seam = () => <div className="seam" aria-hidden><i /></div>;
 
-export default function Home() {
+/**
+ * Home del brief maestro, cinco secciones:
+ * 01 Hero CAOS → CONTROL · 02 Servicios · 03 Proyectos · 04 Cómo trabajamos · 05 Contacto.
+ * La esfera del cierre funciona como transición hacia el contacto (no es una sección más).
+ * La demo de facturas, el simulador y la calculadora viven en /intelligence.
+ */
+export default function HomePage() {
   return (
     <>
       <ScrollRefresh />
-      <Nav />
-      <main>
+      <Nav home />
+      <main id="main">
         <ChaosStage />
-        <Seam />
-        <Flow />
         <Seam />
         <Services />
         <Seam />
-        <Simulator />
+        <Projects />
         <Seam />
-        <Impact />
+        <Process />
         <Finale />
         <Contact />
       </main>
       <Footer />
-      <a href="#contacto" className="wa-float" aria-label="Agendar diagnóstico / Agendar diagnóstico">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
-      </a>
     </>
   );
 }

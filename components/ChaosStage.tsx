@@ -3,6 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { sound } from "@/lib/sound";
+import { track as trackEvent } from "@/lib/config";
 import { getWindows, getNotifs, type Tpl, type Pick } from "./chaos/windows";
 import { locale, useL, useLang } from "@/lib/i18n";
 import LogoMark from "./LogoMark";
@@ -20,10 +21,11 @@ type P = { sx: number; sy: number; mx: number; my: number; ex: number; ey: numbe
 let uid = 1;
 const pickPos = () => {
   for (let i = 0; i < 20; i++) {
-    const x = rand(2, 78), y = rand(12, 76);
-    if (!(x > 24 && x < 64 && y > 30 && y < 64)) return { x, y };
+    // fuera del texto central y lejos de la barra de control (abajo) y del contador (arriba)
+    const x = rand(2, 78), y = rand(14, 62);
+    if (!(x > 24 && x < 64 && y > 26 && y < 66)) return { x, y };
   }
-  return { x: rand(2, 20), y: rand(14, 70) };
+  return { x: rand(2, 20), y: rand(16, 58) };
 };
 
 export default function ChaosStage() {
@@ -372,7 +374,7 @@ export default function ChaosStage() {
     }
     setCalm(p > 0.5);
     if (Math.abs(p - lastTick.current) > 0.06) { sound.tick(); lastTick.current = p; }
-    if (p >= 0.995 && !doneRef.current) { doneRef.current = true; setDone(true); sound.chime(); celebrate(); }
+    if (p >= 0.995 && !doneRef.current) { doneRef.current = true; setDone(true); sound.chime(); celebrate(); trackEvent("hero_complete"); }
   };
   const animateTo = (target: number, duration = 0.9) => {
     const o = { p: prog.current };
@@ -531,8 +533,12 @@ export default function ChaosStage() {
         </div>
       </div>
 
+      {!calm && (
+        <a href="#servicios" className="stage__skip">{L("Ver servicios", "Ver serviços")} <span aria-hidden>↓</span></a>
+      )}
+
       <div className="stage__end">
-        <a href="#servicios" className="btn btn--solid">{L("Explorar soluciones", "Explorar soluções")} <span className="arr">↓</span></a>
+        <a href="#servicios" onClick={() => trackEvent("cta_click", { cta: "hero_explorar" })} className="btn btn--solid">{L("Explorar soluciones", "Explorar soluções")} <span className="arr">↓</span></a>
         <button className="btn btn--ghost" onClick={reset}>↺ {L("Volver al caos", "Voltar ao caos")}</button>
       </div>
     </section>
@@ -560,14 +566,17 @@ function Dashboard({ L }: { L: Pick }) {
       <div className="dash__main">
         <div className="dash__top">
           <h3>{L("Centro de operaciones", "Central de operações")}</h3>
-          <span className="pill-live">{L("DEMO INTERACTIVA", "DEMO INTERATIVA")}</span>
-          <small>{L("Datos ilustrativos · no son resultados de clientes", "Dados ilustrativos · não são resultados de clientes")}</small>
+          <span className="pill-demo">{L("Demo interactiva · Datos ilustrativos", "Demo interativa · Dados ilustrativos")}</span>
         </div>
         <div className="kpis">
-          <div className="kpi spot"><small>{L("Procesos conectados", "Processos conectados")}</small><b data-count="12">0</b><em>{L("ventas, stock, facturación", "vendas, estoque, faturamento")}</em></div>
-          <div className="kpi spot"><small>{L("Fuentes centralizadas", "Fontes centralizadas")}</small><b data-count="6">0</b><em>{L("mail, WhatsApp, web, planillas", "e-mail, WhatsApp, site, planilhas")}</em></div>
-          <div className="kpi spot"><small>{L("Pedidos con seguimiento", "Pedidos com acompanhamento")}</small><b data-count="48">0</b><em>{L("estado visible para todo el equipo", "status visível para toda a equipe")}</em></div>
-          <div className="kpi spot"><small>{L("Pasos manuales en este flujo", "Etapas manuais neste fluxo")}</small><b data-count="0">0</b><em>{L("las tareas repetitivas corren solas", "as tarefas repetitivas rodam sozinhas")}</em></div>
+          {[
+            [L("Información centralizada", "Informação centralizada"), L("mail, WhatsApp, web y planillas en un lugar", "e-mail, WhatsApp, site e planilhas num só lugar")],
+            [L("Procesos conectados", "Processos conectados"), L("ventas, stock y facturación hablan entre sí", "vendas, estoque e faturamento conversam entre si")],
+            [L("Seguimiento disponible", "Acompanhamento disponível"), L("el estado de cada pedido, a la vista", "o status de cada pedido, à vista")],
+            [L("Tareas organizadas", "Tarefas organizadas"), L("cada responsable sabe qué sigue", "cada responsável sabe o que vem depois")],
+          ].map(([t, d]) => (
+            <div key={t} className="kpi kpi--state spot"><b><span className="kpi__ok" aria-hidden>✓</span>{t}</b><em>{d}</em></div>
+          ))}
         </div>
         <div className="dash__grid">
           <div className="panel spot">
@@ -583,7 +592,7 @@ function Dashboard({ L }: { L: Pick }) {
             </svg>
           </div>
           <div className="panel spot">
-            <h4><span>{L("Flujos activos", "Fluxos ativos")}</span><span className="ok">4/4 OK</span></h4>
+            <h4><span>{L("Flujos activos", "Fluxos ativos")}</span><span className="ok">{L("ejemplo", "exemplo")}</span></h4>
             <div className="pipes">
               {pipes.map((p) => (
                 <div className="pipe-wrap pipe" key={p[0]}>

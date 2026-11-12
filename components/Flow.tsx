@@ -16,10 +16,10 @@ const ICONS = [
 export default function Flow() {
   const L = useL();
   const STAGES = [
-    { t: L("RECIBE", "RECEBE"), d: L("Llega un mail con una factura adjunta.", "Chega um e-mail com uma nota anexada.") },
-    { t: L("ENTIENDE", "ENTENDE"), d: L("La IA lee el PDF y extrae los datos.", "A IA lê o PDF e extrai os dados.") },
-    { t: L("EJECUTA", "EXECUTA"), d: L("Se carga en el ERP y se programa el pago.", "É lançada no ERP e o pagamento é agendado.") },
-    { t: L("COMPLETA", "CONCLUI"), d: L("Todos quedan avisados. Nadie tocó nada.", "Todos ficam avisados. Ninguém tocou em nada.") },
+    { t: L("Recibe", "Recebe"), d: L("Llega un mail con una factura adjunta.", "Chega um e-mail com uma nota anexada.") },
+    { t: L("Entiende", "Entende"), d: L("La IA lee el PDF y extrae los datos.", "A IA lê o PDF e extrai os dados.") },
+    { t: L("Carga", "Lança"), d: L("Se registra en el sistema y el pago queda listo para aprobar.", "É registrada no sistema e o pagamento fica pronto para aprovar.") },
+    { t: L("Avisa", "Avisa"), d: L("Una persona aprueba el pago y se avisa a quien corresponde.", "Uma pessoa aprova o pagamento e quem precisa é avisado.") },
   ];
   const FIELDS: [string, string][] = L(
     [["Proveedor", "Andes Textil SA"], ["CUIT", "30-71234567-8"], ["Comprobante", "A 0003-00012876"], ["Importe", "$ 1.248.300"], ["Vencimiento", "14/11/2026"], ["Categoría", "Insumos · 98%"]],
@@ -51,19 +51,18 @@ export default function Flow() {
   const active = q <= 0 ? -1 : Math.min(3, Math.floor(q * 4));
   const local = q * 4 - active; // progreso dentro del paso activo
   const fields = active > 1 ? FIELDS.length : active === 1 ? Math.floor(local * (FIELDS.length + 1)) : 0;
-  const secs = q * 6;
-  const state = (i: number) => (active > i ? " done" : active === i ? " on" : "");
+    const state = (i: number) => (active > i ? " done" : active === i ? " on" : "");
 
   return (
-    <section className="flow" id="flujo" ref={root} aria-label={L("Cómo funciona una automatización", "Como funciona uma automação")}>
+    <section className="flow" id="flujo" ref={root} aria-label={L("Ejemplo: procesamiento de facturas", "Exemplo: processamento de notas")}>
       <div className="flow__sticky">
         <div className="container">
           <div className="flow__head">
             <div>
-              <p className="label">{L("Cómo funciona", "Como funciona")}</p>
-              <h2 className="h2">{L("Del mail a resuelto.", "Do e-mail ao resolvido.")}<br /><span className="serif ctrl">{L("Sin que nadie lo toque.", "Sem ninguém tocar.")}</span></h2>
+              <p className="label">{L("Ejemplo · procesamiento de facturas", "Exemplo · processamento de notas")}</p>
+              <h2 className="h2">{L("Del mail al sistema,", "Do e-mail ao sistema,")}<br /><span className="serif ctrl">{L("con aprobación humana.", "com aprovação humana.")}</span></h2>
             </div>
-            <div className="flow__timer">{L("Tiempo total", "Tempo total")}<b>00:0{Math.min(6, Math.floor(secs))}<span style={{ color: "var(--mute-2)" }}>.{Math.floor((secs % 1) * 10)}</span></b>{L("antes: 24 min a mano", "antes: 24 min manual")}</div>
+            <div className="flow__timer flow__timer--demo">{L("Demo ilustrativa · datos ficticios", "Demo ilustrativa · dados fictícios")}</div>
           </div>
 
           <div className="stages">
@@ -93,7 +92,7 @@ export default function Flow() {
                       <div className="r"><span>A-12874</span><span>{L("Tintes BA", "Tintas SP")}</span><span>{L("Pagada", "Paga")}</span></div>
                       {active >= 2 && <div className="r new"><span>A-12876</span><span>{L("Andes Textil", "Têxtil Andes")}</span><span>{L("Prog. 13/11", "Agend. 13/11")}</span></div>}
                       {active >= 2 && local > 0.4 || active > 2 ? (
-                        <div className="tags"><span>✓ ERP</span><span>{L("✓ Pago programado", "✓ Pagamento agendado")}</span><span>✓ CRM</span></div>
+                        <div className="tags"><span>✓ ERP</span><span>{L("Pago para aprobar", "Pagamento para aprovar")}</span><span>✓ CRM</span></div>
                       ) : null}
                     </div>
                   )}
@@ -101,9 +100,9 @@ export default function Flow() {
                     <div className="done-card">
                       {active >= 3 && (
                         <>
-                          <div className="ntf"><i>✓</i><div><strong>{L("Administración", "Financeiro")}</strong><small>{L("Factura cargada y pago programado", "Nota lançada e pagamento agendado")}</small></div></div>
+                          <div className="ntf"><i>✓</i><div><strong>{L("Administración", "Financeiro")}</strong><small>{L("Factura cargada · pago listo para aprobar", "Nota lançada · pagamento pronto para aprovar")}</small></div></div>
                           {local > 0.35 && <div className="ntf"><i>W</i><div><strong>{L("WhatsApp · Dueño", "WhatsApp · Dono")}</strong><small>{L("“Pago a Andes Textil listo para el 13/11”", "“Pagamento à Têxtil Andes pronto para 13/11”")}</small></div></div>}
-                          {local > 0.7 && <p className="done-sum">{L("Procesada en", "Processada em")} <b>{L("6 segundos", "6 segundos")}</b>.</p>}
+                          {local > 0.7 && <p className="done-sum">{L("Pago aprobado por una persona del equipo.", "Pagamento aprovado por uma pessoa da equipe.")}</p>}
                         </>
                       )}
                     </div>

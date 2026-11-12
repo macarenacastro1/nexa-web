@@ -2,18 +2,10 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { sound } from "@/lib/sound";
-import { useL, useLang } from "@/lib/i18n";
+import { track } from "@/lib/config";
+import { useHref, useL, useLang } from "@/lib/i18n";
 
 gsap.registerPlugin(ScrollTrigger);
-
-// Navegación del brief: Servicios / Proyectos / Cómo trabajamos.
-// "Proyectos" se agrega cuando exista esa sección (no se enlaza a algo vacío).
-// Simulador y Calculadora siguen en la página, dentro de su sección.
-const CH: [string, string, string][] = [
-  ["servicios", "Servicios", "Serviços"],
-  ["flujo", "Cómo trabajamos", "Como trabalhamos"],
-];
 
 /** Logo oficial de NEXA: la N dentro del cuadrado redondeado, con brillo neón. */
 export const Logo = ({ glow = true }: { glow?: boolean }) => (
@@ -30,50 +22,123 @@ export const Logo = ({ glow = true }: { glow?: boolean }) => (
   </svg>
 );
 
-export default function Nav() {
+export const DIVISIONS = [
+  { key: "experience", path: "/experience/", name: "Experience", es: "Experiencias web y diseño digital", pt: "Experiências web e design digital" },
+  { key: "systems", path: "/systems/", name: "Systems", es: "Sistemas y plataformas a medida", pt: "Sistemas e plataformas sob medida" },
+  { key: "intelligence", path: "/intelligence/", name: "Intelligence", es: "Automatización e inteligencia artificial", pt: "Automação e inteligência artificial" },
+] as const;
+
+/**
+ * Navegación del brief: Servicios · Proyectos · Cómo trabajamos · ES/PT · CTA.
+ * En la home los enlaces van a las secciones; en las demás páginas, a la home.
+ * Servicios abre el acceso a las tres páginas de división.
+ */
+export default function Nav({ home = false }: { home?: boolean }) {
   const { lang, setLang } = useLang();
   const L = useL();
+  const href = useHref();
   const bar = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState("");
-  const [on, setOn] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [menu, setMenu] = useState(false);
+  const [drop, setDrop] = useState(false);
+  const base = home ? "" : href("/");
+  const sec = (id: string) => `${base}#${id}`;
 
-  useEffect(() => sound.subscribe(setOn), []);
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.to(bar.current, { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
       ScrollTrigger.create({ start: 40, end: "max", onToggle: (s) => setScrolled(s.isActive) });
-      CH.forEach(([id]) => ScrollTrigger.create({ trigger: `#${id}`, start: "top 50%", end: "bottom 50%", onToggle: (s) => s.isActive && setActive(id) }));
+      if (home)
+        ["servicios", "proyectos", "proceso"].forEach((id) =>
+          ScrollTrigger.create({ trigger: `#${id}`, start: "top 50%", end: "bottom 50%", onToggle: (s) => s.isActive && setActive(id) }),
+        );
     });
     return () => ctx.revert();
+  }, [home]);
+
+  // Primera visita desde un navegador en portugués: ofrecer la versión en portugués.
+  useEffect(() => {
+    try {
+      if (lang === "es" && !localStorage.getItem("nexa:lang") && navigator.language?.toLowerCase().startsWith("pt") && location.pathname === "/") {
+        localStorage.setItem("nexa:lang", "pt");
+        location.replace("/pt/" + location.hash);
+      }
+    } catch {
+      /* sin almacenamiento */
+    }
+  }, [lang]);
+
+  // Escape cierra el menú y el desplegable.
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenu(false);
+        setDrop(false);
+      }
+    };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
   }, []);
+  useEffect(() => {
+    document.body.style.overflow = menu ? "hidden" : "";
+  }, [menu]);
+
+  const cta = () => track("cta_click", { cta: "nav_hablemos" });
+  const close = () => setMenu(false);
 
   return (
-    <header className={`nav${scrolled ? " scrolled" : ""}`}>
+    <header className={`nav${scrolled || menu ? " scrolled" : ""}`}>
       <div className="container nav__inner">
-        <a href="#caos" className="logo"><Logo />NEXA</a>
-        <nav className="chapters" aria-label={L("Secciones", "Seções")}>
-          {CH.map(([id, es, pt]) => (
-            <a key={id} href={`#${id}`} className={active === id ? "on" : ""}>{L(es, pt)}</a>
-          ))}
+        <a href={home ? "#caos" : href("/")} className="logo" aria-label="The Nexa Company · inicio">
+          <Logo />NEXA
+        </a>
+        <nav className="chapters" aria-label={L("Principal", "Principal")}>
+          <div className={`drop${drop ? " open" : ""}`} onMouseEnter={() => setDrop(true)} onMouseLeave={() => setDrop(false)}>
+            <a href={sec("servicios")} className={active === "servicios" ? "on" : ""} aria-haspopup="true" aria-expanded={drop}
+              onFocus={() => setDrop(true)} onClick={() => setDrop(false)}>
+              {L("Servicios", "Serviços")}
+            </a>
+            <div className="drop__panel" onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setDrop(false); }}>
+              {DIVISIONS.map((d) => (
+                <a key={d.key} href={href(d.path)} onClick={() => setDrop(false)}>
+                  <b>Nexa {d.name}</b>
+                  <small>{L(d.es, d.pt)}</small>
+                </a>
+              ))}
+            </div>
+          </div>
+          <a href={sec("proyectos")} className={active === "proyectos" ? "on" : ""}>{L("Proyectos", "Projetos")}</a>
+          <a href={sec("proceso")} className={active === "proceso" ? "on" : ""}>{L("Cómo trabajamos", "Como trabalhamos")}</a>
         </nav>
         <div className="lang" role="group" aria-label={L("Idioma", "Idioma")}>
           {(["es", "pt"] as const).map((l) => (
-            <button key={l} className={lang === l ? "on" : ""} aria-pressed={lang === l} onClick={() => setLang(l)} title={l === "es" ? "Español" : "Português"}>
+            <button key={l} className={lang === l ? "on" : ""} aria-pressed={lang === l} onClick={() => setLang(l)} lang={l === "es" ? "es" : "pt-BR"} title={l === "es" ? "Español" : "Português"}>
               {l.toUpperCase()}
             </button>
           ))}
         </div>
-        <button className={`icon-btn${on ? " on" : ""}`} onClick={() => sound.toggle()} aria-pressed={on} aria-label={on ? L("Desactivar sonido", "Desativar som") : L("Activar sonido", "Ativar som")} title={L("Sonido", "Som")}>
-          {on ? (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14" /></svg>
-          ) : (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6" /></svg>
-          )}
+        <a href={sec("contacto")} onClick={cta} className="btn btn--solid btn--sm nav__cta">{L("Hablemos de tu proyecto", "Vamos falar do seu projeto")}</a>
+        <button className="burger" aria-expanded={menu} aria-controls="mmenu" aria-label={menu ? L("Cerrar menú", "Fechar menu") : L("Abrir menú", "Abrir menu")} onClick={() => setMenu((m) => !m)}>
+          <i /><i />
         </button>
-        <a href="#contacto" className="btn btn--solid btn--sm">{L("Hablemos de tu proyecto", "Vamos falar do seu projeto")}</a>
       </div>
       <div className="nav__progress" ref={bar} />
+
+      <div id="mmenu" className={`mmenu${menu ? " open" : ""}`} hidden={!menu}>
+        <div className="container">
+          <p className="mmenu__label">{L("Servicios", "Serviços")}</p>
+          {DIVISIONS.map((d) => (
+            <a key={d.key} href={href(d.path)} onClick={close} className="mmenu__div">
+              <b>Nexa {d.name}</b>
+              <small>{L(d.es, d.pt)}</small>
+            </a>
+          ))}
+          <a href={sec("proyectos")} onClick={close}>{L("Proyectos", "Projetos")}</a>
+          <a href={sec("proceso")} onClick={close}>{L("Cómo trabajamos", "Como trabalhamos")}</a>
+          <a href={sec("contacto")} onClick={() => { cta(); close(); }} className="btn btn--solid">{L("Hablemos de tu proyecto", "Vamos falar do seu projeto")}</a>
+        </div>
+      </div>
     </header>
   );
 }

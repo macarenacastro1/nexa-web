@@ -71,14 +71,14 @@ export default function Impact() {
     <section className="impact" id="impacto" ref={root} aria-label={L("Calculadora de impacto", "Calculadora de impacto")}>
       <div className="container">
         <p className="label rv">{L("Calculadora de impacto", "Calculadora de impacto")}</p>
-        <h2 className="h2 rv">{L("¿Cuánto tiempo te cuesta", "Quanto tempo custa")}<br /><span className="serif ctrl">{L("el caos?", "o caos?")}</span></h2>
-        <p className="lead rv">{L("Mové los controles con los números de tu empresa. Es una estimación orientativa: el número real lo vemos juntos en el diagnóstico.", "Mova os controles com os números da sua empresa. É uma estimativa: o número real vemos juntos no diagnóstico.")}</p>
+        <h2 className="h2 rv">{L("¿Cuánto tiempo se va", "Quanto tempo vai")}<br /><span className="serif ctrl">{L("en tareas repetidas?", "em tarefas repetidas?")}</span></h2>
+        <p className="lead rv">{L("Mové los controles con los números de tu empresa. Es una estimación orientativa, basada en los supuestos que se explican abajo.", "Mova os controles com os números da sua empresa. É uma estimativa orientativa, baseada nos pressupostos explicados abaixo.")}</p>
 
         <div className="calc">
           <div className="calc__in rv">
             <Range label={L("Tareas manuales por semana", "Tarefas manuais por semana")} value={tasks} min={10} max={600} step={10} fmt={(v) => nf(v)} hint={L("Responder mensajes, cargar datos, pasar planillas, armar reportes…", "Responder mensagens, lançar dados, passar planilhas, montar relatórios…")} onChange={setTasks} />
             <Range label={L("Minutos por tarea", "Minutos por tarefa")} value={mins} min={1} max={60} fmt={(v) => `${v} min`} hint={L("Tiempo promedio que lleva cada una.", "Tempo médio de cada uma.")} onChange={setMins} />
-            <Range label={L("Porcentaje automatizable", "Porcentagem automatizável")} value={pct} min={10} max={90} step={5} fmt={(v) => `${v}%`} hint={L("En promedio, entre 50% y 70% de las tareas repetitivas se pueden automatizar.", "Em média, entre 50% e 70% das tarefas repetitivas podem ser automatizadas.")} onChange={setPct} />
+            <Range label={L("Porcentaje automatizable", "Porcentagem automatizável")} value={pct} min={10} max={90} step={5} fmt={(v) => `${v}%`} hint={L("Si no lo sabés, empezá con un valor conservador. No todo conviene automatizar.", "Se não souber, comece com um valor conservador. Nem tudo vale automatizar.")} onChange={setPct} />
             <p className="calc__total">{L("Hoy tu equipo dedica", "Hoje sua equipe dedica")} <b>{nf(manualH, 1)} {L("horas por semana", "horas por semana")}</b> {L("a tareas manuales.", "a tarefas manuais.")}</p>
           </div>
 
@@ -106,9 +106,18 @@ export default function Impact() {
               </svg>
               <div className="split__leg" style={{ marginTop: 6 }}><span style={{ visibility: "hidden" }} />{L("Horas acumuladas en las primeras 12 semanas:", "Horas acumuladas nas primeiras 12 semanas:")} <b style={{ color: "var(--text)", fontWeight: 500 }}>{nf(maxC)} h</b></div>
             </div>
-            <p className="calc__note">{L("Estimación con fines ilustrativos, no una garantía. Supone una adopción gradual durante el primer mes.", "Estimativa ilustrativa, não uma garantia. Considera uma adoção gradual no primeiro mês.")}</p>
+            <p className="calc__note">{L("Estimación orientativa, no una garantía de resultados.", "Estimativa orientativa, não uma garantia de resultados.")}</p>
+            <details className="calc__how">
+              <summary>{L("Cómo se calcula", "Como é calculado")}</summary>
+              <ul>
+                <li>{L("Horas manuales por semana = tareas × minutos ÷ 60.", "Horas manuais por semana = tarefas × minutos ÷ 60.")}</li>
+                <li>{L("Horas recuperables = horas manuales × el porcentaje que elegiste.", "Horas recuperáveis = horas manuais × a porcentagem que você escolheu.")}</li>
+                <li>{L("Mes = 4,33 semanas · año = 48 semanas de trabajo · jornada = 8 h.", "Mês = 4,33 semanas · ano = 48 semanas de trabalho · jornada = 8 h.")}</li>
+                <li>{L("El gráfico supone una adopción gradual durante las primeras 4 semanas.", "O gráfico considera uma adoção gradual nas primeiras 4 semanas.")}</li>
+              </ul>
+            </details>
             <div className="calc__cta">
-              <a href="#contacto" onClick={toDiagnosis} className="btn btn--solid">{L("Quiero ver esto en un diagnóstico", "Quero ver isso em um diagnóstico")} <span className="arr">→</span></a>
+              <a href="#contacto" onClick={toDiagnosis} className="btn btn--solid">{L("Consultar por mi caso", "Consultar sobre o meu caso")} <span className="arr">→</span></a>
             </div>
           </div>
         </div>
