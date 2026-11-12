@@ -88,6 +88,7 @@ export default function Nav({ home = false }: { home?: boolean }) {
   const close = () => setMenu(false);
 
   return (
+    <>
     <header className={`nav${scrolled || menu ? " scrolled" : ""}`}>
       <div className="container nav__inner">
         <a href={home ? "#caos" : href("/")} className="logo" aria-label="The Nexa Company · inicio">
@@ -124,7 +125,9 @@ export default function Nav({ home = false }: { home?: boolean }) {
         </button>
       </div>
       <div className="nav__progress" ref={bar} />
+    </header>
 
+      {/* fuera del header: su backdrop-filter atraparía al panel fijo */}
       <div id="mmenu" className={`mmenu${menu ? " open" : ""}`} hidden={!menu}>
         <div className="container">
           <p className="mmenu__label">{L("Servicios", "Serviços")}</p>
@@ -139,6 +142,6 @@ export default function Nav({ home = false }: { home?: boolean }) {
           <a href={sec("contacto")} onClick={() => { cta(); close(); }} className="btn btn--solid">{L("Hablemos de tu proyecto", "Vamos falar do seu projeto")}</a>
         </div>
       </div>
-    </header>
+    </>
   );
 }

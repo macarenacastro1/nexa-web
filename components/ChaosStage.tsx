@@ -114,10 +114,11 @@ export default function ChaosStage() {
     const ctx = gsap.context(() => {
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (!reduce) {
-        floats.current = gsap.utils.toArray<HTMLElement>(".win-float").map((f) =>
+        // las ventanas empiezan a flotar después de la primera pintura
+        floats.current = gsap.utils.toArray<HTMLElement>(".win-float").map((f, i) =>
           gsap.to(f, {
             x: () => gsap.utils.random(-22, 22), y: () => gsap.utils.random(-16, 16), rotation: () => gsap.utils.random(-2.5, 2.5),
-            duration: () => gsap.utils.random(2.4, 4.4), ease: "sine.inOut", repeat: -1, yoyo: true, repeatRefresh: true,
+            duration: () => gsap.utils.random(2.4, 4.4), ease: "sine.inOut", repeat: -1, yoyo: true, repeatRefresh: true, delay: 1.2 + i * 0.05,
           })
         );
         gsap.utils.toArray<HTMLElement>("[data-shake]").forEach((s, i) => {
@@ -126,7 +127,8 @@ export default function ChaosStage() {
         });
       }
       gsap.from(".win-pos", { opacity: 0, scale: 0.6, duration: 0.9, ease: "back.out(1.5)", stagger: { each: 0.05, from: "random" }, delay: 0.1 });
-      gsap.from(".copy-chaos > *", { opacity: 0, y: 30, duration: 1.1, stagger: 0.14, ease: "power3.out", delay: 0.45 });
+      // El título entra con movimiento pero visible desde el primer cuadro (mejor LCP).
+      gsap.from(".copy-chaos > *", { y: 30, duration: 1.1, stagger: 0.14, ease: "power3.out", delay: 0.15 });
       gsap.from(".morph, .tally", { opacity: 0, y: 20, duration: 0.8, delay: 1.1, ease: "power3.out" });
       const nt = setTimeout(() => setNotesOn(true), 1500);
 
