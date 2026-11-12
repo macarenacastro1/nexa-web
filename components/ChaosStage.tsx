@@ -33,7 +33,7 @@ export default function ChaosStage() {
   const WINDOWS = useMemo(() => getWindows(L), [L]);
   const NOTIFS = useMemo(() => getNotifs(L), [L]);
   const notifsRef = useRef(NOTIFS);
-  const eyebrow = L("NEXA / Estudio de tecnología y diseño", "NEXA / Estúdio de tecnologia e design");
+  const eyebrow = L("Tecnología, diseño y transformación digital.", "Tecnologia, design e transformação digital.");
   const subtitle = L(
     "Diseñamos experiencias web, sistemas a medida y automatizaciones para mejorar la forma en que vendés y trabajás.",
     "Criamos experiências web, sistemas sob medida e automações para melhorar a forma como você vende e trabalha.",

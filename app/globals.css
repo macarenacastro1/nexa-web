@@ -752,3 +752,12 @@ button { font-family: inherit; color: inherit; }
   .stage__end { bottom: 88px; }
   .dash-wrap { padding-bottom: 210px; }
 }
+/* Cambio n.º 10: etiqueta superior en la sans de la marca, tratamiento editorial */
+.hero-eyebrow, .copy-chaos .hero-eyebrow, .dash-title .hero-eyebrow {
+  font-family: var(--sans); font-size: clamp(15px, 1.25vw, 18px); font-weight: 400; letter-spacing: -.01em; text-transform: none;
+  color: #d6d9dd; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; padding: 0; border-radius: 0;
+  margin: 0 0 20px; text-shadow: 0 2px 18px rgba(7,8,10,.95), 0 0 2px rgba(7,8,10,.8);
+}
+@media (max-width: 720px) {
+  .hero-eyebrow, .copy-chaos .hero-eyebrow, .dash-title .hero-eyebrow { font-size: 14px; letter-spacing: -.005em; margin-bottom: 14px; }
+}
