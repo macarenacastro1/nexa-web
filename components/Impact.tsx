@@ -4,9 +4,11 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CALC_KEY, track, type CalcSummary } from "@/lib/config";
 import { sound } from "@/lib/sound";
+import { locale, useL, useLang } from "@/lib/i18n";
 
 gsap.registerPlugin(ScrollTrigger);
-const nf = (n: number, d = 0) => n.toLocaleString("es-AR", { maximumFractionDigits: d, minimumFractionDigits: d });
+let LOC = "es-AR";
+const nf = (n: number, d = 0) => n.toLocaleString(LOC, { maximumFractionDigits: d, minimumFractionDigits: d });
 
 function Num({ value, dec = 0 }: { value: number; dec?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -30,6 +32,9 @@ function Range({ label, value, min, max, step = 1, fmt, hint, onChange }: { labe
 }
 
 export default function Impact() {
+  const L = useL();
+  const { lang } = useLang();
+  LOC = locale(lang);
   const root = useRef<HTMLElement>(null);
   const [tasks, setTasks] = useState(150);
   const [mins, setMins] = useState(10);
@@ -63,33 +68,33 @@ export default function Impact() {
   };
 
   return (
-    <section className="impact" id="impacto" ref={root} aria-label="Calculadora de impacto">
+    <section className="impact" id="impacto" ref={root} aria-label={L("Calculadora de impacto", "Calculadora de impacto")}>
       <div className="container">
-        <p className="label rv">Calculadora de impacto</p>
-        <h2 className="h2 rv">How much time is<br /><span className="serif" style={{ color: "var(--mute)" }}>chaos costing you?</span></h2>
-        <p className="lead rv">Mové los controles con los números de tu empresa. Es una estimación orientativa: el número real lo vemos juntos en el diagnóstico.</p>
+        <p className="label rv">{L("Calculadora de impacto", "Calculadora de impacto")}</p>
+        <h2 className="h2 rv">{L("¿Cuánto tiempo te cuesta", "Quanto tempo custa")}<br /><span className="serif ctrl">{L("el caos?", "o caos?")}</span></h2>
+        <p className="lead rv">{L("Mové los controles con los números de tu empresa. Es una estimación orientativa: el número real lo vemos juntos en el diagnóstico.", "Mova os controles com os números da sua empresa. É uma estimativa: o número real vemos juntos no diagnóstico.")}</p>
 
         <div className="calc">
           <div className="calc__in rv">
-            <Range label="Tareas manuales por semana" value={tasks} min={10} max={600} step={10} fmt={(v) => nf(v)} hint="Responder mensajes, cargar datos, pasar planillas, armar reportes…" onChange={setTasks} />
-            <Range label="Minutos por tarea" value={mins} min={1} max={60} fmt={(v) => `${v} min`} hint="Tiempo promedio que lleva cada una." onChange={setMins} />
-            <Range label="Porcentaje automatizable" value={pct} min={10} max={90} step={5} fmt={(v) => `${v}%`} hint="En promedio, entre 50% y 70% de las tareas repetitivas se pueden automatizar." onChange={setPct} />
-            <p className="calc__total">Hoy tu equipo dedica <b>{nf(manualH, 1)} horas por semana</b> a tareas manuales.</p>
+            <Range label={L("Tareas manuales por semana", "Tarefas manuais por semana")} value={tasks} min={10} max={600} step={10} fmt={(v) => nf(v)} hint={L("Responder mensajes, cargar datos, pasar planillas, armar reportes…", "Responder mensagens, lançar dados, passar planilhas, montar relatórios…")} onChange={setTasks} />
+            <Range label={L("Minutos por tarea", "Minutos por tarefa")} value={mins} min={1} max={60} fmt={(v) => `${v} min`} hint={L("Tiempo promedio que lleva cada una.", "Tempo médio de cada uma.")} onChange={setMins} />
+            <Range label={L("Porcentaje automatizable", "Porcentagem automatizável")} value={pct} min={10} max={90} step={5} fmt={(v) => `${v}%`} hint={L("En promedio, entre 50% y 70% de las tareas repetitivas se pueden automatizar.", "Em média, entre 50% e 70% das tarefas repetitivas podem ser automatizadas.")} onChange={setPct} />
+            <p className="calc__total">{L("Hoy tu equipo dedica", "Hoje sua equipe dedica")} <b>{nf(manualH, 1)} {L("horas por semana", "horas por semana")}</b> {L("a tareas manuales.", "a tarefas manuais.")}</p>
           </div>
 
           <div className="calc__out rv">
-            <div className="big"><small>Horas que podrías recuperar por semana</small><b><Num value={savedW} /><span className="u">h</span></b></div>
+            <div className="big"><small>{L("Horas que podrías recuperar por semana", "Horas que você poderia recuperar por semana")}</small><b><Num value={savedW} /><span className="u">h</span></b></div>
             <div className="split">
               <div className="split__bar"><i style={{ width: `${pct}%` }} /><i style={{ width: `${100 - pct}%` }} /></div>
-              <div className="split__leg"><span>Automatizable · {nf(savedW, 1)} h</span><span>Sigue manual · {nf(manualH - savedW, 1)} h</span></div>
+              <div className="split__leg"><span>{L("Automatizable", "Automatizável")} · {nf(savedW, 1)} h</span><span>{L("Sigue manual", "Continua manual")} · {nf(manualH - savedW, 1)} h</span></div>
             </div>
             <div className="out-row">
-              <div><b><Num value={savedM} /> h</b><small>por mes</small></div>
-              <div><b><Num value={savedY} /> h</b><small>por año</small></div>
-              <div><b><Num value={days} dec={1} /></b><small>jornadas de 8 h por mes</small></div>
+              <div><b><Num value={savedM} /> h</b><small>{L("por mes", "por mês")}</small></div>
+              <div><b><Num value={savedY} /> h</b><small>{L("por año", "por ano")}</small></div>
+              <div><b><Num value={days} dec={1} /></b><small>{L("jornadas de 8 h por mes", "jornadas de 8 h por mês")}</small></div>
             </div>
             <div>
-              <svg className="cumul" viewBox="0 0 400 140" preserveAspectRatio="none" aria-label="Horas acumuladas en 12 semanas">
+              <svg className="cumul" viewBox="0 0 400 140" preserveAspectRatio="none" aria-label={L("Horas acumuladas en 12 semanas", "Horas acumuladas em 12 semanas")}>
                 <defs>
                   <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#2bf59c" stopOpacity=".28" /><stop offset="1" stopColor="#2bf59c" stopOpacity="0" /></linearGradient>
                   <linearGradient id="cl" x1="0" x2="1"><stop offset="0" stopColor="#4c8dff" /><stop offset=".5" stopColor="#2de2d0" /><stop offset="1" stopColor="#2bf59c" /></linearGradient>
@@ -99,11 +104,11 @@ export default function Impact() {
                 <path d={line} fill="none" stroke="url(#cl)" strokeWidth="2.2" style={{ transition: "d .6s" }} />
                 <circle cx={pts[11][0] - 3} cy={pts[11][1]} r="4" fill="#2bf59c" />
               </svg>
-              <div className="split__leg" style={{ marginTop: 6 }}><span style={{ visibility: "hidden" }} />Horas acumuladas en las primeras 12 semanas: <b style={{ color: "var(--text)", fontWeight: 500 }}>{nf(maxC)} h</b></div>
+              <div className="split__leg" style={{ marginTop: 6 }}><span style={{ visibility: "hidden" }} />{L("Horas acumuladas en las primeras 12 semanas:", "Horas acumuladas nas primeiras 12 semanas:")} <b style={{ color: "var(--text)", fontWeight: 500 }}>{nf(maxC)} h</b></div>
             </div>
-            <p className="calc__note">Estimación con fines ilustrativos, no una garantía. Supone una adopción gradual durante el primer mes.</p>
+            <p className="calc__note">{L("Estimación con fines ilustrativos, no una garantía. Supone una adopción gradual durante el primer mes.", "Estimativa ilustrativa, não uma garantia. Considera uma adoção gradual no primeiro mês.")}</p>
             <div className="calc__cta">
-              <a href="#contacto" onClick={toDiagnosis} className="btn btn--solid">Quiero ver esto en un diagnóstico <span className="arr">→</span></a>
+              <a href="#contacto" onClick={toDiagnosis} className="btn btn--solid">{L("Quiero ver esto en un diagnóstico", "Quero ver isso em um diagnóstico")} <span className="arr">→</span></a>
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useL } from "@/lib/i18n";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,22 +12,19 @@ const ICONS = [
   <path key="e" d="M13 2 4 14h7l-1 8 9-12h-7z" />,
   <path key="c" d="M20 6 9 17l-5-5" />,
 ];
-const STAGES = [
-  { t: "RECEIVE", d: "Llega un mail con una factura adjunta." },
-  { t: "UNDERSTAND", d: "La IA lee el PDF y extrae los datos." },
-  { t: "EXECUTE", d: "Se carga en el ERP y se programa el pago." },
-  { t: "COMPLETE", d: "Todos quedan avisados. Nadie tocó nada." },
-];
-const FIELDS = [
-  ["Proveedor", "Andes Textil SA"],
-  ["CUIT", "30-71234567-8"],
-  ["Comprobante", "A 0003-00012876"],
-  ["Importe", "$ 1.248.300"],
-  ["Vencimiento", "14/11/2026"],
-  ["Categoría", "Insumos · 98%"],
-];
 
 export default function Flow() {
+  const L = useL();
+  const STAGES = [
+    { t: L("RECIBE", "RECEBE"), d: L("Llega un mail con una factura adjunta.", "Chega um e-mail com uma nota anexada.") },
+    { t: L("ENTIENDE", "ENTENDE"), d: L("La IA lee el PDF y extrae los datos.", "A IA lê o PDF e extrai os dados.") },
+    { t: L("EJECUTA", "EXECUTA"), d: L("Se carga en el ERP y se programa el pago.", "É lançada no ERP e o pagamento é agendado.") },
+    { t: L("COMPLETA", "CONCLUI"), d: L("Todos quedan avisados. Nadie tocó nada.", "Todos ficam avisados. Ninguém tocou em nada.") },
+  ];
+  const FIELDS: [string, string][] = L(
+    [["Proveedor", "Andes Textil SA"], ["CUIT", "30-71234567-8"], ["Comprobante", "A 0003-00012876"], ["Importe", "$ 1.248.300"], ["Vencimiento", "14/11/2026"], ["Categoría", "Insumos · 98%"]],
+    [["Fornecedor", "Têxtil Andes Ltda"], ["CNPJ", "12.345.678/0001-90"], ["Documento", "NF-e 000.128.76"], ["Valor", "R$ 124.830,00"], ["Vencimento", "14/11/2026"], ["Categoria", "Insumos · 98%"]],
+  );
   const root = useRef<HTMLElement>(null);
   const [p, setP] = useState(0);
 
@@ -57,15 +55,15 @@ export default function Flow() {
   const state = (i: number) => (active > i ? " done" : active === i ? " on" : "");
 
   return (
-    <section className="flow" id="flujo" ref={root} aria-label="Cómo funciona una automatización">
+    <section className="flow" id="flujo" ref={root} aria-label={L("Cómo funciona una automatización", "Como funciona uma automação")}>
       <div className="flow__sticky">
         <div className="container">
           <div className="flow__head">
             <div>
-              <p className="label">Cómo funciona</p>
-              <h2 className="h2">From inbox to done.<br /><span className="serif" style={{ color: "var(--mute)" }}>Without anyone touching it.</span></h2>
+              <p className="label">{L("Cómo funciona", "Como funciona")}</p>
+              <h2 className="h2">{L("Del mail a resuelto.", "Do e-mail ao resolvido.")}<br /><span className="serif ctrl">{L("Sin que nadie lo toque.", "Sem ninguém tocar.")}</span></h2>
             </div>
-            <div className="flow__timer">Tiempo total<b>00:0{Math.min(6, Math.floor(secs))}<span style={{ color: "var(--mute-2)" }}>.{Math.floor((secs % 1) * 10)}</span></b>antes: 24 min a mano</div>
+            <div className="flow__timer">{L("Tiempo total", "Tempo total")}<b>00:0{Math.min(6, Math.floor(secs))}<span style={{ color: "var(--mute-2)" }}>.{Math.floor((secs % 1) * 10)}</span></b>{L("antes: 24 min a mano", "antes: 24 min manual")}</div>
           </div>
 
           <div className="stages">
@@ -79,10 +77,10 @@ export default function Flow() {
                 <div className="stg__card">
                   {i === 0 && (
                     <div className="mailcard">
-                      <div className="from"><span className="av">AT</span><div><strong>Andes Textil SA</strong><small>facturacion@andestextil.com</small></div></div>
-                      <div className="subj">Factura A 0003-00012876</div>
-                      <div className="body">Hola, adjuntamos la factura correspondiente al pedido de octubre. Saludos.</div>
-                      <div className="att"><i>PDF</i> factura_12876.pdf · 184 KB</div>
+                      <div className="from"><span className="av">AT</span><div><strong>{L("Andes Textil SA", "Têxtil Andes Ltda")}</strong><small>{L("facturacion@andestextil.com", "financeiro@textilandes.com.br")}</small></div></div>
+                      <div className="subj">{L("Factura A 0003-00012876", "NF-e 000.128.76")}</div>
+                      <div className="body">{L("Hola, adjuntamos la factura correspondiente al pedido de octubre. Saludos.", "Olá, segue a nota referente ao pedido de outubro. Abraços.")}</div>
+                      <div className="att"><i>PDF</i> {L("factura_12876.pdf", "nfe_12876.pdf")} · 184 KB</div>
                     </div>
                   )}
                   {i === 1 && FIELDS.map(([k, v], j) => (
@@ -90,12 +88,12 @@ export default function Flow() {
                   ))}
                   {i === 2 && (
                     <div className="erp">
-                      <div className="r h"><span>Comprobante</span><span>Proveedor</span><span>Estado</span></div>
-                      <div className="r"><span>A-12871</span><span>Hilados Sur</span><span>Pagada</span></div>
-                      <div className="r"><span>A-12874</span><span>Tintes BA</span><span>Pagada</span></div>
-                      {active >= 2 && <div className="r new"><span>A-12876</span><span>Andes Textil</span><span>Prog. 13/11</span></div>}
+                      <div className="r h"><span>{L("Comprobante", "Documento")}</span><span>{L("Proveedor", "Fornecedor")}</span><span>{L("Estado", "Status")}</span></div>
+                      <div className="r"><span>A-12871</span><span>{L("Hilados Sur", "Fios Sul")}</span><span>{L("Pagada", "Paga")}</span></div>
+                      <div className="r"><span>A-12874</span><span>{L("Tintes BA", "Tintas SP")}</span><span>{L("Pagada", "Paga")}</span></div>
+                      {active >= 2 && <div className="r new"><span>A-12876</span><span>{L("Andes Textil", "Têxtil Andes")}</span><span>{L("Prog. 13/11", "Agend. 13/11")}</span></div>}
                       {active >= 2 && local > 0.4 || active > 2 ? (
-                        <div className="tags"><span>✓ ERP</span><span>✓ Pago programado</span><span>✓ CRM</span></div>
+                        <div className="tags"><span>✓ ERP</span><span>{L("✓ Pago programado", "✓ Pagamento agendado")}</span><span>✓ CRM</span></div>
                       ) : null}
                     </div>
                   )}
@@ -103,9 +101,9 @@ export default function Flow() {
                     <div className="done-card">
                       {active >= 3 && (
                         <>
-                          <div className="ntf"><i>✓</i><div><strong>Administración</strong><small>Factura cargada y pago programado</small></div></div>
-                          {local > 0.35 && <div className="ntf"><i>W</i><div><strong>WhatsApp · Dueño</strong><small>“Pago a Andes Textil listo para el 13/11”</small></div></div>}
-                          {local > 0.7 && <p className="done-sum">Procesada en <b>6 segundos</b>.</p>}
+                          <div className="ntf"><i>✓</i><div><strong>{L("Administración", "Financeiro")}</strong><small>{L("Factura cargada y pago programado", "Nota lançada e pagamento agendado")}</small></div></div>
+                          {local > 0.35 && <div className="ntf"><i>W</i><div><strong>{L("WhatsApp · Dueño", "WhatsApp · Dono")}</strong><small>{L("“Pago a Andes Textil listo para el 13/11”", "“Pagamento à Têxtil Andes pronto para 13/11”")}</small></div></div>}
+                          {local > 0.7 && <p className="done-sum">{L("Procesada en", "Processada em")} <b>{L("6 segundos", "6 segundos")}</b>.</p>}
                         </>
                       )}
                     </div>

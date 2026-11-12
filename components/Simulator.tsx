@@ -2,43 +2,75 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useL } from "@/lib/i18n";
+import type { Pick } from "./chaos/windows";
 
 gsap.registerPlugin(ScrollTrigger);
 
 type Step = [string, number, string?]; // texto, duración (min manual / seg auto), problema opcional
 type Proc = { key: string; tab: string; manual: Step[]; auto: Step[]; result: string; caseNote?: boolean };
 
-const PROCS: Proc[] = [
+const getProcs = (L: Pick): Proc[] => [
   {
-    key: "fact", tab: "Facturas",
-    manual: [["Abrir el mail y descargar el PDF", 3], ["Tipear los datos en Excel", 8, "un número mal tipeado"], ["Cargarla en el sistema contable", 6], ["Controlar contra el pedido", 7], ["Avisar a pagos por mail", 3]],
-    auto: [["Llega el mail", 0.5], ["La IA extrae los datos", 2], ["Se carga en el ERP", 1], ["Se valida contra el pedido", 1], ["Aviso automático", 0.5]],
-    result: "Factura cargada, validada y con el pago programado.",
+    key: "fact", tab: L("Facturas", "Notas fiscais"),
+    manual: L<Step[]>(
+      [["Abrir el mail y descargar el PDF", 3], ["Tipear los datos en Excel", 8, "un número mal tipeado"], ["Cargarla en el sistema contable", 6], ["Controlar contra el pedido", 7], ["Avisar a pagos por mail", 3]],
+      [["Abrir o e-mail e baixar o PDF", 3], ["Digitar os dados no Excel", 8, "um número digitado errado"], ["Lançar no sistema contábil", 6], ["Conferir com o pedido", 7], ["Avisar o financeiro por e-mail", 3]],
+    ),
+    auto: L<Step[]>(
+      [["Llega el mail", 0.5], ["La IA extrae los datos", 2], ["Se carga en el ERP", 1], ["Se valida contra el pedido", 1], ["Aviso automático", 0.5]],
+      [["Chega o e-mail", 0.5], ["A IA extrai os dados", 2], ["É lançada no ERP", 1], ["É conferida com o pedido", 1], ["Aviso automático", 0.5]],
+    ),
+    result: L("Factura cargada, validada y con el pago programado.", "Nota lançada, conferida e com pagamento agendado."),
   },
   {
-    key: "ventas", tab: "Clientes y ventas",
-    manual: [["Revisar formularios y DMs", 6], ["Pasar los datos al CRM", 7], ["Calificar el contacto", 4, "se perdió en la bandeja"], ["Escribir el primer mensaje", 5], ["Agendar el seguimiento", 3]],
-    auto: [["Entra la consulta", 0.5], ["La IA la califica", 1.5], ["Se crea en el CRM", 1], ["Respuesta personalizada", 2], ["Seguimiento agendado", 0.5]],
-    result: "Lead calificado, respondido y con seguimiento en agenda.",
+    key: "ventas", tab: L("Clientes y ventas", "Clientes e vendas"),
+    manual: L<Step[]>(
+      [["Revisar formularios y DMs", 6], ["Pasar los datos al CRM", 7], ["Calificar el contacto", 4, "se perdió en la bandeja"], ["Escribir el primer mensaje", 5], ["Agendar el seguimiento", 3]],
+      [["Revisar formulários e DMs", 6], ["Passar os dados para o CRM", 7], ["Qualificar o contato", 4, "se perdeu na caixa de entrada"], ["Escrever a primeira mensagem", 5], ["Agendar o follow-up", 3]],
+    ),
+    auto: L<Step[]>(
+      [["Entra la consulta", 0.5], ["La IA la califica", 1.5], ["Se crea en el CRM", 1], ["Respuesta personalizada", 2], ["Seguimiento agendado", 0.5]],
+      [["Chega o contato", 0.5], ["A IA qualifica", 1.5], ["É criado no CRM", 1], ["Resposta personalizada", 2], ["Follow-up agendado", 0.5]],
+    ),
+    result: L("Lead calificado, respondido y con seguimiento en agenda.", "Lead qualificado, respondido e com follow-up na agenda."),
   },
   {
-    key: "ops", tab: "Seguimiento de operaciones",
-    manual: [["Pedir el estado a cada área", 12], ["Actualizar la planilla", 9, "dos versiones distintas"], ["Armar el reporte", 15], ["Mandar el reporte", 2]],
-    auto: [["Los sistemas reportan solos", 1], ["Se consolida todo", 2], ["Dashboard actualizado", 1], ["Alerta solo si hay desvíos", 0.5]],
-    result: "Reporte al día, en tiempo real, sin pedirle nada a nadie.",
+    key: "ops", tab: L("Seguimiento de operaciones", "Acompanhamento de operações"),
+    manual: L<Step[]>(
+      [["Pedir el estado a cada área", 12], ["Actualizar la planilla", 9, "dos versiones distintas"], ["Armar el reporte", 15], ["Mandar el reporte", 2]],
+      [["Pedir o status a cada área", 12], ["Atualizar a planilha", 9, "duas versões diferentes"], ["Montar o relatório", 15], ["Enviar o relatório", 2]],
+    ),
+    auto: L<Step[]>(
+      [["Los sistemas reportan solos", 1], ["Se consolida todo", 2], ["Tablero actualizado", 1], ["Alerta solo si hay desvíos", 0.5]],
+      [["Os sistemas reportam sozinhos", 1], ["Tudo é consolidado", 2], ["Painel atualizado", 1], ["Alerta só se houver desvios", 0.5]],
+    ),
+    result: L("Reporte al día, en tiempo real, sin pedirle nada a nadie.", "Relatório em dia, em tempo real, sem pedir nada a ninguém."),
     caseNote: true,
   },
   {
-    key: "aten", tab: "Atención al cliente",
-    manual: [["Leer el mensaje", 1], ["Buscar precio y stock", 5, "el stock estaba desactualizado"], ["Responder", 3], ["Cargar el pedido", 6], ["Enviar el link de pago", 2]],
-    auto: [["Llega el WhatsApp", 0.3], ["La IA entiende el pedido", 1], ["Consulta stock real", 0.7], ["Responde y toma el pedido", 2], ["Envía el link de pago", 0.5]],
-    result: "Cliente atendido en segundos, a cualquier hora.",
+    key: "aten", tab: L("Atención al cliente", "Atendimento ao cliente"),
+    manual: L<Step[]>(
+      [["Leer el mensaje", 1], ["Buscar precio y stock", 5, "el stock estaba desactualizado"], ["Responder", 3], ["Cargar el pedido", 6], ["Enviar el link de pago", 2]],
+      [["Ler a mensagem", 1], ["Buscar preço e estoque", 5, "o estoque estava desatualizado"], ["Responder", 3], ["Lançar o pedido", 6], ["Enviar o link de pagamento", 2]],
+    ),
+    auto: L<Step[]>(
+      [["Llega el WhatsApp", 0.3], ["La IA entiende el pedido", 1], ["Consulta stock real", 0.7], ["Responde y toma el pedido", 2], ["Envía el link de pago", 0.5]],
+      [["Chega o WhatsApp", 0.3], ["A IA entende o pedido", 1], ["Consulta estoque real", 0.7], ["Responde e recebe o pedido", 2], ["Envia o link de pagamento", 0.5]],
+    ),
+    result: L("Cliente atendido en segundos, a cualquier hora.", "Cliente atendido em segundos, a qualquer hora."),
   },
   {
-    key: "int", tab: "Integración entre sistemas",
-    manual: [["Exportar desde la tienda", 4], ["Limpiar el Excel", 11], ["Importar al ERP", 6, "37 filas con error"], ["Corregir los errores", 14], ["Actualizar el stock web", 6]],
-    auto: [["Cambio detectado", 0.3], ["Datos normalizados", 1], ["ERP sincronizado", 1.2], ["Tienda actualizada", 1], ["Registro de auditoría", 0.5]],
-    result: "Tienda, ERP y stock hablando entre sí, siempre iguales.",
+    key: "int", tab: L("Integración entre sistemas", "Integração entre sistemas"),
+    manual: L<Step[]>(
+      [["Exportar desde la tienda", 4], ["Limpiar el Excel", 11], ["Importar al ERP", 6, "37 filas con error"], ["Corregir los errores", 14], ["Actualizar el stock web", 6]],
+      [["Exportar da loja", 4], ["Limpar o Excel", 11], ["Importar no ERP", 6, "37 linhas com erro"], ["Corrigir os erros", 14], ["Atualizar o estoque do site", 6]],
+    ),
+    auto: L<Step[]>(
+      [["Cambio detectado", 0.3], ["Datos normalizados", 1], ["ERP sincronizado", 1.2], ["Tienda actualizada", 1], ["Registro de auditoría", 0.5]],
+      [["Mudança detectada", 0.3], ["Dados normalizados", 1], ["ERP sincronizado", 1.2], ["Loja atualizada", 1], ["Registro de auditoria", 0.5]],
+    ),
+    result: L("Tienda, ERP y stock hablando entre sí, siempre iguales.", "Loja, ERP e estoque conversando entre si, sempre iguais."),
     caseNote: true,
   },
 ];
@@ -48,6 +80,8 @@ const AUTO_REAL = 2.2;
 const mmss = (m: number) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(Math.floor(m % 60)).padStart(2, "0")}`;
 
 export default function Simulator() {
+  const L = useL();
+  const PROCS = getProcs(L);
   const root = useRef<HTMLElement>(null);
   const [idx, setIdx] = useState(0);
   const [run, setRun] = useState(0); // re-disparar
@@ -87,11 +121,11 @@ export default function Simulator() {
   const saving = 1 - aTotal / 60 / mTotal;
 
   return (
-    <section className="sim" id="simulador" ref={root} aria-label="Simulador de automatizaciones">
+    <section className="sim" id="simulador" ref={root} aria-label={L("Simulador de automatizaciones", "Simulador de automações")}>
       <div className="container">
         <p className="label rv">Simulador</p>
-        <h2 className="h2 rv">Same process.<br /><span className="serif" style={{ color: "var(--mute)" }}>Two very different days.</span></h2>
-        <p className="lead rv">Elegí un proceso de tu empresa y mirá cómo se hace a mano y cómo se hace solo.</p>
+        <h2 className="h2 rv">{L("Mismo proceso.", "Mesmo processo.")}<br /><span className="serif ctrl">{L("Dos días muy distintos.", "Dois dias muito diferentes.")}</span></h2>
+        <p className="lead rv">{L("Elegí un proceso de tu empresa y mirá cómo se hace a mano y cómo se hace solo.", "Escolha um processo da sua empresa e veja como é feito à mão e como é feito sozinho.")}</p>
 
         <div className="sim__tabs rv" role="tablist">
           {PROCS.map((p, i) => (
@@ -104,8 +138,8 @@ export default function Simulator() {
         <div className="race rv">
           <div className="lane lane--manual">
             <div className="lane__head">
-              <h3>MANUAL</h3>
-              <div className="clock">{mmss(mt * mTotal)}<small>min · {mTotal} en total</small></div>
+              <h3>{L("A MANO", "MANUAL")}</h3>
+              <div className="clock">{mmss(mt * mTotal)}<small>min · {mTotal} {L("en total", "no total")}</small></div>
             </div>
             <div className="lane__bar"><i style={{ width: `${mt * 100}%` }} /></div>
             <ol className="steps-l">
@@ -117,13 +151,13 @@ export default function Simulator() {
                 </li>
               ))}
             </ol>
-            <p className="lane__foot">{mt >= 1 ? <><b>Terminado</b> después de {mTotal} minutos y algún error de tipeo.</> : "Una persona haciendo todo a mano…"}</p>
+            <p className="lane__foot">{mt >= 1 ? <><b>{L("Terminado", "Concluído")}</b> {L(`después de ${mTotal} minutos y algún error de tipeo.`, `depois de ${mTotal} minutos e algum erro de digitação.`)}</> : L("Una persona haciendo todo a mano…", "Uma pessoa fazendo tudo à mão…")}</p>
           </div>
 
           <div className="lane lane--auto">
             <div className="lane__head">
-              <h3>AUTOMATIZADO</h3>
-              <div className="clock">00:{String(Math.round(at * aTotal)).padStart(2, "0")}<small>seg · {aTotal} en total</small></div>
+              <h3>{L("AUTOMATIZADO", "AUTOMATIZADO")}</h3>
+              <div className="clock">00:{String(Math.round(at * aTotal)).padStart(2, "0")}<small>{L("seg", "seg")} · {aTotal} {L("en total", "no total")}</small></div>
             </div>
             <div className="lane__bar"><i style={{ width: `${at * 100}%` }} /></div>
             <ol className="steps-l">
@@ -135,18 +169,18 @@ export default function Simulator() {
                 </li>
               ))}
             </ol>
-            <p className="lane__foot">{at >= 1 ? <><b>✓ {proc.result}</b>{mt < 1 && " Mientras tanto, el proceso manual sigue…"}</> : "Ejecutando…"}</p>
+            <p className="lane__foot">{at >= 1 ? <><b>✓ {proc.result}</b>{mt < 1 && L(" Mientras tanto, el proceso manual sigue…", " Enquanto isso, o processo manual continua…")}</> : L("Ejecutando…", "Executando…")}</p>
           </div>
         </div>
 
         <div className="sim__sum rv">
-          <div><small>Manual</small><b>{mTotal} min</b></div>
-          <div className="g"><small>Automatizado</small><b>{aTotal} s</b></div>
-          <div className="g"><small>Menos tiempo</small><b>{(saving * 100).toFixed(1).replace(".", ",")}%</b></div>
-          <button className="btn btn--line btn--sm" onClick={() => setRun((r) => r + 1)}>↺ Volver a simular</button>
+          <div><small>{L("A mano", "Manual")}</small><b>{mTotal} min</b></div>
+          <div className="g"><small>{L("Automatizado", "Automatizado")}</small><b>{aTotal} s</b></div>
+          <div className="g"><small>{L("Menos tiempo", "Menos tempo")}</small><b>{(saving * 100).toFixed(1).replace(".", ",")}%</b></div>
+          <button className="btn btn--line btn--sm" onClick={() => setRun((r) => r + 1)}>↺ {L("Volver a simular", "Simular de novo")}</button>
         </div>
         {proc.caseNote && (
-          <p className="sim__case">Caso real: así funciona <a href="#contacto">Tex Hub, el sistema que desarrollamos para Texbros</a>.</p>
+          <p className="sim__case">{L("Caso real: así funciona", "Case real: é assim que funciona")} <a href="#contacto">{L("Tex Hub, el sistema que desarrollamos para Texbros", "o Tex Hub, sistema que desenvolvemos para a Texbros")}</a>.</p>
         )}
       </div>
     </section>

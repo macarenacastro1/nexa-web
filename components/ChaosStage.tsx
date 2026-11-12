@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { sound } from "@/lib/sound";
 import { getWindows, getNotifs, type Tpl, type Pick } from "./chaos/windows";
 import { locale, useL, useLang } from "@/lib/i18n";
+import LogoMark from "./LogoMark";
 
 gsap.registerPlugin(ScrollTrigger);
 const useIso = typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -14,7 +15,6 @@ const ease = (t: number) => t * t * (3 - 2 * t);
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
 
 type Spawn = { id: number; tpl: Tpl; x: number; y: number; r: number };
-type Banner = { id: number; tpl: Tpl };
 type P = { sx: number; sy: number; mx: number; my: number; ex: number; ey: number; c: number; ph: number; s: number };
 
 let uid = 1;
@@ -50,7 +50,6 @@ export default function ChaosStage() {
 
   const [closed, setClosed] = useState<Set<string>>(new Set());
   const [spawns, setSpawns] = useState<Spawn[]>([]);
-  const [banners, setBanners] = useState<Banner[]>([]);
   const [closes, setCloses] = useState(0);
   const [arrived, setArrived] = useState(0);
   const [unread, setUnread] = useState(1284);
@@ -59,20 +58,20 @@ export default function ChaosStage() {
   const [done, setDone] = useState(false);
   const [touched, setTouched] = useState(false);
 
-  /* ---------- living chaos: unread counter + banners ---------- */
+  /* ---------- living chaos: unread counter + notificaciones nuevas ---------- */
   useEffect(() => {
     if (calm) return;
     const a = setInterval(() => setUnread((u) => u + Math.ceil(Math.random() * 3)), 800);
     let n = 0;
     const b = setInterval(() => {
       if (!visible.current || document.hidden) return;
+      // Las notificaciones nuevas aparecen entre las ventanas del escritorio (no en el costado),
+      // así se entiende que son parte del caos y que se pueden cerrar.
       const list = notifsRef.current;
       const tpl = list[(n++ * 5) % list.length];
-      const id = uid++;
-      setBanners((l) => [{ id, tpl }, ...l].slice(0, 3));
+      setSpawns((sp) => [...sp, { id: uid++, tpl, ...pickPos(), r: rand(-6, 6) }].slice(-16));
       setArrived((x) => x + 1);
       sound.ding();
-      setTimeout(() => setBanners((l) => l.filter((x) => x.id !== id)), 7000);
     }, 4200);
     return () => { clearInterval(a); clearInterval(b); };
   }, [calm]);
@@ -124,9 +123,11 @@ export default function ChaosStage() {
         .to(".note", { color: "#2bf59c", duration: 0.1 }, 0.04)
         .to(".note .t.bad", { opacity: 0, duration: 0.06 }, 0.04)
         .to(".note .good", { opacity: 1, duration: 0.08 }, 0.08)
-        .to(".banners, .spawns, .tally, .nudge", { opacity: 0, duration: 0.1 }, 0.03)
+        .to(".spawns, .tally, .nudge", { opacity: 0, duration: 0.1 }, 0.03)
         .to(".win-pos", { rotation: 0, scale: 0.97, duration: 0.1 }, 0.07)
         .to(".win-pos", { opacity: 0, scale: 0.9, filter: "blur(10px)", duration: 0.12, stagger: { each: 0.004, from: "random" } }, 0.18)
+        .fromTo(".nexo-logo__in", { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.1, ease: "power2.out" }, 0.44)
+        .to(".nexo-logo__in", { opacity: 0, scale: 1.06, duration: 0.08 }, 0.6)
         .to(".stage__bg--calm", { opacity: 1, duration: 0.35 }, 0.2)
         .to(".stage__veil", { opacity: 0, duration: 0.2 }, 0.2)
         .fromTo(".dash", { opacity: 0, scale: 0.9, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 0.2, ease: "power3.out" }, 0.68)
@@ -195,11 +196,36 @@ export default function ChaosStage() {
     if (!el || !cv) return;
     const r = el.getBoundingClientRect();
     const w = r.width, h = r.height;
-    const K = 6, cx = w / 2, cy = h * 0.53, R = Math.min(w, h) * 0.3;
-    const clusters = Array.from({ length: K }, (_, k) => {
-      const a = (k / K) * Math.PI * 2 - Math.PI / 2;
-      return { x: cx + Math.cos(a) * R * 1.35, y: cy + Math.sin(a) * R };
-    });
+    // El nexo: las partículas dibujan el logo de NEXA (cuadrado redondeado + N) en el centro.
+    const cx = w / 2, cy = h * 0.53, S = (Math.min(w, h) * 0.44) / 38;
+    const at = (u: number, v: number) => ({ x: cx + (u - 24) * S, y: cy + (v - 24) * S });
+    const K = 6;
+    const clusters = [at(9, 9), at(39, 9), at(39, 39), at(9, 39), at(17, 17), at(31, 31)];
+    const onRect = () => {
+      // punto al azar sobre el borde del cuadrado redondeado (x 5..43, radio 11)
+      const side = 38 - 22, arc = (Math.PI / 2) * 11, per = 4 * side + 4 * arc;
+      let d = Math.random() * per;
+      const corners = [[16, 16, Math.PI], [32, 16, -Math.PI / 2], [32, 32, 0], [16, 32, Math.PI / 2]];
+      const sides = [[16, 5, 1, 0], [43, 16, 0, 1], [32, 43, -1, 0], [5, 32, 0, -1]];
+      for (let k = 0; k < 4; k++) {
+        if (d < arc) { const [ox, oy, a0] = corners[k]; const a = a0 + d / 11; return at(ox + Math.cos(a) * 11, oy + Math.sin(a) * 11); }
+        d -= arc;
+        if (d < side) { const [sx, sy, dx, dy] = sides[k]; return at(sx + dx * d, sy + dy * d); }
+        d -= side;
+      }
+      return at(5, 24);
+    };
+    const onN = () => {
+      const segs = [[17, 31, 17, 17], [17, 17, 31, 31], [31, 31, 31, 17]];
+      const [x1, y1, x2, y2] = segs[Math.floor(Math.random() * 3)];
+      const t = Math.random();
+      return at(x1 + (x2 - x1) * t, y1 + (y2 - y1) * t);
+    };
+    const nearest = (pt: { x: number; y: number }) => {
+      let best = 0, bd = Infinity;
+      clusters.forEach((c, i) => { const d = (c.x - pt.x) ** 2 + (c.y - pt.y) ** 2; if (d < bd) { bd = d; best = i; } });
+      return best;
+    };
     const targets = [...el.querySelectorAll<HTMLElement>(".dash .kpi, .dash .panel, .dash")].map((n) => {
       const b = n.getBoundingClientRect();
       return { x: b.left - r.left, y: b.top - r.top, w: b.width, h: b.height };
@@ -211,8 +237,9 @@ export default function ChaosStage() {
       if (b.width < 2) return;
       const n = Math.round(clamp((b.width * b.height) / 2200, 8, 28));
       for (let j = 0; j < n; j++) {
-        const c = (i + j) % K;
-        const ang = Math.random() * Math.PI * 2, rr = Math.sqrt(Math.random()) * 46;
+        const m = Math.random() < 0.62 ? onRect() : onN();
+        const c = nearest(m);
+        const ang = Math.random() * Math.PI * 2, rr = Math.sqrt(Math.random()) * 2.2 * S;
         const tg = targets[Math.floor(Math.random() * targets.length)] || { x: cx - 100, y: cy - 50, w: 200, h: 100 };
         const per = Math.random() * 2 * (tg.w + tg.h);
         let ex, ey;
@@ -222,11 +249,12 @@ export default function ChaosStage() {
         else { ex = tg.x; ey = tg.y + per - 2 * tg.w - tg.h; }
         list.push({
           sx: b.left - r.left + Math.random() * b.width, sy: b.top - r.top + Math.random() * b.height,
-          mx: clusters[c].x + Math.cos(ang) * rr, my: clusters[c].y + Math.sin(ang) * rr,
+          mx: m.x + Math.cos(ang) * rr, my: m.y + Math.sin(ang) * rr,
           ex, ey, c, ph: Math.random() * 6.28, s: rand(0.7, 1.5),
         });
       }
     });
+    void K;
     parts.current = { list, clusters, hub: { x: cx, y: cy } };
   };
 
@@ -418,7 +446,7 @@ export default function ChaosStage() {
             </div>
           </div>
         ))}
-        <div className="spawns">
+        <div className="spawns" aria-live="polite">
           {spawns.map((s) => (
             <div key={s.id} className="spawn" style={{ left: `${s.x}%`, top: `${s.y}%`, transform: `rotate(${s.r}deg)` }}>
               <div className="win toast-win">
@@ -432,18 +460,10 @@ export default function ChaosStage() {
       </div>
 
       <canvas className="particles" ref={canvas} aria-hidden />
+      <div className="nexo-logo" aria-hidden><div className="nexo-logo__in"><LogoMark /></div></div>
       <div className="stage__veil" />
       <div className="stage__grain" />
 
-      <div className="banners" aria-live="polite">
-        {banners.map((b) => (
-          <div className="banner" key={b.id}>
-            <span className="app-ico" style={{ background: b.tpl.color }}>{b.tpl.ico}</span>
-            <div><strong>{b.tpl.app}<em>{L("ahora", "agora")}</em></strong><small><b style={{ fontWeight: 600 }}>{b.tpl.title}:</b> {b.tpl.body}</small></div>
-            <button className="x" aria-label={L("Cerrar", "Fechar")} onClick={(e) => { e.stopPropagation(); setBanners((l) => l.filter((x) => x.id !== b.id)); multiply(); }}>×</button>
-          </div>
-        ))}
-      </div>
 
       <div className="tally" role="status">
         <span className="live">{fmt(unread)} {L("sin leer", "não lidas")}</span>
