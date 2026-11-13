@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { track } from "@/lib/config";
-import { useHref, useL } from "@/lib/i18n";
+import { useHref, useL, useLang } from "@/lib/i18n";
+import { rememberReturn } from "./criscuolo/BackToNexa";
 
 /* =====================================================================
    Demostraciones de las tres divisiones. Son vistas conceptuales: los
@@ -10,7 +11,7 @@ import { useHref, useL } from "@/lib/i18n";
    ===================================================================== */
 
 /* ---------------------------- EXPERIENCE ---------------------------- */
-export const EXPERIENCE_PROJECTS = ["criscuolo", "piel", "ceramica"] as const;
+export const EXPERIENCE_PROJECTS = ["criscuolo"] as const;
 export type ExpKey = (typeof EXPERIENCE_PROJECTS)[number];
 
 export function useExperienceProjects() {
@@ -21,18 +22,6 @@ export function useExperienceProjects() {
       status: L("Concepto navegable", "Conceito navegável"),
       summary: L("Una experiencia de café que cuenta el camino del fruto a la taza.", "Uma experiência de café que conta o caminho da fruta à xícara."),
       shows: L(["Storytelling", "Dirección de arte", "Diseño editorial", "Transiciones inmersivas"], ["Storytelling", "Direção de arte", "Design editorial", "Transições imersivas"]),
-    },
-    piel: {
-      name: "Piel de Campo",
-      status: L("Concepto en desarrollo", "Conceito em desenvolvimento"),
-      summary: L("Experiencia editorial para una marca de indumentaria de cuero y gamuza, con piezas confeccionadas a medida.", "Experiência editorial para uma marca de roupas de couro e camurça, com peças confeccionadas sob medida."),
-      shows: L(["Diseño e-commerce", "Presentación de colecciones", "Fotografía y materiales", "Confección a medida"], ["Design de e-commerce", "Apresentação de coleções", "Fotografia e materiais", "Confecção sob medida"]),
-    },
-    ceramica: {
-      name: L("Estudio de cerámica", "Estúdio de cerâmica"),
-      status: L("Concepto · nombre pendiente", "Conceito · nome a definir"),
-      summary: L("Tienda de piezas de cerámica y reservas para talleres y experiencias.", "Loja de peças de cerâmica e reservas para oficinas e experiências."),
-      shows: L(["Catálogo y compra online", "Agenda de talleres", "Fechas y horarios", "Cupos disponibles"], ["Catálogo e compra online", "Agenda de oficinas", "Datas e horários", "Vagas disponíveis"]),
     },
   } satisfies Record<ExpKey, { name: string; status: string; summary: string; shows: string[] }>;
 }
@@ -48,6 +37,7 @@ function Frame({ url, tone, children }: { url: string; tone: "light" | "dark"; c
 
 function CriscuoloPreview() {
   const L = useL();
+  const { lang } = useLang();
   const v = useRef<HTMLVideoElement>(null);
   // se reproduce solo mientras está en pantalla (y nunca con movimiento reducido)
   useEffect(() => {
@@ -59,7 +49,7 @@ function CriscuoloPreview() {
     return () => io.disconnect();
   }, []);
   return (
-    <a className="vid-card" href="/casos/criscuolo/" onClick={() => track("project_open", { project: "criscuolo", from: "video" })}
+    <a className="vid-card" href="/casos/criscuolo/" onClick={() => { rememberReturn(lang); track("project_open", { project: "criscuolo", from: "video" }); }}
       aria-label={L("Ver el concepto de Criscuolo Coffee completo", "Ver o conceito da Criscuolo Coffee completo")}>
       <Frame url="criscuolo.coffee" tone="light">
         <video ref={v} className="vid-card__video" muted loop playsInline preload="metadata" poster="/criscuolo/recorrido-poster.jpg" aria-hidden>
@@ -76,110 +66,18 @@ function CriscuoloPreview() {
   );
 }
 
-function PielPreview() {
-  const L = useL();
-  const items = L(
-    [["Campera de gamuza", "Gamuza · a medida"], ["Chaleco de cuero", "Cuero vacuno · a medida"], ["Bolso de campo", "Cuero curtido · a medida"]],
-    [["Jaqueta de camurça", "Camurça · sob medida"], ["Colete de couro", "Couro bovino · sob medida"], ["Bolsa de campo", "Couro curtido · sob medida"]],
-  );
-  const steps = L(["Elegís la pieza", "Tomamos tus medidas", "La confeccionamos", "Te la entregamos"], ["Você escolhe a peça", "Tiramos suas medidas", "Confeccionamos", "Entregamos"]);
-  return (
-    <Frame url="pieldecampo.com" tone="dark">
-      <div className="autoscroll"><div className="autoscroll__page pv-pc">
-        <nav aria-hidden><b>PIEL DE CAMPO</b><span>{L("Colección · Materiales · A medida", "Coleção · Materiais · Sob medida")}</span></nav>
-        <div className="pv-pc__hero">
-          <small>{L("Colección otoño", "Coleção outono")}</small>
-          <h4>{L("Hecho a medida,", "Feito sob medida,")}<br /><em>{L("pensado para durar.", "pensado para durar.")}</em></h4>
-        </div>
-        <div className="pv-pc__big" aria-hidden><span className="sw sw--0" /><span className="sw sw--2" /></div>
-        <div className="pv-pc__grid">
-          {items.map(([n, m], i) => (
-            <div key={n}><span className={`sw sw--${i}`} aria-hidden /><b>{n}</b><small>{m}</small></div>
-          ))}
-        </div>
-        <div className="pv-pc__sec">
-          <small>{L("Materiales", "Materiais")}</small>
-          <div className="pv-pc__mats" aria-hidden>{["#8a6142", "#c9a77c", "#3d2717", "#6b4a2f", "#b08860"].map((c) => <i key={c} style={{ background: c }} />)}</div>
-        </div>
-        <div className="pv-pc__sec">
-          <small>{L("Cómo pedir una pieza a medida", "Como pedir uma peça sob medida")}</small>
-          <ol className="pv-pc__steps">{steps.map((t, i) => <li key={t}><b>0{i + 1}</b>{t}</li>)}</ol>
-        </div>
-        <p className="pv-note">{L("Las piezas se confeccionan a medida según la colección; no son personalizables libremente.", "As peças são confeccionadas sob medida conforme a coleção; não são personalizáveis livremente.")}</p>
-      </div></div>
-    </Frame>
-  );
-}
-
-function CeramicaPreview() {
-  const L = useL();
-  const days = L(["Jue 14", "Sáb 16", "Mar 19", "Jue 21"], ["Qui 14", "Sáb 16", "Ter 19", "Qui 21"]);
-  const cupos = [3, 0, 5, 2];
-  const [day, setDay] = useState(0);
-  const [slot, setSlot] = useState(0);
-  return (
-    <Frame url={L("estudiodeceramica.com", "estudiodeceramica.com")} tone="light">
-      <div className="autoscroll"><div className="autoscroll__page pv-ce">
-        <nav aria-hidden><b>{L("ESTUDIO", "ESTÚDIO")}</b><span>{L("Piezas · Talleres · Experiencias", "Peças · Oficinas · Experiências")}</span></nav>
-        <div className="pv-ce__cols">
-          <div className="pv-ce__shop" aria-hidden>
-            <small>{L("Tienda", "Loja")}</small>
-            {[L("Taza esmaltada", "Caneca esmaltada"), L("Plato hondo", "Prato fundo"), L("Jarrón", "Vaso")].map((n, i) => (
-              <div key={n}><span className={`clay clay--${i}`} /><b>{n}</b></div>
-            ))}
-          </div>
-          <div className="pv-ce__book">
-            <small>{L("Reservá un taller de torno", "Reserve uma oficina de torno")}</small>
-            <div className="pv-ce__days" role="radiogroup" aria-label={L("Fecha del taller (ejemplo)", "Data da oficina (exemplo)")}>
-              {days.map((d, i) => (
-                <button key={d} role="radio" aria-checked={day === i} disabled={!cupos[i]} className={day === i ? "on" : ""} onClick={() => setDay(i)}>
-                  {d}<em>{cupos[i] ? L(`${cupos[i]} cupos`, `${cupos[i]} vagas`) : L("Completo", "Esgotado")}</em>
-                </button>
-              ))}
-            </div>
-            <div className="pv-ce__slots" role="radiogroup" aria-label={L("Horario (ejemplo)", "Horário (exemplo)")}>
-              {["10:00", "15:00", "18:30"].map((h, i) => (
-                <button key={h} role="radio" aria-checked={slot === i} className={slot === i ? "on" : ""} onClick={() => setSlot(i)}>{h}</button>
-              ))}
-            </div>
-            <span className="pv-ce__cta" aria-hidden>{L("Continuar reserva", "Continuar reserva")} →</span>
-          </div>
-        </div>
-        <div className="pv-ce__sec" aria-hidden>
-          <small>{L("Experiencias", "Experiências")}</small>
-          {[[L("Taller de torno · 2 h", "Oficina de torno · 2 h"), L("Hasta 6 personas", "Até 6 pessoas")], [L("Esmaltado de piezas", "Esmaltação de peças"), L("Sábados", "Sábados")], [L("Regalo empresarial", "Presente corporativo"), L("A pedido", "Sob encomenda")]].map(([t, d]) => (
-            <div key={t}><b>{t}</b><span>{d}</span></div>
-          ))}
-        </div>
-      </div></div>
-    </Frame>
-  );
-}
-
 export function ExperienceDemo({ compact = false }: { compact?: boolean }) {
   const L = useL();
-  const href = useHref();
-  const P = useExperienceProjects();
-  const [k, setK] = useState<ExpKey>("criscuolo");
-  const p = P[k];
+  const p = useExperienceProjects().criscuolo;
   return (
     <div className="demo demo--exp">
-      <div className="demo__tabs" role="tablist" aria-label={L("Proyectos de Experience", "Projetos de Experience")}>
-        {EXPERIENCE_PROJECTS.map((key) => (
-          <button key={key} role="tab" aria-selected={k === key} className={k === key ? "on" : ""}
-            onClick={() => { setK(key); track("experience_demo_select", { project: key }); }}>
-            {P[key].name}
-          </button>
-        ))}
-      </div>
-      <div key={k} className="demo__stage" role="tabpanel" aria-label={p.name}>
-        {k === "criscuolo" ? <CriscuoloPreview /> : k === "piel" ? <PielPreview /> : <CeramicaPreview />}
+      <div className="demo__stage" aria-label={p.name}>
+        <CriscuoloPreview />
       </div>
       <div className="demo__caption">
-        <span className="status">{p.status}</span>
+        <span className="status">{p.name} · {p.status}</span>
         {!compact && <p>{p.summary}</p>}
         <ul aria-label={L("Qué demuestra", "O que demonstra")}>{p.shows.map((s) => <li key={s}>{s}</li>)}</ul>
-        {k !== "criscuolo" && <a className="demo__link demo__link--soft" href={href("/proyectos/")}>{L("Ver su estado en Proyectos", "Ver o status em Projetos")} →</a>}
       </div>
     </div>
   );

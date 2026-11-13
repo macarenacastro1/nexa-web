@@ -3,7 +3,8 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { track } from "@/lib/config";
-import { useHref, useL } from "@/lib/i18n";
+import { useHref, useL, useLang } from "@/lib/i18n";
+import { rememberReturn } from "./criscuolo/BackToNexa";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -91,6 +92,7 @@ export function ProjectVisual({ k }: { k: string }) {
 
 export function ProjectCard({ p, i, detail = false }: { p: ReturnType<typeof useProjects>[number]; i: number; detail?: boolean }) {
   const L = useL();
+  const { lang } = useLang();
   return (
     <article className={`pj${i % 2 ? " pj--flip" : ""}`} aria-labelledby={`pj-${p.key}`}>
       <ProjectVisual k={p.key} />
@@ -103,7 +105,7 @@ export function ProjectCard({ p, i, detail = false }: { p: ReturnType<typeof use
           <div><dt>{L("Propuesta", "Proposta")}</dt><dd>{p.solution}</dd></div>
         </dl>
         {p.href ? (
-          <a className="btn btn--line btn--sm" href={p.href} onClick={() => track("project_open", { project: p.key, from: detail ? "proyectos" : "home" })}>
+          <a className="btn btn--line btn--sm" href={p.href} onClick={() => { rememberReturn(lang); track("project_open", { project: p.key, from: detail ? "proyectos" : "home" }); }}>
             {p.cta} <span className="arr">→</span>
           </a>
         ) : (

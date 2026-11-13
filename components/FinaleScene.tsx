@@ -96,7 +96,7 @@ function Lattice() {
 
 export default function FinaleScene() {
   return (
-    <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 7.2], fov: 45 }} gl={{ antialias: true, alpha: true }}>
+    <Canvas resize={{ offsetSize: true }} dpr={[1, 2]} camera={{ position: [0, 0, 7.2], fov: 45 }} gl={{ antialias: true, alpha: true }}>
       <fog attach="fog" args={["#000000", 5.5, 10]} />
       <Lattice />
     </Canvas>

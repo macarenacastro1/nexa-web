@@ -4,6 +4,7 @@ import ChaosStage from "@/components/ChaosStage";
 import Services from "@/components/Services";
 import Process from "@/components/Process";
 import Finale from "@/components/Finale";
+import Testimonials from "@/components/Testimonials";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
@@ -26,6 +27,7 @@ export default function HomePage() {
         <Services />
         <Seam />
         <Process />
+        <Testimonials />
         <Finale />
         <Contact />
       </main>

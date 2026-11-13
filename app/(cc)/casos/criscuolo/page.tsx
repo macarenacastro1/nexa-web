@@ -4,6 +4,7 @@ import Collection from "@/components/criscuolo/Collection";
 import { GrainJourney, Sensorial, Brand, Finale } from "@/components/criscuolo/Sections";
 import "@/components/criscuolo/criscuolo.css";
 import ScrollRefresh from "@/components/ScrollRefresh";
+import BackToNexa from "@/components/criscuolo/BackToNexa";
 
 export const metadata: Metadata = {
   title: "Criscuolo Coffee — Da fruta à xícara · Conceito por NEXA",
@@ -17,6 +18,7 @@ export default function Page() {
       {/* tipografía propia de la marca */}
       <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" />
       <ScrollRefresh />
+      <BackToNexa />
       <Journey />
       <GrainJourney />
       <Collection />
@@ -25,7 +27,6 @@ export default function Page() {
       <Finale />
       <footer className="cc-foot" id="contato">
         <span>Conceito de portfólio desenvolvido pela NEXA · Não é o site oficial da Criscuolo Coffee</span>
-        <a href="/pt/">← Voltar para NEXA</a>
       </footer>
     </div>
   );
