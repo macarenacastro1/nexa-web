@@ -18,6 +18,30 @@ export const NEEDS = [
 ] as const;
 export type NeedKey = (typeof NEEDS)[number]["key"];
 
+/** Rubro o sector. "Otro" pide escribirlo. */
+export const SECTORS: [string, string][] = [
+  ["Gastronomía", "Gastronomia"],
+  ["Salud y bienestar", "Saúde e bem-estar"],
+  ["Estética y belleza", "Estética e beleza"],
+  ["Moda e indumentaria", "Moda e vestuário"],
+  ["Comercio y tiendas", "Comércio e lojas"],
+  ["E-commerce", "E-commerce"],
+  ["Inmobiliaria y construcción", "Imobiliária e construção"],
+  ["Servicios profesionales (contable, legal, consultoría)", "Serviços profissionais (contábil, jurídico, consultoria)"],
+  ["Educación y capacitación", "Educação e treinamento"],
+  ["Industria y manufactura", "Indústria e manufatura"],
+  ["Logística y distribución", "Logística e distribuição"],
+  ["Tecnología y software", "Tecnologia e software"],
+  ["Turismo y hotelería", "Turismo e hotelaria"],
+  ["Agro", "Agro"],
+  ["Finanzas y seguros", "Finanças e seguros"],
+  ["Marketing y comunicación", "Marketing e comunicação"],
+  ["Deportes y fitness", "Esportes e fitness"],
+  ["Arte, diseño y cultura", "Arte, design e cultura"],
+  ["ONG o institución", "ONG ou instituição"],
+  ["Emprendimiento personal", "Empreendimento pessoal"],
+];
+
 function readCalc(): CalcSummary | null {
   try {
     const raw = sessionStorage.getItem(CALC_KEY);
@@ -50,6 +74,7 @@ export default function Contact({ need }: { need?: NeedKey }) {
   const [state, setState] = useState<"idle" | "sending" | "ok">("idle");
   const [error, setError] = useState("");
   const started = useRef(false);
+  const [sector, setSector] = useState("");
   const msgRef = useRef<HTMLTextAreaElement>(null);
 
   // Si viene de la calculadora (en /intelligence), sugerimos el mensaje con sus números
@@ -61,8 +86,8 @@ export default function Contact({ need }: { need?: NeedKey }) {
         `Usé la calculadora: ${c.tasks} tareas manuales por semana, ${c.mins} min cada una, ${c.pct}% automatizable (estimación de ${c.hours_week} h por semana).`,
         `Usei a calculadora: ${c.tasks} tarefas manuais por semana, ${c.mins} min cada, ${c.pct}% automatizável (estimativa de ${c.hours_week} h por semana).`,
       );
-      const sel = document.querySelector<HTMLSelectElement>("#f-s");
-      if (sel && !sel.value) sel.value = NEEDS[2].value;
+      const r = document.querySelector<HTMLInputElement>('input[name="need"][value="' + NEEDS[2].value + '"]');
+      if (r && !document.querySelector('input[name="need"]:checked')) r.checked = true;
     };
     fill(readCalc());
     const onCalc = (e: Event) => fill((e as CustomEvent<CalcSummary>).detail);
@@ -104,6 +129,20 @@ export default function Contact({ need }: { need?: NeedKey }) {
         first ??= f;
       }
     });
+    // tipo de proyecto (opciones tocables)
+    const needSel = form.querySelector<HTMLInputElement>('input[name="need"]:checked');
+    const needFld = form.querySelector<HTMLElement>(".field--need")!;
+    needFld.classList.toggle("err", !needSel);
+    needFld.querySelector("small")!.textContent = needSel ? "" : L("Elegí una opción", "Escolha uma opção");
+    if (!needSel) { ok = false; first ??= form.querySelector<HTMLInputElement>('input[name="need"]'); }
+    // rubro "Otro": hay que escribirlo
+    if (sector === "__otro") {
+      const o = form.querySelector<HTMLInputElement>("#f-so")!;
+      const valid = o.value.trim().length > 1;
+      o.closest(".field")!.classList.toggle("err", !valid);
+      o.closest(".field")!.querySelector("small")!.textContent = valid ? "" : L("Contanos cuál es tu rubro", "Conte qual é o seu setor");
+      if (!valid) { ok = false; first ??= o; }
+    }
     if (!ok) {
       (first as HTMLElement | null)?.focus();
       return;
@@ -120,7 +159,8 @@ export default function Contact({ need }: { need?: NeedKey }) {
           company: v("f-c"),
           email: v("f-e"),
           phone: v("f-w"),
-          need: v("f-s"),
+          need: needSel?.value ?? "",
+          sector: sector === "__otro" ? v("f-so") : sector,
           message: v("f-m"),
           consent: form.querySelector<HTMLInputElement>("#f-ok")?.checked === true,
           consent_version: lang === "pt" ? `${CONSENT_VERSION}-pt` : CONSENT_VERSION,
@@ -135,8 +175,9 @@ export default function Contact({ need }: { need?: NeedKey }) {
       const data = (await res.json().catch(() => ({}))) as { status?: string };
       if (!res.ok || (data.status && data.status !== "ok")) throw new Error(data.status === "rate_limited" ? "rate" : "fail");
       // Solo el tipo de proyecto: nada de datos personales en analítica
-      track("generate_lead", { need: NEEDS.find((n) => n.value === v("f-s"))?.key ?? "otro" });
+      track("generate_lead", { need: NEEDS.find((n) => n.value === needSel?.value)?.key ?? "otro" });
       form.reset();
+      setSector("");
       try { sessionStorage.removeItem(CALC_KEY); } catch { /* nada */ }
       sound.chime();
       setState("ok");
@@ -162,7 +203,7 @@ export default function Contact({ need }: { need?: NeedKey }) {
           <ul className="trust">
             <li><Check /><div>{L("La lee una persona del equipo", "Uma pessoa da equipe lê")}<small>{L("Te respondemos por mail con los próximos pasos.", "Respondemos por e-mail com os próximos passos.")}</small></div></li>
             <li><Check /><div>{L("Para las tres especialidades", "Para as três especialidades")}<small>{L("Web y e-commerce, sistemas a medida o automatización: contanos tu caso.", "Web e e-commerce, sistemas sob medida ou automação: conte o seu caso.")}</small></div></li>
-            <li><Check /><div>{L("Argentina, Latinoamérica y Brasil", "Argentina, América Latina e Brasil")}<small>{L("Trabajamos en español y en portugués.", "Trabalhamos em espanhol e em português.")}</small></div></li>
+            <li><Check /><div>{L("Argentina y toda Latinoamérica", "Argentina e toda a América Latina")}<small>{L("Trabajamos en español y en portugués.", "Trabalhamos em espanhol e em português.")}</small></div></li>
           </ul>
         </div>
 
@@ -179,14 +220,37 @@ export default function Contact({ need }: { need?: NeedKey }) {
             <div className="field"><label htmlFor="f-n">{L("Nombre", "Nome")} *</label><input id="f-n" required autoComplete="name" maxLength={200} /><small /></div>
             <div className="field"><label htmlFor="f-e">Email *</label><input id="f-e" type="email" required autoComplete="email" maxLength={200} /><small /></div>
             <div className="field"><label htmlFor="f-c">{L("Empresa o marca", "Empresa ou marca")} <span className="opt">(opcional)</span></label><input id="f-c" autoComplete="organization" maxLength={200} /><small /></div>
-            <div className="field"><label htmlFor="f-w">{L("WhatsApp o teléfono", "WhatsApp ou telefone")} <span className="opt">(opcional)</span></label><input id="f-w" type="tel" placeholder={L("+54 9 11 …", "+55 11 9 …")} autoComplete="tel" maxLength={40} /><small /></div>
-            <div className="field field--full"><label htmlFor="f-s">{L("¿Qué necesitás?", "Do que você precisa?")} *</label>
-              <select id="f-s" required defaultValue={defaultNeed} key={defaultNeed}>
-                <option value="" disabled>{L("Elegí una opción", "Escolha uma opção")}</option>
-                {NEEDS.map((n) => <option key={n.key} value={n.value}>{L(n.es, n.pt)}</option>)}
+            <div className="field"><label htmlFor="f-w">{L("WhatsApp o teléfono", "WhatsApp ou telefone")} <span className="opt">(opcional)</span></label><input id="f-w" type="tel" placeholder={L("Con código de área", "Com DDD")} autoComplete="tel" maxLength={40} /><small /></div>
+            <div className="field field--full">
+              <label htmlFor="f-sector">{L("Rubro o sector", "Setor de atuação")} <span className="opt">(opcional)</span></label>
+              <select id="f-sector" value={sector} onChange={(e) => setSector(e.target.value)}>
+                <option value="">{L("Elegí tu rubro", "Escolha seu setor")}</option>
+                {SECTORS.map(([es, pt]) => <option key={es} value={es}>{L(es, pt)}</option>)}
+                <option value="__otro">{L("Otro", "Outro")}</option>
               </select><small />
             </div>
-            <div className="field field--full"><label htmlFor="f-m">{L("Contanos brevemente tu idea", "Conte brevemente sua ideia")} *</label><textarea id="f-m" ref={msgRef} rows={4} required maxLength={3000} /><small /></div>
+            {sector === "__otro" && (
+              <div className="field field--full"><label htmlFor="f-so">{L("¿Cuál es tu rubro?", "Qual é o seu setor?")} *</label><input id="f-so" maxLength={80} autoFocus /><small /></div>
+            )}
+            <fieldset className="field field--full field--need">
+              <legend>{L("¿Qué querés construir?", "O que você quer construir?")} *</legend>
+              <div className="chips" role="radiogroup">
+                {NEEDS.map((n) => (
+                  <label key={n.key} className="chip">
+                    <input type="radio" name="need" value={n.value} defaultChecked={n.value === defaultNeed} />
+                    <span>{L(n.es, n.pt)}</span>
+                  </label>
+                ))}
+              </div>
+              <small />
+            </fieldset>
+            <div className="field field--full">
+              <label htmlFor="f-m">{L("¿Qué te gustaría resolver o mejorar?", "O que você gostaria de resolver ou melhorar?")} *</label>
+              <textarea id="f-m" ref={msgRef} rows={4} required maxLength={3000}
+                placeholder={L("Por ejemplo: tenemos una tienda y queremos que los pedidos de WhatsApp se carguen solos en el sistema.", "Por exemplo: temos uma loja e queremos que os pedidos do WhatsApp entrem sozinhos no sistema.")} />
+              <p className="hint">{L("Unas líneas alcanzan. Lo charlamos en detalle después.", "Algumas linhas bastam. Conversamos em detalhe depois.")}</p>
+              <small />
+            </div>
             <div className="hp" aria-hidden>
               <label htmlFor="f-web">{L("No completar", "Não preencher")}</label><input id="f-web" tabIndex={-1} autoComplete="off" />
             </div>

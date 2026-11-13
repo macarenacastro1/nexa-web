@@ -8,7 +8,9 @@ import ScrollRefresh from "@/components/ScrollRefresh";
 import Nav, { DIVISIONS } from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Contact, { type NeedKey } from "@/components/Contact";
-import { ExperienceDemo, SystemsDemo } from "@/components/demos";
+import { ExperienceDemo, IntelligenceDemo } from "@/components/demos";
+import { SystemsDemo } from "@/components/systems-demos";
+import { HeroArt, ServiceVisual } from "@/components/service-visuals";
 import Flow from "@/components/Flow";
 import Simulator from "@/components/Simulator";
 import Impact from "@/components/Impact";
@@ -89,10 +91,10 @@ function useContent(k: Key) {
           ["Portais para clientes", "Um espaço onde seus clientes consultam o status do que pediram ou baixam suas informações."],
         ],
       ),
-      demoTitle: [L("Orden que", "Ordem que"), L("se ve.", "se vê.")],
+      demoTitle: [L("Tres sistemas,", "Três sistemas,"), L("tres formas de ordenar.", "três formas de organizar.")],
       demoLead: L(
-        "Una vista conceptual de un sistema de operaciones: cada pedido con su estado, su responsable y su próximo paso.",
-        "Uma visão conceitual de um sistema de operações: cada pedido com seu status, seu responsável e seu próximo passo.",
+        "Ejemplos ficticios que podés usar: un gestor de stock que responde consultas solo, una agenda de turnos con lista de espera y un radar comercial para buscar clientes, seguir métricas y mirar a la competencia.",
+        "Exemplos fictícios que você pode usar: um gestor de estoque que responde consultas sozinho, uma agenda com lista de espera e um radar comercial para buscar clientes, acompanhar métricas e olhar a concorrência.",
       ),
       blockTitle: [L("Diseño funcional,", "Design funcional,"), L("integraciones y mantenimiento.", "integrações e manutenção.")],
       block: L<Item[]>(
@@ -152,6 +154,77 @@ function useContent(k: Key) {
   };
 }
 
+/** Qué incluye cada servicio (mismo orden que "items"). */
+function useIncludes(k: Key): string[][] {
+  const L = useL();
+  if (k === "experience")
+    return L(
+      [
+        ["Dirección de arte y diseño a medida", "Versión para celular cuidada", "Textos, SEO básico y analítica"],
+        ["Catálogo, carrito y pagos", "Envíos, stock y medios de pago locales", "Panel para cargar productos"],
+        ["Narrativa con scroll y movimiento", "Microinteracciones con propósito", "Rendimiento cuidado en celulares"],
+        ["Investigación y arquitectura", "Prototipos navegables", "Sistema visual y componentes"],
+      ],
+      [
+        ["Direção de arte e design sob medida", "Versão mobile caprichada", "Textos, SEO básico e analytics"],
+        ["Catálogo, carrinho e pagamentos", "Frete, estoque e meios de pagamento locais", "Painel para cadastrar produtos"],
+        ["Narrativa com scroll e movimento", "Microinterações com propósito", "Desempenho cuidado no celular"],
+        ["Pesquisa e arquitetura", "Protótipos navegáveis", "Sistema visual e componentes"],
+      ],
+    );
+  if (k === "systems")
+    return L(
+      [
+        ["Funciona en computadora y celular", "Usuarios y permisos", "Datos seguros en la nube"],
+        ["Estados, responsables y fechas", "Historial de cada operación", "Avisos automáticos"],
+        ["Indicadores que importan", "Filtros por período y equipo", "Datos actualizados solos"],
+        ["Formularios y controles a medida", "Menos papel y planillas", "Registro de quién hizo qué"],
+        ["Acceso con usuario para cada cliente", "Estado de pedidos o proyectos", "Facturas y documentos para descargar"],
+      ],
+      [
+        ["Funciona no computador e no celular", "Usuários e permissões", "Dados seguros na nuvem"],
+        ["Status, responsáveis e datas", "Histórico de cada operação", "Avisos automáticos"],
+        ["Indicadores que importam", "Filtros por período e equipe", "Dados atualizados sozinhos"],
+        ["Formulários e controles sob medida", "Menos papel e planilhas", "Registro de quem fez o quê"],
+        ["Acesso com usuário para cada cliente", "Status de pedidos ou projetos", "Notas e documentos para baixar"],
+      ],
+    );
+  return L(
+    [
+      ["Detectamos tareas repetidas", "Flujos con pasos y condiciones", "Revisión humana en lo importante"],
+      ["CRM, tienda, planillas, mail, WhatsApp", "Datos iguales en todas partes", "Registro de cada sincronización"],
+      ["Responde con la información de tu negocio", "Deriva a una persona cuando hace falta", "Web, WhatsApp o Instagram"],
+      ["Facturas, remitos y formularios", "Extracción de datos para revisar", "Carga en tu sistema"],
+    ],
+    [
+      ["Detectamos tarefas repetidas", "Fluxos com etapas e condições", "Revisão humana no que importa"],
+      ["CRM, loja, planilhas, e-mail, WhatsApp", "Dados iguais em todo lugar", "Registro de cada sincronização"],
+      ["Responde com as informações do seu negócio", "Passa para uma pessoa quando precisa", "Site, WhatsApp ou Instagram"],
+      ["Notas, romaneios e formulários", "Extração de dados para revisar", "Lançamento no seu sistema"],
+    ],
+  );
+}
+
+function Rows({ k, items }: { k: Key; items: Item[] }) {
+  const L = useL();
+  const inc = useIncludes(k);
+  return (
+    <div className="svrows">
+      {items.map(([t, d], i) => (
+        <article key={t} className={`svrow${i % 2 ? " svrow--flip" : ""}`}>
+          <div className="svrow__copy">
+            <span className="svrow__n">0{i + 1}</span>
+            <h3>{t}</h3>
+            <p>{d}</p>
+            <ul aria-label={L("Incluye", "Inclui")}>{(inc[i] ?? []).map((x) => <li key={x}>{x}</li>)}</ul>
+          </div>
+          <ServiceVisual division={k} i={i} />
+        </article>
+      ))}
+    </div>
+  );
+}
+
 function useExamples() {
   const L = useL();
   return L<Item[]>(
@@ -208,8 +281,9 @@ export default function DivisionPage({ k }: { k: Key }) {
       <ScrollRefresh />
       <Nav />
       <main id="main" ref={root} className={`dp dp--${k}`}>
-        <section className="dp-hero" aria-labelledby="dp-title">
-          <div className="container">
+        <section className="dp-hero dp-hero--art" aria-labelledby="dp-title">
+          <div className="container dp-hero__grid">
+            <div>
             <p className="label rv">Nexa {d.name}</p>
             <p className="dp-hero__cat rv">{c.cat}</p>
             <h1 className="dp-hero__title rv" id="dp-title">{c.title[0]} <span className="serif ctrl">{c.title[1]}</span></h1>
@@ -218,20 +292,22 @@ export default function DivisionPage({ k }: { k: Key }) {
               <a href="#contacto" className="btn btn--solid" onClick={() => track("cta_click", { cta: `${k}_hero` })}>{L("Hablemos de tu proyecto", "Vamos falar do seu projeto")} <span className="arr">→</span></a>
               <a href="#que-hacemos" className="btn btn--line">{L("Qué hacemos", "O que fazemos")}</a>
             </div>
+            </div>
+            <HeroArt division={k} />
           </div>
         </section>
 
         <section className="dp-sec" id="que-hacemos" aria-labelledby="dp-what">
           <div className="container">
             <h2 className="h2 dp-h2" id="dp-what">{L("Qué", "O que")} <span className="serif ctrl">{L("hacemos.", "fazemos.")}</span></h2>
-            <List items={c.items} cols={c.items.length > 4 ? 3 : 2} />
+            <Rows k={k} items={c.items} />
           </div>
         </section>
 
         {k === "experience" && (
           <section className="dp-sec dp-demo" aria-labelledby="dp-demo">
-            <div className="container dp-demo__grid">
-              <div>
+            <div className="container dp-demo__stack">
+              <div className="dp-demo__head">
                 <h2 className="h2 dp-h2" id="dp-demo">{c.demoTitle[0]} <span className="serif ctrl">{c.demoTitle[1]}</span></h2>
                 <p className="lead">{c.demoLead}</p>
               </div>
@@ -241,8 +317,8 @@ export default function DivisionPage({ k }: { k: Key }) {
         )}
         {k === "systems" && (
           <section className="dp-sec dp-demo" aria-labelledby="dp-demo">
-            <div className="container dp-demo__grid">
-              <div>
+            <div className="container dp-demo__stack">
+              <div className="dp-demo__head">
                 <h2 className="h2 dp-h2" id="dp-demo">{c.demoTitle[0]} <span className="serif ctrl">{c.demoTitle[1]}</span></h2>
                 <p className="lead">{c.demoLead}</p>
               </div>
@@ -251,6 +327,17 @@ export default function DivisionPage({ k }: { k: Key }) {
           </section>
         )}
 
+        {k === "intelligence" && (
+          <section className="dp-sec dp-demo" aria-labelledby="dp-demo">
+            <div className="container dp-demo__grid">
+              <div>
+                <h2 className="h2 dp-h2" id="dp-demo">{L("Lo automático,", "O automático,")} <span className="serif ctrl">{L("con control.", "com controle.")}</span></h2>
+                <p className="lead">{L("Elegí un caso y mirá cómo una consulta, un turno o una factura pasan por el sistema. Lo importante siempre lo aprueba una persona.", "Escolha um caso e veja como uma consulta, um horário ou uma nota passam pelo sistema. O importante sempre é aprovado por uma pessoa.")}</p>
+              </div>
+              <IntelligenceDemo />
+            </div>
+          </section>
+        )}
         {k === "intelligence" && <Flow />}
 
         <section className="dp-sec" aria-labelledby="dp-block">

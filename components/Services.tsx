@@ -4,7 +4,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { track } from "@/lib/config";
 import { useHref, useL } from "@/lib/i18n";
-import { ExperienceDemo, IntelligenceDemo, SystemsDemo } from "./demos";
+import { ExperienceDemo, IntelligenceDemo } from "./demos";
+import { SystemsDemo } from "./systems-demos";
 
 gsap.registerPlugin(ScrollTrigger);
 

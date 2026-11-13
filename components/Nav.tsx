@@ -29,7 +29,7 @@ export const DIVISIONS = [
 ] as const;
 
 /**
- * Navegación del brief: Servicios · Proyectos · Cómo trabajamos · ES/PT · CTA.
+ * Navegación: Servicios · Cómo trabajamos · ES/PT · CTA (los proyectos se ven en Servicios).
  * En la home los enlaces van a las secciones; en las demás páginas, a la home.
  * Servicios abre el acceso a las tres páginas de división.
  */
@@ -50,7 +50,7 @@ export default function Nav({ home = false }: { home?: boolean }) {
       gsap.to(bar.current, { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
       ScrollTrigger.create({ start: 40, end: "max", onToggle: (s) => setScrolled(s.isActive) });
       if (home)
-        ["servicios", "proyectos", "proceso"].forEach((id) =>
+        ["servicios", "proceso"].forEach((id) =>
           ScrollTrigger.create({ trigger: `#${id}`, start: "top 50%", end: "bottom 50%", onToggle: (s) => s.isActive && setActive(id) }),
         );
     });
@@ -109,7 +109,6 @@ export default function Nav({ home = false }: { home?: boolean }) {
               ))}
             </div>
           </div>
-          <a href={sec("proyectos")} className={active === "proyectos" ? "on" : ""}>{L("Proyectos", "Projetos")}</a>
           <a href={sec("proceso")} className={active === "proceso" ? "on" : ""}>{L("Cómo trabajamos", "Como trabalhamos")}</a>
         </nav>
         <div className="lang" role="group" aria-label={L("Idioma", "Idioma")}>
@@ -137,7 +136,6 @@ export default function Nav({ home = false }: { home?: boolean }) {
               <small>{L(d.es, d.pt)}</small>
             </a>
           ))}
-          <a href={sec("proyectos")} onClick={close}>{L("Proyectos", "Projetos")}</a>
           <a href={sec("proceso")} onClick={close}>{L("Cómo trabajamos", "Como trabalhamos")}</a>
           <a href={sec("contacto")} onClick={() => { cta(); close(); }} className="btn btn--solid">{L("Hablemos de tu proyecto", "Vamos falar do seu projeto")}</a>
         </div>
