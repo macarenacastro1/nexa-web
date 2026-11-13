@@ -1147,7 +1147,7 @@ fieldset.field { border: 0; padding: 0; margin: 0; min-width: 0; }
 .proc2__steps { display: flex; flex-direction: column; border-top: 1px solid var(--line-2); }
 .proc2__steps li { border-bottom: 1px solid var(--line-2); }
 .proc2__steps button { position: relative; width: 100%; display: grid; grid-template-columns: 44px 1fr; align-items: center; gap: 8px; padding: 20px 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-.proc2__steps .n { font-size: 13px; color: var(--mute-2); font-variant-numeric: tabular-nums; transition: color .3s; }
+.proc2__steps .n { font-size: 13px; color: var(--mute); font-variant-numeric: tabular-nums; transition: color .3s; }
 .proc2__steps .t { font-size: clamp(22px, 2.3vw, 30px); font-weight: 500; letter-spacing: -.03em; color: var(--mute-2); transition: color .35s var(--ease); }
 .proc2__steps li.done .t { color: #9aa0a8; }
 .proc2__steps li.on .t, .proc2__steps button:hover .t { color: var(--text); }
