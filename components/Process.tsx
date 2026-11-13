@@ -157,15 +157,30 @@ export default function Process() {
     const up = () => setWide(mq.matches);
     up();
     mq.addEventListener("change", up);
-    // la etapa activa es la que cruza el centro de la pantalla
-    const io = new IntersectionObserver((es) => {
-      es.forEach((e) => { if (e.isIntersecting) setI(Number((e.target as HTMLElement).dataset.i)); });
-    }, { rootMargin: "-45% 0px -45% 0px" });
-    panels.current.forEach((p) => p && io.observe(p));
-    return () => { io.disconnect(); mq.removeEventListener("change", up); };
+    // La etapa activa es la que tiene su texto más cerca del centro de la pantalla:
+    // la pantalla de la derecha y el brillo del texto cambian recién cuando llega la próxima.
+    let raf = 0;
+    const pick = () => {
+      raf = 0;
+      const mid = window.innerHeight / 2;
+      let best = 0, dist = Infinity;
+      panels.current.forEach((p, j) => {
+        const c = p?.querySelector(".proc3__copy");
+        if (!c) return;
+        const r = c.getBoundingClientRect();
+        const d = Math.abs(r.top + r.height / 2 - mid);
+        if (d < dist) { dist = d; best = j; }
+      });
+      setI(best);
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(pick); };
+    pick();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); cancelAnimationFrame(raf); mq.removeEventListener("change", up); };
   }, []);
 
-  const go = (j: number) => panels.current[j]?.scrollIntoView({ behavior: "smooth", block: "center" });
+  const go = (j: number) => (panels.current[j]?.querySelector(".proc3__copy") ?? panels.current[j])?.scrollIntoView({ behavior: "smooth", block: "center" });
   const V = VIS[i]!;
   return (
     <section className="proc3" id="proceso" aria-labelledby="proc-title">
@@ -188,6 +203,7 @@ export default function Process() {
               const Vj = VIS[j]!;
               return (
                 <li key={s.t} ref={(el) => { panels.current[j] = el; }} data-i={j} className={`proc3__step${j === i ? " on" : ""}`}>
+                  <div className="proc3__copy">
                   <span className="proc3__num" aria-hidden>0{j + 1}</span>
                   <h3>{s.t}</h3>
                   <p className="proc3__d">{s.d}</p>
@@ -195,6 +211,7 @@ export default function Process() {
                     <div><dt>{L("Qué hacés vos", "O que você faz")}</dt><dd>{s.you}</dd></div>
                     <div><dt>{L("Qué te llevás", "O que você recebe")}</dt><dd>{s.get}</dd></div>
                   </dl>
+                  </div>
                   {!wide && <div className="proc3__inline">{j === i ? <Vj /> : <div className="proc3__ph" />}</div>}
                 </li>
               );

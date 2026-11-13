@@ -16,14 +16,27 @@ export default function BackToNexa() {
   useEffect(() => {
     // abrir siempre arriba (el navegador a veces recuerda la posición anterior)
     try { history.scrollRestoration = "manual"; } catch { /* nada */ }
-    if (!location.hash) window.scrollTo(0, 0);
+    // vuelve arriba varias veces mientras carga (imágenes, 3D y tipografías cambian el alto),
+    // salvo que la persona ya haya empezado a moverse por la página
+    let touched = false;
+    const mark = () => { touched = true; };
+    const top = () => { if (!touched && !location.hash) window.scrollTo(0, 0); };
+    ["wheel", "touchstart", "keydown", "pointerdown"].forEach((ev) => window.addEventListener(ev, mark, { once: true, passive: true }));
+    top();
+    const timers = [50, 300, 900, 2000].map((ms) => setTimeout(top, ms));
+    window.addEventListener("load", top, { once: true });
+    window.addEventListener("pageshow", top);
     try {
       const raw = sessionStorage.getItem(KEY);
       if (raw) setRet(JSON.parse(raw) as Ret);
       const ref = document.referrer ? new URL(document.referrer) : null;
       setCame(!!raw && !!ref && ref.origin === location.origin);
     } catch { /* sin almacenamiento */ }
-    return () => { try { history.scrollRestoration = "auto"; } catch { /* nada */ } };
+    return () => {
+      timers.forEach(clearTimeout);
+      window.removeEventListener("pageshow", top);
+      try { history.scrollRestoration = "auto"; } catch { /* nada */ }
+    };
   }, []);
 
   const back = (e: React.MouseEvent) => {

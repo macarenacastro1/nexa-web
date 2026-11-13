@@ -302,7 +302,7 @@ function BookingSystem() {
     <div ref={ref} className="ap-wrap">
       <Shell brand="Odonto Prisma" logo={<Mark c1="#36c2b4" c2="#2a6fdb" shape="pr" />} url="agenda.odontoprisma.com" nav={nav} active="cal"
         title={L("Agenda · hoy", "Agenda · hoje")} sub={L("Jueves 14 · Sede Centro", "Quinta 14 · Unidade Centro")} user="RC" bell={0}>
-        <div className="ap-split">
+        <div className="ap-split ap-split--book">
           <div className="ap-col">
             <div className="ap-kpis">
               <div><small>{L("Turnos de hoy", "Horários de hoje")}</small><b key={total} className="tick">{total}</b></div>
@@ -320,7 +320,7 @@ function BookingSystem() {
                     const a = agenda[k];
                     return a ? (
                       <div key={k} role="gridcell" className={`ap-slot ap-slot--${a.st}`}>
-                        <b>{a.who}</b><small>{a.what}</small><em>{ST[a.st]}</em>
+                        <b>{a.who}</b><span className="ap-slot__row"><small>{a.what}</small><em>{ST[a.st]}</em></span>
                       </div>
                     ) : (
                       <button key={k} type="button" role="gridcell" className="ap-slot ap-slot--free" onClick={() => book(k)} aria-label={L(`Reservar ${h}`, `Reservar ${h}`)}>

@@ -52,9 +52,9 @@ function CriscuoloPreview() {
     <a className="vid-card" href="/casos/criscuolo/" onClick={() => { rememberReturn(lang); track("project_open", { project: "criscuolo", from: "video" }); }}
       aria-label={L("Ver el concepto de Criscuolo Coffee completo", "Ver o conceito da Criscuolo Coffee completo")}>
       <Frame url="criscuolo.coffee" tone="light">
-        <video ref={v} className="vid-card__video" muted loop playsInline preload="metadata" poster="/criscuolo/recorrido-poster.jpg" aria-hidden>
-          <source src="/criscuolo/recorrido.webm" type="video/webm" />
-          <source src="/criscuolo/recorrido.mp4" type="video/mp4" />
+        <video ref={v} className="vid-card__video" muted loop playsInline preload="metadata" poster="/criscuolo/recorrido-v3-poster.jpg" aria-hidden>
+          <source src="/criscuolo/recorrido-v3.webm" type="video/webm" />
+          <source src="/criscuolo/recorrido-v3.mp4" type="video/mp4" />
         </video>
       </Frame>
       <span className="vid-card__cta">

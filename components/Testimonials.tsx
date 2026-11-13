@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useRef, useState } from "react";
 import { useL } from "@/lib/i18n";
 
 /**
@@ -8,6 +9,7 @@ import { useL } from "@/lib/i18n";
  * sección lo dice en pantalla.
  */
 export const PLACEHOLDER = true;
+const DUR = 7000;
 
 type T = { q: string; n: string; r: string; tag: "Experience" | "Systems" | "Intelligence"; c: string };
 
@@ -35,33 +37,69 @@ export default function Testimonials() {
       { q: "Tínhamos uma ideia bem desorganizada e eles transformaram em algo claro, bonito e fácil de usar.", n: "Joaquín P.", r: "Startup de serviços · Bogotá", tag: "Experience", c: "#2bf59c" },
     ],
   );
-  const rows = [items.slice(0, 4), items.slice(4)];
-  const Card = ({ t, hidden }: { t: T; hidden?: boolean }) => (
-    <figure className="tm-card" aria-hidden={hidden || undefined}>
-      <span className="tm-card__tag" style={{ color: t.c }}>Nexa {t.tag}</span>
-      <blockquote>“{t.q}”</blockquote>
-      <figcaption>
-        <span className="tm-card__av" style={{ background: `linear-gradient(135deg, ${t.c}, #13161a)` }}>{t.n.replace("Dra. ", "").split(" ").map((w) => w[0]).join("")}</span>
-        <span><b>{t.n}</b><small>{t.r}</small></span>
-      </figcaption>
-    </figure>
-  );
+  const [i, setI] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [run, setRun] = useState(0);
+  const reduce = useRef(false);
+  const root = useRef<HTMLElement>(null);
+  const seen = useRef(false);
+  useEffect(() => {
+    reduce.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const io = new IntersectionObserver(([e]) => { seen.current = !!e?.isIntersecting; }, { threshold: 0.3 });
+    if (root.current) io.observe(root.current);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    if (paused || reduce.current) return;
+    const t = setTimeout(() => {
+      if (seen.current && !document.hidden) setI((x) => (x + 1) % items.length);
+      setRun((r) => r + 1);
+    }, DUR);
+    return () => clearTimeout(t);
+  }, [i, paused, run, items.length]);
+  // en celular, la persona activa queda a la vista dentro de la fila
+  const list = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    const ul = list.current;
+    const b = ul?.querySelectorAll("button")[i] as HTMLElement | undefined;
+    if (ul && b && ul.scrollWidth > ul.clientWidth) ul.scrollTo({ left: b.offsetLeft - 16, behavior: "smooth" });
+  }, [i]);
+  const t = items[i]!;
+  const initials = (n: string) => n.replace("Dra. ", "").split(" ").map((w) => w[0]).join("");
   return (
-    <section className="tm" id="testimonios" aria-labelledby="tm-title">
-      <div className="container tm__head">
-        <p className="label">{L("Testimonios", "Depoimentos")}</p>
-        <h2 className="h2" id="tm-title">{L("Lo que dicen", "O que dizem")} <span className="serif ctrl">{L("quienes trabajan con nosotros.", "quem trabalha com a gente.")}</span></h2>
-        {PLACEHOLDER && <p className="tm__note">{L("Textos de ejemplo para ver el diseño · se reemplazan por testimonios reales antes de publicar", "Textos de exemplo para ver o design · serão substituídos por depoimentos reais antes de publicar")}</p>}
-      </div>
-      <div className="tm__rows">
-        {rows.map((r, ri) => (
-          <div key={ri} className={`tm__row${ri ? " tm__row--rev" : ""}`}>
-            <div className="tm__track">
-              {r.map((t) => <Card key={t.n} t={t} />)}
-              {r.map((t) => <Card key={`${t.n}-b`} t={t} hidden />)}
-            </div>
-          </div>
-        ))}
+    <section className="tm2" id="testimonios" ref={root} aria-labelledby="tm-title" style={{ ["--tc" as string]: t.c }}>
+      <div className="container">
+        <div className="tm2__head">
+          <p className="label">{L("Testimonios", "Depoimentos")}</p>
+          <h2 className="h2" id="tm-title">{L("Lo que dicen", "O que dizem")} <span className="serif ctrl">{L("quienes trabajan con nosotros.", "quem trabalha com a gente.")}</span></h2>
+          {PLACEHOLDER && <p className="tm__note">{L("Textos de ejemplo para ver el diseño · se reemplazan por testimonios reales antes de publicar", "Textos de exemplo para ver o design · serão substituídos por depoimentos reais antes de publicar")}</p>}
+        </div>
+        <div className="tm2__body" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
+          <ul className="tm2__people" ref={list} role="tablist" aria-label={L("Personas", "Pessoas")}>
+            {items.map((p, j) => (
+              <li key={p.n} role="presentation">
+                <button type="button" role="tab" aria-selected={j === i} aria-controls="tm-quote" className={j === i ? "on" : ""} onClick={() => { setI(j); setRun((r) => r + 1); }} style={{ ["--pc" as string]: p.c }}>
+                  <span className="tm2__av">{initials(p.n)}</span>
+                  <span className="tm2__who"><b>{p.n}</b><small>{p.r}</small></span>
+                  {j === i && !paused && <span className="tm2__bar" aria-hidden><i key={`${i}-${run}`} style={{ animationDuration: `${DUR}ms` }} /></span>}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <figure className="tm2__quote" id="tm-quote" role="tabpanel" aria-live="polite">
+            <span className="tm2__glow" aria-hidden />
+            <svg className="tm2__mark" viewBox="0 0 64 48" aria-hidden><defs><linearGradient id="tmq" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#2bf59c" /><stop offset=".5" stopColor="#2de2d0" /><stop offset="1" stopColor="#4c8dff" /></linearGradient></defs><path fill="url(#tmq)" d="M0 48V28C0 12 8 2 24 0l3 7C18 10 14 16 14 24h12v24zm36 0V28C36 12 44 2 60 0l3 7c-9 3-13 9-13 17h12v24z" /></svg>
+            <blockquote key={i}>
+              {t.q.split(" ").map((w, k) => <span key={k} style={{ animationDelay: `${k * 0.025}s` }}>{w} </span>)}
+            </blockquote>
+            <figcaption key={`c-${i}`}>
+              <span className="tm2__av tm2__av--lg">{initials(t.n)}</span>
+              <span><b>{t.n}</b><small>{t.r}</small></span>
+              <span className="tm2__tag">Nexa {t.tag}</span>
+            </figcaption>
+            <span className="tm2__count" aria-hidden>{String(i + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}</span>
+          </figure>
+        </div>
       </div>
     </section>
   );
