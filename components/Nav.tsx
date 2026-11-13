@@ -57,6 +57,21 @@ export default function Nav({ home = false }: { home?: boolean }) {
     return () => ctx.revert();
   }, [home]);
 
+  // Guarda la campaña de origen (UTM) de la visita para que el formulario la mande aunque se navegue entre páginas.
+  useEffect(() => {
+    try {
+      const q = new URLSearchParams(location.search);
+      const u: Record<string, string> = {};
+      for (const k of ["source", "medium", "campaign", "content", "term"]) {
+        const v = q.get(`utm_${k}`);
+        if (v) u[k] = v.slice(0, 120);
+      }
+      if (Object.keys(u).length) sessionStorage.setItem("nexa:utm", JSON.stringify(u));
+    } catch {
+      /* sin almacenamiento */
+    }
+  }, []);
+
   // Primera visita desde un navegador en portugués: ofrecer la versión en portugués.
   useEffect(() => {
     try {

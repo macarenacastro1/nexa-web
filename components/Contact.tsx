@@ -51,6 +51,7 @@ function readCalc(): CalcSummary | null {
   }
 }
 
+/** UTM de la visita: la del link actual o, si la persona navegó, la que se guardó al entrar. */
 function utm() {
   const q = new URLSearchParams(window.location.search);
   const out: Record<string, string> = {};
@@ -58,7 +59,12 @@ function utm() {
     const v = q.get(`utm_${k}`);
     if (v) out[k] = v;
   }
-  return out;
+  if (Object.keys(out).length) return out;
+  try {
+    return JSON.parse(sessionStorage.getItem("nexa:utm") || "{}") as Record<string, string>;
+  } catch {
+    return out;
+  }
 }
 
 /**
