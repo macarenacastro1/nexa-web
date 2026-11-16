@@ -3,12 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import { useL } from "@/lib/i18n";
 
 /**
- * Testimonios. IMPORTANTE: por ahora son textos de ejemplo para ver el diseño.
- * Antes de publicar hay que reemplazarlos por testimonios reales (con permiso
- * de cada persona) o quitar la sección. Mientras PLACEHOLDER sea true, la
- * sección lo dice en pantalla.
+ * Testimonios reales de clientes (pasados por la owner el 16/11/2026).
+ * Si se vuelve a poner un texto de ejemplo, marcar PLACEHOLDER = true:
+ * la sección lo avisa en pantalla.
  */
-export const PLACEHOLDER = true;
+export const PLACEHOLDER = false;
 const DUR = 7000;
 
 type T = { q: string; n: string; r: string; tag: "Experience" | "Systems" | "Intelligence"; c: string };
@@ -17,24 +16,18 @@ export default function Testimonials() {
   const L = useL();
   const items: T[] = L(
     [
-      { q: "Antes respondíamos las consultas de stock a mano y se nos escapaban ventas. Ahora el WhatsApp contesta solo y nosotros nos ocupamos de despachar.", n: "Carolina M.", r: "Distribuidora de insumos · Córdoba", tag: "Intelligence", c: "#2de2d0" },
-      { q: "Nos escucharon a todos: ventas, administración y depósito. El sistema quedó pensado para cómo trabajamos de verdad, no al revés.", n: "Martín R.", r: "Fábrica de muebles · Rosario", tag: "Systems", c: "#4c8dff" },
-      { q: "La web nueva se siente como nuestra marca. La gente nos escribe diciendo que la recorrió entera antes de comprar.", n: "Lucía F.", r: "Marca de indumentaria · CABA", tag: "Experience", c: "#2bf59c" },
-      { q: "Lo que más valoro es que vimos y aprobamos cada pantalla antes de que se programara. No hubo sorpresas.", n: "Diego A.", r: "Estudio contable · Mendoza", tag: "Systems", c: "#4c8dff" },
-      { q: "Los turnos se confirman solos y cuando alguien cancela, el lugar se ocupa con la lista de espera. Recuperamos horas que antes perdíamos.", n: "Dra. Paula S.", r: "Consultorio odontológico · La Plata", tag: "Systems", c: "#4c8dff" },
-      { q: "Conectaron la tienda, el sistema de facturación y las planillas. Dejamos de copiar datos de un lado a otro todos los días.", n: "Federico G.", r: "E-commerce de electrónica · Montevideo", tag: "Intelligence", c: "#2de2d0" },
-      { q: "Después de lanzar siguieron con nosotros: capacitaron al equipo y cada mes sumamos alguna mejora.", n: "Valeria T.", r: "Cadena de cafeterías · Santiago", tag: "Systems", c: "#4c8dff" },
-      { q: "Teníamos una idea bastante desordenada y la convirtieron en algo claro, lindo y fácil de usar.", n: "Joaquín P.", r: "Startup de servicios · Bogotá", tag: "Experience", c: "#2bf59c" },
+      { q: "Página web, ecommerce y sistema de stock inteligente, ¡con un radar de posibles futuros clientes! Un éxito.", n: "Gabriel M.", r: "Productora de café · Brasil", tag: "Systems", c: "#4c8dff" },
+      { q: "Organicé mi empresa, comparé precios de proveedores, automaticé mensajes ¡y todo el mundo me felicita por la página web! Gracias, Nexa.", n: "Carola G.", r: "Empresa de productos de cuero · Córdoba", tag: "Intelligence", c: "#2de2d0" },
+      { q: "Destaco la calidez del equipo: todo el proceso fue súper personalizado y acompañado. Mi agenda de turnos está 100% automatizada, desde agendar turnos hasta cambiarlos y pagarlos. ¡Muchas gracias al Nexa team! 🚀🚀", n: "Lucas P.", r: "Peluquería canina · Mendoza", tag: "Systems", c: "#4c8dff" },
+      { q: "El equipo de Nexa se encargó de desarrollar un radar de posibles futuros clientes, con sus debilidades y por dónde teníamos que entrar. ¡Impecable! Seguimos cerrando más y más contratos. Muchas gracias.", n: "Franchesca A.", r: "Agencia de marketing · CABA", tag: "Intelligence", c: "#2de2d0" },
+      { q: "Ahorré tiempo y plata en el seguimiento de mis procesos. Ahora tengo un sistema completamente personalizado y modificable. Recomiendo a Nexa y a su equipo. Gracias.", n: "Rafael L.", r: "Importadora · Brasil", tag: "Systems", c: "#4c8dff" },
     ],
     [
-      { q: "Antes respondíamos as consultas de estoque à mão e perdíamos vendas. Agora o WhatsApp responde sozinho e nós cuidamos do despacho.", n: "Carolina M.", r: "Distribuidora de insumos · Córdoba", tag: "Intelligence", c: "#2de2d0" },
-      { q: "Ouviram todo mundo: vendas, financeiro e estoque. O sistema ficou pensado para como trabalhamos de verdade, não o contrário.", n: "Martín R.", r: "Fábrica de móveis · Rosário", tag: "Systems", c: "#4c8dff" },
-      { q: "O site novo tem a cara da nossa marca. As pessoas escrevem dizendo que percorreram tudo antes de comprar.", n: "Lucía F.", r: "Marca de roupas · Buenos Aires", tag: "Experience", c: "#2bf59c" },
-      { q: "O que mais valorizo é que vimos e aprovamos cada tela antes de ser programada. Não houve surpresas.", n: "Diego A.", r: "Escritório contábil · Mendoza", tag: "Systems", c: "#4c8dff" },
-      { q: "Os horários se confirmam sozinhos e, quando alguém cancela, a vaga vai para a lista de espera. Recuperamos horas que perdíamos.", n: "Dra. Paula S.", r: "Consultório odontológico · La Plata", tag: "Systems", c: "#4c8dff" },
-      { q: "Conectaram a loja, o sistema de faturamento e as planilhas. Paramos de copiar dados de um lado para o outro todo dia.", n: "Federico G.", r: "E-commerce de eletrônicos · Montevidéu", tag: "Intelligence", c: "#2de2d0" },
-      { q: "Depois do lançamento continuaram com a gente: treinaram a equipe e todo mês incluímos alguma melhoria.", n: "Valeria T.", r: "Rede de cafeterias · Santiago", tag: "Systems", c: "#4c8dff" },
-      { q: "Tínhamos uma ideia bem desorganizada e eles transformaram em algo claro, bonito e fácil de usar.", n: "Joaquín P.", r: "Startup de serviços · Bogotá", tag: "Experience", c: "#2bf59c" },
+      { q: "Site, e-commerce e sistema de estoque inteligente, com um radar de possíveis futuros clientes! Um sucesso.", n: "Gabriel M.", r: "Produtora de café · Brasil", tag: "Systems", c: "#4c8dff" },
+      { q: "Organizei minha empresa, comparei preços de fornecedores, automatizei mensagens e todo mundo me elogia pelo site! Obrigada, Nexa.", n: "Carola G.", r: "Empresa de produtos de couro · Córdoba", tag: "Intelligence", c: "#2de2d0" },
+      { q: "Destaco o carinho da equipe: todo o processo foi super personalizado e acompanhado. Minha agenda está 100% automatizada, desde marcar horários até remarcar e pagar. Muito obrigado ao Nexa team! 🚀🚀", n: "Lucas P.", r: "Pet shop de banho e tosa · Mendoza", tag: "Systems", c: "#4c8dff" },
+      { q: "A equipe da Nexa desenvolveu um radar de possíveis futuros clientes, com os pontos fracos de cada um e por onde entrar. Impecável! Seguimos fechando cada vez mais contratos. Muito obrigada.", n: "Franchesca A.", r: "Agência de marketing · Buenos Aires", tag: "Intelligence", c: "#2de2d0" },
+      { q: "Economizei tempo e dinheiro no acompanhamento dos meus processos. Agora tenho um sistema totalmente personalizado e ajustável. Recomendo a Nexa e sua equipe. Obrigado.", n: "Rafael L.", r: "Importadora · Brasil", tag: "Systems", c: "#4c8dff" },
     ],
   );
   const [i, setI] = useState(0);
@@ -49,14 +42,16 @@ export default function Testimonials() {
     if (root.current) io.observe(root.current);
     return () => io.disconnect();
   }, []);
+  // los textos largos quedan más tiempo en pantalla (~0,28 s por palabra)
+  const dur = Math.max(DUR, (items[i]?.q.split(" ").length ?? 0) * 280);
   useEffect(() => {
     if (paused || reduce.current) return;
     const t = setTimeout(() => {
       if (seen.current && !document.hidden) setI((x) => (x + 1) % items.length);
       setRun((r) => r + 1);
-    }, DUR);
+    }, dur);
     return () => clearTimeout(t);
-  }, [i, paused, run, items.length]);
+  }, [i, paused, run, items.length, dur]);
   // en celular, la persona activa queda a la vista dentro de la fila
   const list = useRef<HTMLUListElement>(null);
   useEffect(() => {
@@ -81,7 +76,7 @@ export default function Testimonials() {
                 <button type="button" role="tab" aria-selected={j === i} aria-controls="tm-quote" className={j === i ? "on" : ""} onClick={() => { setI(j); setRun((r) => r + 1); }} style={{ ["--pc" as string]: p.c }}>
                   <span className="tm2__av">{initials(p.n)}</span>
                   <span className="tm2__who"><b>{p.n}</b><small>{p.r}</small></span>
-                  {j === i && !paused && <span className="tm2__bar" aria-hidden><i key={`${i}-${run}`} style={{ animationDuration: `${DUR}ms` }} /></span>}
+                  {j === i && !paused && <span className="tm2__bar" aria-hidden><i key={`${i}-${run}`} style={{ animationDuration: `${dur}ms` }} /></span>}
                 </button>
               </li>
             ))}
