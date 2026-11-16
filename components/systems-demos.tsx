@@ -53,6 +53,8 @@ const ICONS = {
   search: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm9 3-4.3-4.3",
   eye: "M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
   gear: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.4-3a7.4 7.4 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14.5 3h-5l-.4 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7.4 7.4 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2l.4 2.6h5l.4-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z",
+  mega: "M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1zm13-3a5 5 0 0 1 0 8m3-11a9 9 0 0 1 0 14",
+  cash: "M3 6h18v12H3zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6.5 9.5h.01M17.5 14.5h.01",
   bell: "M6 16V11a6 6 0 1 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0",
 };
 const Icon = ({ d }: { d: keyof typeof ICONS }) => (
@@ -346,115 +348,327 @@ function BookingSystem() {
 
 /* --------------------------- 3 · RADAR COMERCIAL --------------------------- */
 type Lead = { n: string; c: string; r: string; s: number; sig: string[]; svc: string };
+type Deal = { id: string; n: string; v: string; st: number; who: string; hot?: boolean };
+type Conv = { id: string; n: string; ch: "wa" | "mail" | "ig"; unread: number; msgs: { out?: boolean; t: string; text: string }[]; ai: string };
+
+/* ------------------------------ 3 · VÉRTICE: gestión comercial completa ------------------------------ */
 function RadarSystem() {
   const L = useL();
   const toast = useToast();
-  const [tab, setTab] = useState<"leads" | "metrics" | "rivals">("leads");
-  const [crm, setCrm] = useState<Set<string>>(new Set());
-  const [pipe, setPipe] = useState(23);
+  const cur = L("$", "R$");
+  type Tab = "home" | "radar" | "crm" | "inbox" | "ads" | "fin";
+  const [tab, setTab] = useState<Tab>("home");
+  const [sub, setSub] = useState<"leads" | "rivals">("leads");
   const [scan, setScan] = useState(0);
+  const [inCrm, setInCrm] = useState<Set<string>>(new Set());
+  const STAGES = L(["Contactar", "Propuesta", "Negociación", "Ganado"], ["Contatar", "Proposta", "Negociação", "Ganho"]);
+  const [deals, setDeals] = useState<Deal[]>(L(
+    [
+      { id: "d1", n: "Panadería Trigo", v: `${cur} 850 mil`, st: 0, who: "VG" }, { id: "d2", n: "Óptica Central", v: `${cur} 1,2 M`, st: 1, who: "MS", hot: true },
+      { id: "d3", n: "Gimnasio Norte", v: `${cur} 640 mil`, st: 1, who: "VG" }, { id: "d4", n: "Vinoteca Malbec", v: `${cur} 2,1 M`, st: 2, who: "MS" },
+      { id: "d5", n: "Estudio Contable Paz", v: `${cur} 980 mil`, st: 3, who: "VG" },
+    ],
+    [
+      { id: "d1", n: "Padaria Trigo", v: `${cur} 18 mil`, st: 0, who: "VG" }, { id: "d2", n: "Ótica Central", v: `${cur} 24 mil`, st: 1, who: "MS", hot: true },
+      { id: "d3", n: "Academia Norte", v: `${cur} 12 mil`, st: 1, who: "VG" }, { id: "d4", n: "Adega Malbec", v: `${cur} 41 mil`, st: 2, who: "MS" },
+      { id: "d5", n: "Escritório Contábil Paz", v: `${cur} 19 mil`, st: 3, who: "VG" },
+    ],
+  ));
+  const [convs, setConvs] = useState<Conv[]>(L(
+    [
+      { id: "c1", n: "Óptica Central", ch: "wa", unread: 1, msgs: [{ t: "10:02", text: "Hola! Vimos la propuesta. ¿El sistema de turnos incluye recordatorios por WhatsApp?" }], ai: "¡Hola! Sí: cada paciente recibe un recordatorio 24 h antes y puede confirmar o reprogramar desde el mismo mensaje. ¿Te muestro una demo el jueves?" },
+      { id: "c2", n: "Vinoteca Malbec", ch: "mail", unread: 0, msgs: [{ t: "09:15", text: "Necesitamos que la tienda online se conecte con nuestro stock actual." }, { out: true, t: "09:40", text: "Perfecto, lo sumamos al alcance. Te mando el detalle hoy." }], ai: "Te adjunto el alcance actualizado con la conexión al stock. ¿Lo revisamos el viernes?" },
+      { id: "c3", n: "Gimnasio Norte", ch: "ig", unread: 0, msgs: [{ t: "Ayer", text: "¿Hacen apps para reservar clases?" }], ai: "¡Sí! Hacemos apps de reservas con pago online y lista de espera. ¿Cuántas clases por semana manejan?" },
+    ],
+    [
+      { id: "c1", n: "Ótica Central", ch: "wa", unread: 1, msgs: [{ t: "10:02", text: "Oi! Vimos a proposta. O sistema de agendamento inclui lembretes por WhatsApp?" }], ai: "Oi! Sim: cada paciente recebe um lembrete 24 h antes e pode confirmar ou remarcar na própria mensagem. Posso mostrar uma demo na quinta?" },
+      { id: "c2", n: "Adega Malbec", ch: "mail", unread: 0, msgs: [{ t: "09:15", text: "Precisamos que a loja online se conecte com nosso estoque atual." }, { out: true, t: "09:40", text: "Perfeito, incluímos no escopo. Envio o detalhe hoje." }], ai: "Segue o escopo atualizado com a integração ao estoque. Revisamos na sexta?" },
+      { id: "c3", n: "Academia Norte", ch: "ig", unread: 0, msgs: [{ t: "Ontem", text: "Vocês fazem apps para reservar aulas?" }], ai: "Sim! Fazemos apps de reservas com pagamento online e lista de espera. Quantas aulas por semana vocês têm?" },
+    ],
+  ));
+  const [open, setOpen] = useState("c1");
+  const [props, setProps] = useState<{ id: string; t: string; why: string; st?: "ok" | "no" }[]>(L(
+    [
+      { id: "p1", t: "Subir 20% el presupuesto de “Turnos para consultorios”", why: "Trae consultas a la mitad de costo que las otras campañas." },
+      { id: "p2", t: "Pausar el anuncio “Video institucional”", why: "Gastó 14% del presupuesto y no generó ninguna consulta en 10 días." },
+    ],
+    [
+      { id: "p1", t: "Aumentar 20% o orçamento de “Agenda para clínicas”", why: "Traz consultas pela metade do custo das outras campanhas." },
+      { id: "p2", t: "Pausar o anúncio “Vídeo institucional”", why: "Gastou 14% do orçamento e não gerou nenhuma consulta em 10 dias." },
+    ],
+  ));
+  const [done, setDone] = useState<Set<number>>(new Set());
+
   const LEADS: Lead[] = L(
     [
       { n: "Café Aurora", c: "Cafetería · Palermo", r: "4,7 (512)", s: 86, sig: ["Sin web", "Mucha demanda"], svc: "Web con pedidos online" },
       { n: "Estudio Dental Lumen", c: "Odontología · Belgrano", r: "4,8 (230)", s: 79, sig: ["Web caída", "Turnos por teléfono"], svc: "Sistema de turnos" },
       { n: "Ferretería Roca", c: "Comercio · Rosario", r: "4,5 (318)", s: 71, sig: ["Solo Instagram"], svc: "Tienda online" },
       { n: "Kinesio Vital", c: "Salud · Córdoba", r: "4,6 (97)", s: 64, sig: ["Web sin celular"], svc: "Rediseño web" },
-      { n: "Lavadero Blanco", c: "Servicios · La Plata", r: "4,4 (151)", s: 58, sig: ["Sin WhatsApp"], svc: "Asistente de WhatsApp" },
     ],
     [
       { n: "Café Aurora", c: "Cafeteria · Pinheiros", r: "4,7 (512)", s: 86, sig: ["Sem site", "Muita demanda"], svc: "Site com pedidos online" },
       { n: "Clínica Dental Lumen", c: "Odontologia · Moema", r: "4,8 (230)", s: 79, sig: ["Site fora do ar", "Agenda por telefone"], svc: "Sistema de agendamento" },
       { n: "Ferragens Roca", c: "Comércio · Curitiba", r: "4,5 (318)", s: 71, sig: ["Só Instagram"], svc: "Loja online" },
       { n: "Fisio Vital", c: "Saúde · Campinas", r: "4,6 (97)", s: 64, sig: ["Site sem versão mobile"], svc: "Redesign do site" },
-      { n: "Lavanderia Branca", c: "Serviços · Santos", r: "4,4 (151)", s: 58, sig: ["Sem WhatsApp"], svc: "Assistente de WhatsApp" },
     ],
   );
   const RIV = L(
     [["@estudio.orbita", "12,4 mil", 2.1, "Reels de casos", [3, 5, 2, 6, 4, 7, 5]], ["@agencia.pulso", "8,7 mil", 4.8, "Tutoriales cortos", [6, 4, 7, 8, 6, 9, 10]], ["@lab.nodo", "3,2 mil", 0.6, "Carruseles", [2, 1, 3, 2, 2, 3, 2]]],
     [["@estudio.orbita", "12,4 mil", 2.1, "Reels de cases", [3, 5, 2, 6, 4, 7, 5]], ["@agencia.pulso", "8,7 mil", 4.8, "Tutoriais curtos", [6, 4, 7, 8, 6, 9, 10]], ["@lab.nodo", "3,2 mil", 0.6, "Carrosséis", [2, 1, 3, 2, 2, 3, 2]]],
   ) as [string, string, number, string, number[]][];
-  // búsqueda en vivo: los prospectos aparecen de a uno mientras se analizan
-  const ref = useLive(() => setScan((s) => (s >= LEADS.length ? s : s + 1)), 900);
-  const send = (n: string) => {
-    setCrm((x) => new Set(x).add(n));
-    setPipe((p) => p + 1);
-    toast.show(L(`${n} pasó al CRM · etapa “Contactar”`, `${n} foi para o CRM · etapa “Contatar”`));
+  const RECO = L(
+    [
+      ["Llamá a Óptica Central hoy", "Abrió la propuesta 3 veces desde ayer.", "Alto"],
+      ["Ofrecé “Sistema de turnos” a 6 consultorios del radar", "Tienen mucha demanda y reservan por teléfono.", "Alto"],
+      ["Publicá un caso de éxito en Instagram", "La competencia que más crece muestra casos reales.", "Medio"],
+    ],
+    [
+      ["Ligue para a Ótica Central hoje", "Abriu a proposta 3 vezes desde ontem.", "Alto"],
+      ["Ofereça “Agendamento” a 6 clínicas do radar", "Têm muita demanda e agendam por telefone.", "Alto"],
+      ["Publique um case de sucesso no Instagram", "A concorrência que mais cresce mostra cases reais.", "Médio"],
+    ],
+  );
+
+  const tick = useRef(0);
+  const ref = useLive(() => {
+    if (tab === "radar" && sub === "leads") { setScan((s) => Math.min(LEADS.length, s + 1)); return; }
+    const s = tick.current++ % 3;
+    if (tab === "crm") {
+      // entra una consulta nueva o avanza una oportunidad, sin vaciar el embudo
+      const NEW = L(["Pastelería Dulce", "Taller Mecánico Sur", "Hotel Andino"], ["Confeitaria Doce", "Oficina Mecânica Sul", "Hotel Andino"]);
+      setDeals((ds) => {
+        const fresh = NEW.find((n) => !ds.some((d) => d.n === n));
+        if (s === 0 && fresh && ds.filter((d) => d.st === 0).length < 3) {
+          toast.show(L(`Nueva consulta desde la web: ${fresh}`, `Nova consulta pelo site: ${fresh}`));
+          return [{ id: fresh, n: fresh, v: L(`${cur} a cotizar`, `${cur} a orçar`), st: 0, who: "MS" }, ...ds];
+        }
+        const won = ds.filter((d) => d.st === 3).length;
+        const i = ds.findIndex((d) => d.st < 3 && (won < 3 || d.st < 2));
+        if (i < 0) return ds;
+        const d = ds[i]!;
+        toast.show(L(`${d.n} avanzó a “${STAGES[d.st + 1]}”`, `${d.n} avançou para “${STAGES[d.st + 1]}”`));
+        return ds.map((x, j) => (j === i ? { ...x, st: x.st + 1 } : x));
+      });
+    } else if (s === 1) {
+      setConvs((cs) => cs.map((c) => (c.id === "c3" && c.msgs.length < 3 ? { ...c, unread: c.unread + 1, msgs: [...c.msgs, { t: now(), text: L("Son unas 40 clases por semana, en 2 sedes.", "São umas 40 aulas por semana, em 2 unidades.") }] } : c)));
+    }
+  }, 2600);
+
+  const toCrm = (l: Lead) => {
+    setInCrm((x) => new Set(x).add(l.n));
+    setDeals((ds) => [{ id: l.n, n: l.n, v: L(`${cur} a cotizar`, `${cur} a orçar`), st: 0, who: "VG", hot: true }, ...ds]);
+    toast.show(L(`${l.n} pasó al CRM · etapa “Contactar”`, `${l.n} foi para o CRM · etapa “Contatar”`));
     track("systems_demo_action", { system: "radar", action: "crm" });
   };
-  const pts = [12, 18, 15, 22, 28, 24, 31, 35, 33, 41, 46, 52];
-  const max = Math.max(...pts);
-  const line = pts.map((v, i) => `${i ? "L" : "M"}${(i / 11) * 300},${90 - (v / max) * 78}`).join(" ");
+  const conv = convs.find((c) => c.id === open)!;
+  const reply = () => {
+    setConvs((cs) => cs.map((c) => (c.id === open ? { ...c, unread: 0, msgs: [...c.msgs, { out: true, t: now(), text: c.ai }], ai: "" } : c)));
+    toast.show(L("Respuesta enviada", "Resposta enviada"));
+    track("systems_demo_action", { system: "radar", action: "reply" });
+  };
+  const unread = convs.reduce((n, c) => n + c.unread, 0);
+  const won = deals.filter((d) => d.st === 3).length;
   const nav: Nav[] = [
-    { k: "leads", label: L("Prospectos", "Prospects"), icon: "search" }, { k: "metrics", label: L("Métricas", "Métricas"), icon: "chart" },
-    { k: "rivals", label: L("Competencia", "Concorrência"), icon: "eye" }, { k: "crm", label: "CRM", icon: "users" },
+    { k: "home", label: L("Inicio", "Início"), icon: "home" }, { k: "radar", label: "Radar", icon: "search" }, { k: "crm", label: "CRM", icon: "users" },
+    { k: "inbox", label: L("Bandeja", "Caixa de entrada"), icon: "chat" }, { k: "ads", label: L("Publicidad", "Anúncios"), icon: "mega" }, { k: "fin", label: L("Finanzas", "Finanças"), icon: "cash" },
   ];
-  const titles = { leads: L("Prospectos", "Prospects"), metrics: L("Métricas", "Métricas"), rivals: L("Competencia", "Concorrência") };
+  const title = nav.find((n) => n.k === tab)!.label;
+  const fin = [[42, 28], [48, 30], [45, 31], [58, 33], [63, 34], [71, 36]];
+  const finMax = 75;
+  const months = L(["jun", "jul", "ago", "sep", "oct", "nov"], ["jun", "jul", "ago", "set", "out", "nov"]);
+  const ch = { wa: "WhatsApp", mail: "Mail", ig: "Instagram" } as const;
+
   return (
     <div ref={ref} className="ap-wrap">
       <Shell brand="Vértice" logo={<Mark c1="#8b5cf6" c2="#4c8dff" shape="vx" />} url="app.vertice.studio" nav={nav} active={tab}
-        onNav={(k) => { if (k !== "crm") setTab(k as typeof tab); }} title={titles[tab]} sub={L(`CRM: ${pipe} oportunidades abiertas`, `CRM: ${pipe} oportunidades abertas`)} user="VG" bell={crm.size}>
+        onNav={(k) => setTab(k as Tab)} title={title} sub={L(`${deals.filter((d) => d.st < 3).length} oportunidades abiertas · ${won} ganadas este mes`, `${deals.filter((d) => d.st < 3).length} oportunidades abertas · ${won} ganhas este mês`)} user="VG" bell={unread}>
         <div className="ap-tabs" role="tablist">
-          {(["leads", "metrics", "rivals"] as const).map((k) => (
-            <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => setTab(k)}>{titles[k]}</button>
+          {nav.map((n) => (
+            <button key={n.k} type="button" role="tab" aria-selected={tab === n.k} className={tab === n.k ? "on" : ""} onClick={() => setTab(n.k as Tab)}>
+              {n.label}{n.k === "inbox" && unread > 0 && <em className="ap-dot">{unread}</em>}
+            </button>
           ))}
         </div>
-        {tab === "leads" && (
-          <div className="ap-col">
-            <div className="ap-query">
-              <span><small>{L("Rubro", "Segmento")}</small>{L("Comercios y salud", "Comércio e saúde")}</span>
-              <span><small>{L("Zona", "Região")}</small>{L("Buenos Aires y alrededores", "São Paulo e região")}</span>
-              <span className="ap-query__st">{scan < LEADS.length ? <><i className="spin" />{L(`Analizando negocios… ${scan}/${LEADS.length}`, `Analisando negócios… ${scan}/${LEADS.length}`)}</> : L(`${LEADS.length} oportunidades encontradas`, `${LEADS.length} oportunidades encontradas`)}</span>
-            </div>
-            <ul className="ap-leads">
-              {LEADS.slice(0, Math.max(scan, 0)).map((l) => (
-                <li key={l.n}>
-                  <span className="ap-ring" style={{ ["--p" as string]: l.s }}><b>{l.s}</b></span>
-                  <div className="ap-leads__id"><b>{l.n}</b><small>{l.c} · ★ {l.r}</small></div>
-                  <div className="ap-leads__sig">{l.sig.map((s) => <span key={s} className="ap-chip ap-chip--warn">{s}</span>)}<em>{L("Ofrecer:", "Oferecer:")} {l.svc}</em></div>
-                  {crm.has(l.n) ? <span className="ap-chip ap-chip--ok">✓ {L("En el CRM", "No CRM")}</span> : <button type="button" className="ap-btn ap-btn--pri" onClick={() => send(l.n)}>{L("Pasar al CRM", "Enviar ao CRM")}</button>}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {tab === "metrics" && (
+
+        {tab === "home" && (
           <div className="ap-col">
             <div className="ap-kpis ap-kpis--4">
-              {[[L("Visitas a la web", "Visitas ao site"), "4.820", "+12%"], [L("Consultas", "Consultas"), "64", "+9%"], [L("Propuestas", "Propostas"), "19", "+4"], [L("Ventas", "Vendas"), "11", "+3"]].map(([k, v, d]) => (
-                <div key={k}><small>{k}</small><b>{v}</b><em className="up">{d}</em></div>
+              {[[L("Consultas (semana)", "Consultas (semana)"), "18", "+6"], [L("Propuestas abiertas", "Propostas abertas"), String(deals.filter((d) => d.st > 0 && d.st < 3).length), ""], [L("Ventas del mes", "Vendas do mês"), L(`${cur} 4,9 M`, `${cur} 98 mil`), "+22%"], [L("Caja", "Caixa"), L(`${cur} 3,1 M`, `${cur} 61 mil`), "+8%"]].map(([k, v, d]) => (
+                <div key={k}><small>{k}</small><b>{v}</b>{d && <em className="up">{d}</em>}</div>
               ))}
             </div>
             <div className="ap-card">
-              <div className="ap-card__h"><b>{L("Consultas por semana", "Consultas por semana")}</b><small>{L("últimas 12 semanas", "últimas 12 semanas")}</small></div>
-              <svg viewBox="0 0 300 95" className="ap-chart" role="img" aria-label={L("Consultas por semana, en subida", "Consultas por semana, em alta")}>
-                <defs><linearGradient id="apg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#6d5cf6" stopOpacity=".28" /><stop offset="1" stopColor="#6d5cf6" stopOpacity="0" /></linearGradient></defs>
-                {[20, 45, 70].map((y) => <line key={y} x1="0" x2="300" y1={y} y2={y} stroke="#e7e8ee" />)}
-                <path d={`${line} L300,95 L0,95 Z`} fill="url(#apg)" />
-                <path d={line} fill="none" stroke="#6d5cf6" strokeWidth="2.2" className="ap-line" pathLength={1} />
-              </svg>
+              <div className="ap-card__h"><b>{L("Movimientos para vender más esta semana", "Movimentos para vender mais esta semana")}</b><small>{L("los arma el sistema con tus datos", "o sistema monta com seus dados")}</small></div>
+              <ul className="ap-reco">
+                {RECO.map(([t, w, imp], i) => (
+                  <li key={t} className={done.has(i) ? "done" : ""}>
+                    <span className="ap-reco__n">{done.has(i) ? "✓" : i + 1}</span>
+                    <div><b>{t}</b><small>{w}</small></div>
+                    <span className={`ap-chip ${imp === "Alto" ? "ap-chip--ok" : "ap-chip--blue"}`}>{L("Impacto", "Impacto")} {imp!.toLowerCase()}</span>
+                    <button type="button" className="ap-btn" disabled={done.has(i)} onClick={() => { setDone((x) => new Set(x).add(i)); toast.show(L("Marcado como hecho", "Marcado como feito")); }}>{done.has(i) ? L("Hecho", "Feito") : L("Hacer", "Fazer")}</button>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div className="ap-card">
-              <div className="ap-card__h"><b>{L("¿De dónde vienen?", "De onde vêm?")}</b></div>
-              {[["Google", 46], ["Instagram", 31], [L("Recomendados", "Indicações"), 15], ["WhatsApp", 8]].map(([k, v]) => (
-                <div key={k as string} className="ap-bar"><span>{k}</span><i><s style={{ width: `${v}%` }} /></i><b>{v}%</b></div>
-              ))}
+            <div className="ap-alerts2">
+              <div><b>{L("2 cuotas vencen esta semana", "2 parcelas vencem esta semana")}</b><small>{L("Vinoteca Malbec y Estudio Contable Paz", "Adega Malbec e Escritório Contábil Paz")}</small></div>
+              <div><b>{L(`${unread || 1} mensaje${unread === 1 ? "" : "s"} sin responder`, `${unread || 1} mensage${unread === 1 ? "m" : "ns"} sem resposta`)}</b><small>{L("con respuesta sugerida lista para enviar", "com resposta sugerida pronta para enviar")}</small></div>
             </div>
           </div>
         )}
-        {tab === "rivals" && (
+
+        {tab === "radar" && (
           <div className="ap-col">
-            <div className="ap-insight"><b>{L("Lo que está funcionando", "O que está funcionando")}</b>{L("@agencia.pulso creció 4,8% este mes publicando tutoriales cortos tres veces por semana.", "@agencia.pulso cresceu 4,8% este mês publicando tutoriais curtos três vezes por semana.")}</div>
-            <ul className="ap-rivals">
-              {RIV.map(([h, f, g, topic, bars]) => (
-                <li key={h}>
-                  <span className="ap-rivals__av">{h[1]!.toUpperCase()}</span>
-                  <div><b>{h}</b><small>{f} {L("seguidores", "seguidores")}</small></div>
-                  <em className={g > 1 ? "up" : ""}>+{String(g).replace(".", ",")}%</em>
-                  <span className="ap-spark" aria-hidden>{bars.map((b, i) => <i key={i} style={{ height: `${b * 10}%` }} />)}</span>
-                  <span className="ap-chip">{topic}</span>
+            <div className="ap-seg" role="group">
+              <button type="button" className={sub === "leads" ? "on" : ""} onClick={() => setSub("leads")}>{L("Buscar clientes", "Buscar clientes")}</button>
+              <button type="button" className={sub === "rivals" ? "on" : ""} onClick={() => setSub("rivals")}>{L("Competencia", "Concorrência")}</button>
+            </div>
+            {sub === "leads" ? (
+              <>
+                <div className="ap-query">
+                  <span><small>{L("Rubro", "Segmento")}</small>{L("Comercios y salud", "Comércio e saúde")}</span>
+                  <span><small>{L("Zona", "Região")}</small>{L("Buenos Aires y alrededores", "São Paulo e região")}</span>
+                  <span className="ap-query__st">{scan < LEADS.length ? <><i className="spin" />{L(`Analizando negocios… ${scan}/${LEADS.length}`, `Analisando negócios… ${scan}/${LEADS.length}`)}</> : L(`${LEADS.length} oportunidades encontradas`, `${LEADS.length} oportunidades encontradas`)}</span>
+                </div>
+                <ul className="ap-leads">
+                  {LEADS.slice(0, scan).map((l) => (
+                    <li key={l.n}>
+                      <span className="ap-ring" style={{ ["--p" as string]: l.s }}><b>{l.s}</b></span>
+                      <div className="ap-leads__id"><b>{l.n}</b><small>{l.c} · ★ {l.r}</small></div>
+                      <div className="ap-leads__sig">{l.sig.map((s) => <span key={s} className="ap-chip ap-chip--warn">{s}</span>)}<em>{L("Ofrecer:", "Oferecer:")} {l.svc}</em></div>
+                      {inCrm.has(l.n) ? <span className="ap-chip ap-chip--ok">✓ {L("En el CRM", "No CRM")}</span> : <button type="button" className="ap-btn ap-btn--pri" onClick={() => toCrm(l)}>{L("Pasar al CRM", "Enviar ao CRM")}</button>}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <>
+                <div className="ap-insight"><b>{L("Lo que está funcionando", "O que está funcionando")}</b>{L("@agencia.pulso creció 4,8% este mes publicando tutoriales cortos tres veces por semana.", "@agencia.pulso cresceu 4,8% este mês publicando tutoriais curtos três vezes por semana.")}</div>
+                <ul className="ap-rivals">
+                  {RIV.map(([h, f, g, topic, bars]) => (
+                    <li key={h}>
+                      <span className="ap-rivals__av">{h[1]!.toUpperCase()}</span>
+                      <div><b>{h}</b><small>{f} {L("seguidores", "seguidores")}</small></div>
+                      <em className={g > 1 ? "up" : ""}>+{String(g).replace(".", ",")}%</em>
+                      <span className="ap-spark" aria-hidden>{bars.map((b, i) => <i key={i} style={{ height: `${b * 10}%` }} />)}</span>
+                      <span className="ap-chip">{topic}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        )}
+
+        {tab === "crm" && (
+          <div className="ap-kan">
+            {STAGES.map((s, i) => {
+              const ds = deals.filter((d) => d.st === i);
+              return (
+                <div key={s} className={`ap-kan__col${i === 3 ? " won" : ""}`}>
+                  <p>{s}<span>{ds.length}</span></p>
+                  {ds.map((d) => (
+                    <button key={d.id} type="button" className="ap-kan__card" disabled={i === 3} title={i < 3 ? L("Tocá para avanzar de etapa", "Toque para avançar de etapa") : undefined}
+                      onClick={() => { setDeals((x) => x.map((y) => (y.id === d.id ? { ...y, st: y.st + 1 } : y))); track("systems_demo_action", { system: "radar", action: "stage" }); }}>
+                      <b>{d.n}</b>
+                      <small>{d.v}</small>
+                      <span><i className="ap-av">{d.who}</i>{d.hot && <em className="ap-chip ap-chip--warn">{L("Caliente", "Quente")}</em>}</span>
+                    </button>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {tab === "inbox" && (
+          <div className="ap-inbox">
+            <ul>
+              {convs.map((c) => (
+                <li key={c.id}>
+                  <button type="button" className={c.id === open ? "on" : ""} onClick={() => { setOpen(c.id); setConvs((cs) => cs.map((x) => (x.id === c.id ? { ...x, unread: 0 } : x))); }}>
+                    <i className={`ap-ch ap-ch--${c.ch}`}>{ch[c.ch][0]}</i>
+                    <span><b>{c.n}</b><small>{c.msgs.at(-1)!.text}</small></span>
+                    {c.unread > 0 && <em className="ap-dot">{c.unread}</em>}
+                  </button>
                 </li>
               ))}
             </ul>
+            <div className="ap-thread">
+              <div className="ap-thread__h"><b>{conv.n}</b><small>{ch[conv.ch]} · {L("vinculado al CRM", "vinculado ao CRM")}</small></div>
+              <div className="ap-thread__body">
+                {conv.msgs.map((m, i) => <p key={i} className={m.out ? "out" : ""}>{m.text}<small>{m.t}</small></p>)}
+              </div>
+              {conv.ai ? (
+                <div className="ap-suggest">
+                  <small>✦ {L("Respuesta sugerida", "Resposta sugerida")}</small>
+                  <p>{conv.ai}</p>
+                  <button type="button" className="ap-btn ap-btn--pri" onClick={reply}>{L("Enviar", "Enviar")}</button>
+                </div>
+              ) : <p className="ap-thread__ok">✓ {L("Al día", "Em dia")}</p>}
+            </div>
+          </div>
+        )}
+
+        {tab === "ads" && (
+          <div className="ap-col">
+            <div className="ap-kpis">
+              {[[L("Inversión (30 días)", "Investimento (30 dias)"), L(`${cur} 420 mil`, `${cur} 8,4 mil`)], [L("Consultas", "Consultas"), "57"], [L("Costo por consulta", "Custo por consulta"), L(`${cur} 7.370`, `${cur} 147`)]].map(([k, v]) => (
+                <div key={k}><small>{k}</small><b>{v}</b></div>
+              ))}
+            </div>
+            <table className="ap-table">
+              <thead><tr><th>{L("Campaña", "Campanha")}</th><th>{L("Consultas", "Consultas")}</th><th className="hide-s">{L("Costo/consulta", "Custo/consulta")}</th></tr></thead>
+              <tbody>
+                {L(
+                  [["Turnos para consultorios · Meta", "31", "$ 4.900"], ["Sistemas a medida · Google", "19", "$ 9.800"], ["Video institucional · Meta", "0", "—"]],
+                  [["Agenda para clínicas · Meta", "31", "R$ 98"], ["Sistemas sob medida · Google", "19", "R$ 196"], ["Vídeo institucional · Meta", "0", "—"]],
+                ).map(([a, b, c]) => <tr key={a} className={b === "0" ? "low" : ""}><td>{a}</td><td>{b}</td><td className="hide-s">{c}</td></tr>)}
+              </tbody>
+            </table>
+            <div className="ap-card">
+              <div className="ap-card__h"><b>{L("El sistema propone, vos aprobás", "O sistema propõe, você aprova")}</b></div>
+              <ul className="ap-props">
+                {props.map((p) => (
+                  <li key={p.id}>
+                    <div><b>{p.t}</b><small>{p.why}</small></div>
+                    {p.st ? <span className={`ap-chip ${p.st === "ok" ? "ap-chip--ok" : ""}`}>{p.st === "ok" ? L("✓ Aprobado y aplicado", "✓ Aprovado e aplicado") : L("Descartado", "Descartado")}</span> : (
+                      <span className="ap-props__b">
+                        <button type="button" className="ap-btn" onClick={() => setProps((x) => x.map((y) => (y.id === p.id ? { ...y, st: "no" } : y)))}>{L("Descartar", "Descartar")}</button>
+                        <button type="button" className="ap-btn ap-btn--pri" onClick={() => { setProps((x) => x.map((y) => (y.id === p.id ? { ...y, st: "ok" } : y))); toast.show(L("Cambio aplicado en la campaña", "Alteração aplicada na campanha")); track("systems_demo_action", { system: "radar", action: "approve" }); }}>{L("Aprobar", "Aprovar")}</button>
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {tab === "fin" && (
+          <div className="ap-col">
+            <div className="ap-kpis">
+              {[[L("Ingresos (nov)", "Receitas (nov)"), L(`${cur} 7,1 M`, `${cur} 142 mil`), "+13%"], [L("Gastos (nov)", "Despesas (nov)"), L(`${cur} 3,6 M`, `${cur} 72 mil`), ""], [L("Resultado", "Resultado"), L(`${cur} 3,5 M`, `${cur} 70 mil`), "+19%"]].map(([k, v, d]) => (
+                <div key={k}><small>{k}</small><b>{v}</b>{d && <em className="up">{d}</em>}</div>
+              ))}
+            </div>
+            <div className="ap-split">
+              <div className="ap-card">
+                <div className="ap-card__h"><b>{L("Flujo de caja", "Fluxo de caixa")}</b><small>{L("ingresos y gastos", "receitas e despesas")}</small></div>
+                <div className="ap-flow" role="img" aria-label={L("Ingresos creciendo más que los gastos", "Receitas crescendo mais que as despesas")}>
+                  {fin.map(([a, b], i) => (
+                    <span key={i}><i style={{ height: `${(a! / finMax) * 100}%` }} /><i className="g" style={{ height: `${(b! / finMax) * 100}%` }} /><small>{months[i]}</small></span>
+                  ))}
+                </div>
+              </div>
+              <div className="ap-card">
+                <div className="ap-card__h"><b>{L("Margen por proyecto", "Margem por projeto")}</b></div>
+                {L([["Vinoteca Malbec", 48], ["Estudio Contable Paz", 36], ["Óptica Central", 22]], [["Adega Malbec", 48], ["Escritório Contábil Paz", 36], ["Ótica Central", 22]]).map(([k, v]) => (
+                  <div key={k as string} className="ap-bar"><span>{k}</span><i><s style={{ width: `${(v as number) * 2}%` }} /></i><b>{v}%</b></div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
         {toast.node}
@@ -468,7 +682,7 @@ export function SystemsDemo() {
   const SYS = [
     { k: "stock", name: L("Stock y pedidos", "Estoque e pedidos"), desc: L("Rivera Insumos vende packaging a comercios. Su sistema descuenta el stock con cada venta, contesta solo las consultas por WhatsApp y prepara el pedido al proveedor antes de quedarse sin mercadería.", "A Rivera Insumos vende embalagens para o comércio. O sistema baixa o estoque a cada venda, responde sozinho as consultas no WhatsApp e prepara o pedido ao fornecedor antes de faltar mercadoria.") },
     { k: "turnos", name: L("Turnos", "Agendamentos"), desc: L("Odonto Prisma tiene dos profesionales y la agenda siempre llena. Los pacientes reservan desde la web, confirman por WhatsApp y, si alguien cancela, el hueco se ofrece solo a la lista de espera.", "A Odonto Prisma tem dois profissionais e a agenda sempre cheia. Os pacientes reservam pelo site, confirmam pelo WhatsApp e, se alguém cancela, a vaga é oferecida sozinha à lista de espera.") },
-    { k: "radar", name: L("Clientes y competencia", "Clientes e concorrência"), desc: L("Vértice es un estudio que busca clientes todos los meses. Su radar encuentra negocios que necesitan sus servicios, mide qué canal trae más consultas y sigue lo que hace la competencia.", "A Vértice é um estúdio que busca clientes todo mês. O radar encontra negócios que precisam dos seus serviços, mede qual canal traz mais consultas e acompanha o que a concorrência faz.") },
+    { k: "radar", name: L("Gestión comercial", "Gestão comercial"), desc: L("Vértice es un estudio que vende servicios todos los meses. Su sistema busca negocios que necesitan lo que ofrece, los sigue en el CRM, junta WhatsApp, mail e Instagram en una sola bandeja con respuestas sugeridas, propone mejoras en los anuncios para aprobar y muestra la caja y el margen de cada proyecto.", "A Vértice é um estúdio que vende serviços todo mês. O sistema encontra negócios que precisam do que ela oferece, acompanha tudo no CRM, reúne WhatsApp, e-mail e Instagram numa só caixa com respostas sugeridas, propõe melhorias nos anúncios para aprovar e mostra o caixa e a margem de cada projeto.") },
   ];
   const [k, setK] = useState(SYS[0]!.k);
   const s = SYS.find((x) => x.k === k)!;

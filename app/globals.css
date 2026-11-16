@@ -1675,6 +1675,60 @@ tr.low .ap-qty s { background: #e8890c; }
 @keyframes apGrowY { from { transform: scaleY(0); } }
 .ap-toast { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 5; padding: 9px 14px; border-radius: 10px; background: #1f2329; color: #fff; font-size: 12px; white-space: nowrap; box-shadow: 0 10px 30px rgba(0,0,0,.25); animation: apToast 2.6s var(--ease) both; }
 @keyframes apToast { 0% { opacity: 0; transform: translate(-50%, 8px); } 10%, 85% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, 4px); } }
+/* Vértice: gestión comercial completa */
+.ap-dot { display: inline-grid; place-items: center; min-width: 16px; height: 16px; margin-left: 6px; padding: 0 4px; border-radius: 999px; background: #e5484d; color: #fff; font: 600 10px var(--sans); font-style: normal; }
+.ap-reco { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ap-reco li { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 9px; background: #f8f9fb; font-size: 12.5px; transition: opacity .3s; }
+.ap-reco li.done { opacity: .55; }
+.ap-reco li b { display: block; font-weight: 600; } .ap-reco li small { color: var(--ap-mute); font-size: 11px; }
+.ap-reco__n { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; background: #1f2329; color: #fff; font-size: 11px; font-weight: 600; }
+.ap-alerts2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ap-alerts2 > div { padding: 9px 11px; border-radius: 10px; background: #fff8ec; border: 1px solid #f6e3c2; font-size: 12px; }
+.ap-alerts2 > div:last-child { background: #eef4ff; border-color: #d9e5fb; }
+.ap-alerts2 b { display: block; font-weight: 600; } .ap-alerts2 small { color: var(--ap-mute); font-size: 11px; }
+.ap-seg { display: inline-flex; align-self: flex-start; padding: 3px; border-radius: 9px; background: #eceef2; gap: 2px; }
+.ap-seg button { border: 0; background: none; padding: 5px 11px; border-radius: 7px; font: 500 12px var(--sans); color: var(--ap-mute); cursor: pointer; }
+.ap-seg button.on { background: #fff; color: var(--ap-text); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.ap-kan { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; align-items: start; }
+.ap-kan__col { display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 10px; background: #eef0f3; min-height: 260px; }
+.ap-kan__col.won { background: #e7f5ee; }
+.ap-kan__col > p { margin: 0 2px 2px; display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 600; color: #3c424c; }
+.ap-kan__col > p span { color: var(--ap-mute); font-weight: 500; }
+.ap-kan__card { display: flex; flex-direction: column; gap: 3px; padding: 8px 9px; border-radius: 8px; border: 1px solid var(--ap-line); background: #fff; text-align: left; font: inherit; color: inherit; cursor: pointer; animation: apIn .45s var(--ease); transition: border-color .2s, transform .2s; }
+.ap-kan__card:hover:not(:disabled) { border-color: #b9bec8; transform: translateY(-1px); }
+.ap-kan__card:disabled { cursor: default; }
+.ap-kan__card b { font-size: 12px; font-weight: 600; } .ap-kan__card small { font-size: 11px; color: var(--ap-mute); }
+.ap-kan__card > span { display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+.ap-kan__card .ap-av { width: 20px; height: 20px; font-size: 9px; font-style: normal; }
+.ap-kan__card .ap-chip { font-size: 10px; padding: 2px 6px; }
+.ap-inbox { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 8px; min-height: 300px; }
+.ap-inbox > ul { list-style: none; margin: 0; padding: 4px; display: flex; flex-direction: column; gap: 2px; background: #fff; border: 1px solid var(--ap-line); border-radius: 10px; }
+.ap-inbox > ul button { width: 100%; display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 7px 8px; border: 0; border-radius: 8px; background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.ap-inbox > ul button.on { background: #eef0f4; }
+.ap-inbox > ul b { display: block; font-size: 12px; font-weight: 600; } .ap-inbox > ul small { display: block; font-size: 11px; color: var(--ap-mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ap-ch { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; color: #fff; font: 600 11px var(--sans); font-style: normal; }
+.ap-ch--wa { background: #25a75c; } .ap-ch--mail { background: #4c6ef5; } .ap-ch--ig { background: linear-gradient(135deg, #f58529, #dd2a7b 55%, #8134af); }
+.ap-thread { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--ap-line); border-radius: 10px; min-width: 0; }
+.ap-thread__h { padding: 9px 12px; border-bottom: 1px solid var(--ap-line); font-size: 12.5px; }
+.ap-thread__h b { display: block; font-weight: 600; } .ap-thread__h small { color: var(--ap-mute); font-size: 11px; }
+.ap-thread__body { flex: 1; display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; }
+.ap-thread__body p { margin: 0; max-width: 82%; padding: 7px 10px; border-radius: 10px 10px 10px 3px; background: #f1f2f5; font-size: 12px; line-height: 1.4; animation: apIn .4s var(--ease); }
+.ap-thread__body p.out { align-self: flex-end; border-radius: 10px 10px 3px 10px; background: #1f2329; color: #fff; }
+.ap-thread__body p small { display: block; margin-top: 2px; font-size: 10px; opacity: .6; }
+.ap-thread__ok { margin: 0; padding: 10px 12px; border-top: 1px solid var(--ap-line); font-size: 12px; color: #0f6b4c; }
+.ap-suggest { margin: 0 10px 10px; padding: 9px 10px; border-radius: 10px; background: linear-gradient(135deg, #f3f0ff, #eaf2ff); border: 1px solid #e1dbff; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; align-items: end; }
+.ap-suggest small { grid-column: 1 / -1; font-size: 10.5px; font-weight: 600; color: #5b4bd6; }
+.ap-suggest p { margin: 0; font-size: 12px; line-height: 1.4; color: #2f2a55; }
+.ap-props { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ap-props li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 9px; background: #f8f9fb; font-size: 12.5px; }
+.ap-props li b { display: block; font-weight: 600; } .ap-props li small { color: var(--ap-mute); font-size: 11px; }
+.ap-props__b { display: flex; gap: 6px; }
+.ap-flow { display: flex; align-items: flex-end; gap: 10px; height: 130px; padding-top: 6px; }
+.ap-flow > span { flex: 1; height: 100%; display: flex; align-items: flex-end; justify-content: center; gap: 3px; position: relative; padding-bottom: 16px; }
+.ap-flow i { width: 38%; max-width: 14px; border-radius: 3px 3px 0 0; background: #12a37a; animation: apGrow .8s var(--ease) both; }
+.ap-flow i.g { background: #f08a6b; }
+.ap-flow small { position: absolute; bottom: 0; font-size: 10.5px; color: var(--ap-mute); }
+@keyframes apGrow { from { transform: scaleY(0); transform-origin: bottom; } to { transform: scaleY(1); transform-origin: bottom; } }
 /* ventanas angostas (la columna de la home y el celular) */
 @container (max-width: 700px) {
   .ap-split { grid-template-columns: minmax(0, 1fr) 200px; }
@@ -1687,9 +1741,18 @@ tr.low .ap-qty s { background: #e8890c; }
   .ap-rivals li { grid-template-columns: 34px minmax(0, 1fr) 54px; }
   .ap-rivals li .ap-spark, .ap-rivals li .ap-chip { display: none; }
   .ap-kpis--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ap-kan { grid-template-columns: repeat(4, 150px); overflow-x: auto; padding-bottom: 4px; }
+  .ap-inbox { grid-template-columns: 170px minmax(0, 1fr); }
+  .ap-reco li { grid-template-columns: 24px minmax(0, 1fr) auto; }
+  .ap-reco li .ap-chip { display: none; }
 }
 @container (max-width: 560px) {
   .ap-split { grid-template-columns: minmax(0, 1fr); }
+  .ap-inbox { grid-template-columns: minmax(0, 1fr); }
+  .ap-inbox > ul { flex-direction: row; overflow-x: auto; }
+  .ap-inbox > ul li { flex: 0 0 170px; }
+  .ap-alerts2 { grid-template-columns: minmax(0, 1fr); }
+  .ap-props li { grid-template-columns: minmax(0, 1fr); }
   .ap-wa__body { max-height: 230px; min-height: 160px; }
 }
 @container (max-width: 480px) {
