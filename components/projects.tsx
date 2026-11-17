@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { track } from "@/lib/config";
 import { useHref, useL, useLang } from "@/lib/i18n";
 import { rememberReturn } from "./criscuolo/BackToNexa";
+import { Defs, Piece } from "./cobalto/shapes";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -34,19 +35,19 @@ export function useProjects() {
     },
     {
       key: "ceramica",
-      name: L("Estudio de cerámica", "Estúdio de cerâmica"),
-      cat: L("Tienda y reservas · Piezas y talleres", "Loja e reservas · Peças e oficinas"),
-      status: L("Concepto · nombre pendiente", "Conceito · nome a definir"),
+      name: "Cobalto",
+      cat: L("Experiencia web · Estudio de cerámica y brunch", "Experiência web · Estúdio de cerâmica e brunch"),
+      status: L("Concepto · demo navegable", "Conceito · demo navegável"),
       challenge: L(
-        "El estudio vende piezas y también talleres con cupos limitados: hoy esas dos cosas suelen gestionarse por mensajes y planillas separadas.",
-        "O estúdio vende peças e também oficinas com vagas limitadas: hoje essas duas coisas costumam ser geridas por mensagens e planilhas separadas.",
+        "Un estudio donde se pinta cerámica mientras se toma un brunch vende una experiencia, no un producto: la web tiene que contagiar ese plan y llevar directo a reservar.",
+        "Um estúdio onde se pinta cerâmica enquanto se toma um brunch vende uma experiência, não um produto: o site precisa contagiar esse programa e levar direto à reserva.",
       ),
       solution: L(
-        "Una sola experiencia que combina catálogo con compra online y una agenda de talleres con fechas, horarios y cupos visibles para quien reserva.",
-        "Uma única experiência que combina catálogo com compra online e uma agenda de oficinas com datas, horários e vagas visíveis para quem reserva.",
+        "Una mesa ilustrada donde cada objeto se puede tocar: la taza muestra las piezas, los pinceles los colores, el croissant el brunch, y la tarjeta del estudio se transforma en el calendario de reservas.",
+        "Uma mesa ilustrada onde cada objeto pode ser tocado: a xícara mostra as peças, os pincéis as cores, o croissant o brunch, e o cartão do estúdio se transforma no calendário de reservas.",
       ),
-      href: null,
-      cta: null,
+      href: "/casos/cobalto/",
+      cta: L("Explorar el concepto", "Explorar o conceito"),
     },
   ];
 }
@@ -62,7 +63,13 @@ export function ProjectVisual({ k }: { k: string }) {
     );
   return (
     <div className="pj-vis pj-vis--ce" aria-hidden>
-      <span className="pj-pot pj-pot--a" /><span className="pj-pot pj-pot--b" /><span className="pj-pot pj-pot--c" />
+      <Defs />
+      <div className="pj-ce">
+        <Piece kind="amphora" tone="#1d3fbf" handle="both" size={150} />
+        <Piece kind="jug" tone="#f7f1e6" pattern="dots" handle="right" size={120} />
+        <Piece kind="tall" tone="#1f1c19" size={96} />
+      </div>
+      <span className="pj-vis__word">A little art.</span>
     </div>
   );
 }

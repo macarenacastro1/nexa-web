@@ -992,11 +992,10 @@ button { font-family: inherit; color: inherit; }
 .pj-vis--cc { background: radial-gradient(80% 70% at 70% 40%, #fbf7ef, #e9dfcf); display: grid; place-items: center; }
 .pj-vis--cc img { width: 52%; height: auto; transform: rotate(-6deg) translateX(14%); filter: drop-shadow(0 40px 40px rgba(60,40,20,.3)); }
 .pj-vis--cc .pj-vis__word { color: #8c3b1e; }
-.pj-vis--ce { background: radial-gradient(90% 80% at 50% 30%, #f3ece3, #ddcfbf); }
-.pj-pot { position: absolute; bottom: 14%; display: block; box-shadow: 0 30px 40px -20px rgba(58,42,32,.45); }
-.pj-pot--a { left: 14%; width: 22%; height: 42%; border-radius: 42% 42% 48% 48% / 30% 30% 60% 60%; background: radial-gradient(circle at 35% 30%, #d9c4ae, #a77b5b); }
-.pj-pot--b { left: 41%; width: 26%; height: 22%; border-radius: 20% 20% 50% 50%; background: radial-gradient(circle at 35% 30%, #8fa39a, #4f675d); }
-.pj-pot--c { left: 70%; width: 16%; height: 56%; border-radius: 30% 30% 46% 46% / 20% 20% 60% 60%; background: radial-gradient(circle at 35% 30%, #c67a52, #8a4529); }
+.pj-vis--ce { background: #f3eadb; }
+.pj-ce { position: absolute; left: 8%; right: 8%; bottom: 18%; display: flex; align-items: flex-end; justify-content: center; gap: 4%; border-bottom: 3px solid #1f1c19; }
+.pj-ce svg { height: auto; max-width: 32%; }
+.pj-vis--ce .pj-vis__word { color: #1d3fbf; }
 .pjs__all { display: inline-block; margin-top: 56px; color: var(--teal); font-size: 15px; }
 .pjs__all:hover { text-decoration: underline; }
 @media (max-width: 860px) { .pj { grid-template-columns: 1fr; } .pj--flip .pj-vis { order: 0; } }
@@ -1979,3 +1978,13 @@ tr.low .ap-qty s { background: #e8890c; }
   .tm2__tag { margin-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .tm2__glow, .tm2__quote blockquote span, .tm2__quote figcaption { animation: none; } }
+
+/* vista previa de Cobalto (Experience) */
+.cbp { container-type: inline-size; position: relative; aspect-ratio: 16 / 10; background: #f3eadb; padding: 7% 7% 0; overflow: hidden; font-family: "Bricolage Grotesque", var(--sans); }
+.cbp__h { margin: 0; color: #1d3fbf; font-weight: 800; font-size: clamp(24px, 6cqw, 84px); line-height: .9; letter-spacing: -.045em; }
+.cbp__h em { font-style: normal; color: #e5482f; }
+.cbp__table { position: absolute; left: 5%; right: 5%; bottom: 12%; display: flex; align-items: flex-end; justify-content: flex-end; gap: 3%; border-bottom: 2.5px solid #1f1c19; }
+.cbp__table svg { width: 13%; height: auto; }
+.cbp__table svg:nth-of-type(4) { width: 8%; }
+.cbp__card { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 12%; aspect-ratio: 1; margin-left: 2%; border: 1.5px solid #1f1c19; border-radius: 3px; background: #fbf6ec; box-shadow: 3px 3px 0 #1d3fbf; color: #1d3fbf; font-weight: 800; font-size: 2.2cqw; letter-spacing: -.03em; transform: rotate(4deg); }
+.cbp__card small { font-size: .7em; color: #e5482f; font-weight: 600; letter-spacing: 0; }
