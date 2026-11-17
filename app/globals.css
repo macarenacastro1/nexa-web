@@ -992,10 +992,10 @@ button { font-family: inherit; color: inherit; }
 .pj-vis--cc { background: radial-gradient(80% 70% at 70% 40%, #fbf7ef, #e9dfcf); display: grid; place-items: center; }
 .pj-vis--cc img { width: 52%; height: auto; transform: rotate(-6deg) translateX(14%); filter: drop-shadow(0 40px 40px rgba(60,40,20,.3)); }
 .pj-vis--cc .pj-vis__word { color: #8c3b1e; }
-.pj-vis--ce { background: #4a2c20; }
-.pj-ce { position: absolute; left: 8%; right: 8%; bottom: 18%; display: flex; align-items: flex-end; justify-content: center; gap: 4%; border-bottom: 1px solid rgba(239,232,220,.5); }
+.pj-vis--ce { background: #c7b59d; }
+.pj-ce { position: absolute; left: 8%; right: 8%; bottom: 18%; display: flex; align-items: flex-end; justify-content: center; gap: 4%; border-bottom: 3px solid #f4ede1; }
 .pj-ce svg { height: auto; max-width: 32%; }
-.pj-vis--ce .pj-vis__word { color: #efe8dc; font-family: "Italiana", var(--serif); font-style: normal; text-transform: uppercase; letter-spacing: .04em; }
+.pj-vis--ce .pj-vis__word { color: #f4ede1; font-family: "Instrument Serif", var(--serif); font-style: italic; }
 .pjs__all { display: inline-block; margin-top: 56px; color: var(--teal); font-size: 15px; }
 .pjs__all:hover { text-decoration: underline; }
 @media (max-width: 860px) { .pj { grid-template-columns: 1fr; } .pj--flip .pj-vis { order: 0; } }
@@ -1980,11 +1980,11 @@ tr.low .ap-qty s { background: #e8890c; }
 @media (prefers-reduced-motion: reduce) { .tm2__glow, .tm2__quote blockquote span, .tm2__quote figcaption { animation: none; } }
 
 /* vista previa de Cobalto (Experience) */
-.cbp { container-type: inline-size; position: relative; aspect-ratio: 16 / 10; background: #efe8dc; padding: 7% 7% 0; overflow: hidden; font-family: "Italiana", var(--serif); }
-.cbp__h { margin: 0; color: #2a1c15; font-weight: 400; text-transform: uppercase; font-size: clamp(24px, 6cqw, 84px); line-height: .95; letter-spacing: -.01em; }
-.cbp__h em { font-style: normal; color: #2a1c15; }
-.cbp__table { position: absolute; left: 5%; right: 5%; bottom: 12%; display: flex; align-items: flex-end; justify-content: flex-end; gap: 3%; border-bottom: 1px solid rgba(42,28,21,.3); }
+.cbp { container-type: inline-size; position: relative; aspect-ratio: 16 / 10; background: #c7b59d; padding: 7% 7% 0; overflow: hidden; font-family: "Instrument Serif", var(--serif); }
+.cbp__h { margin: 0; color: #f4ede1; font-weight: 400; font-size: clamp(24px, 6cqw, 84px); line-height: .95; letter-spacing: -.01em; }
+.cbp__h em { font-style: italic; color: #f4ede1; }
+.cbp__table { position: absolute; left: 5%; right: 5%; bottom: 12%; display: flex; align-items: flex-end; justify-content: flex-end; gap: 3%; border-bottom: 2.5px solid #f4ede1; }
 .cbp__table svg { width: 13%; height: auto; }
 .cbp__table svg:nth-of-type(4) { width: 8%; }
-.cbp__card { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 12%; aspect-ratio: 1; margin-left: 2%; border: 0; border-radius: 0; background: #2e1b13; box-shadow: 0 12px 24px -14px rgba(0,0,0,.6); color: #efe8dc; font-weight: 400; letter-spacing: .1em; font-size: 2.2cqw; letter-spacing: -.03em; transform: rotate(-4deg); }
-.cbp__card small { margin-top: .4em; font-size: .5em; color: #d8c3a5; font-family: "Hanken Grotesk", var(--sans); font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
+.cbp__card { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 12%; aspect-ratio: 1; margin-left: 2%; border: 0; border-radius: 3px; background: #f4ede1; box-shadow: 0 12px 24px -14px rgba(59,42,32,.6); color: #a5552a; font-weight: 400; font-style: italic; font-size: 2.2cqw; letter-spacing: -.03em; transform: rotate(4deg); }
+.cbp__card small { font-size: .65em; color: #3b2a20; font-family: Outfit, var(--sans); font-weight: 600; letter-spacing: 0; }

@@ -27,8 +27,8 @@ export function useExperienceProjects() {
     cobalto: {
       name: "Cobalto",
       status: L("Concepto navegable", "Conceito navegável"),
-      summary: L("Un estudio de cerámica con brunch, con dirección de arte editorial: cuatro cuadros que se abren al tocarlos y una tarjeta que se convierte en el calendario de reservas.", "Um estúdio de cerâmica com brunch, com direção de arte editorial: quatro quadros que se abrem ao toque e um cartão que vira o calendário de reservas."),
-      shows: L(["Dirección de arte", "Interacción", "Reservas online", "Tienda"], ["Direção de arte", "Interação", "Reservas online", "Loja"]),
+      summary: L("Un estudio de cerámica con brunch: una mesa ilustrada donde cada objeto se toca y la tarjeta del estudio se convierte en el calendario de reservas.", "Um estúdio de cerâmica com brunch: uma mesa ilustrada onde cada objeto pode ser tocado e o cartão do estúdio vira o calendário de reservas."),
+      shows: L(["Ilustración propia", "Interacción", "Reservas online", "Tienda"], ["Ilustração própria", "Interação", "Reservas online", "Loja"]),
     },
   } satisfies Record<ExpKey, { name: string; status: string; summary: string; shows: string[] }>;
 }
@@ -81,15 +81,15 @@ function CobaltoPreview() {
       aria-label={L("Ver el concepto de Cobalto completo", "Ver o conceito da Cobalto completo")}>
       <Frame url="cobalto.studio" tone="light">
         <div className="cbp" aria-hidden>
-          <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Italiana&family=Hanken+Grotesk:wght@400;500&display=swap" />
+          <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;600;700&display=swap" />
           <Defs />
           <p className="cbp__h">A little art.<br /><span>A lot of <em>fun.</em></span></p>
           <div className="cbp__table">
-            <Piece kind="vase" tone="#d8c3a5" pattern="stone" size={70} />
-            <Piece kind="mug" tone="#4a2c20" handle="right" size={62} />
-            <Piece kind="jug" tone="#8e8b84" pattern="stone" handle="right" size={70} />
-            <Piece kind="tall" tone="#4a2c20" size={46} />
-            <span className="cbp__card">COBALTO<small>Reservá tu mesa →</small></span>
+            <Piece kind="vase" tone="#e7dccb" pattern="reactive" size={70} />
+            <Piece kind="mug" tone="#f4ede1" handle="right" size={62} />
+            <Piece kind="jug" tone="#a9b49a" handle="right" size={70} />
+            <Piece kind="tall" tone="#3b2a20" size={46} />
+            <span className="cbp__card">Cobalto<small>Reservá →</small></span>
           </div>
         </div>
       </Frame>

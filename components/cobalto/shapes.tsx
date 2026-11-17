@@ -52,6 +52,13 @@ export function Defs() {
         <pattern id="cb-speck-light" width="90" height="90" patternUnits="userSpaceOnUse">
           {dots.map((d, i) => <circle key={i} cx={(d.x + 40) % 90} cy={(d.y + 25) % 90} r={d.r * 0.9} fill="#f3eadb" opacity={d.o * 0.6} />)}
         </pattern>
+        <filter id="cb-print" x="-6%" y="-6%" width="112%" height="112%">
+          <feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="2" seed="5" result="n" />
+          <feColorMatrix in="n" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -12 0 0 0 10.2" result="holes" />
+          <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="2" result="w" />
+          <feDisplacementMap in="SourceGraphic" in2="w" scale="3.2" result="rough" />
+          <feComposite in="rough" in2="holes" operator="in" />
+        </filter>
         <filter id="cb-stone" x="0" y="0" width="100%" height="100%">
           <feTurbulence type="fractalNoise" baseFrequency=".006 .07" numOctaves="4" seed="4" result="t" />
           <feColorMatrix in="t" values=".42 0 0 0 .55  .36 0 0 0 .45  .3 0 0 0 .34  0 0 0 0 1" result="c" />
@@ -88,11 +95,12 @@ export function Piece({ kind, tone = "#f7f1e6", pattern, handle, size = 160, lab
   return (
     <svg viewBox={`0 0 ${W} ${H}`} width={size} height={(size * H) / W} role={label ? "img" : undefined} aria-label={label} aria-hidden={label ? undefined : true}>
       <clipPath id={id}><path d={d} /></clipPath>
+      <g filter="url(#cb-print)">
       {handle && (handle === "right" || handle === "both") && <path d={`M${W / 2 + 28},${top + h * 0.22} c26,4 28,${h * 0.42} 0,${h * 0.5}`} fill="none" stroke={light ? "#e2d5c1" : tone} strokeWidth={8} strokeLinecap="round" />}
       {handle && (handle === "left" || handle === "both") && <path d={`M${W / 2 - 28},${top + h * 0.22} c-26,4 -28,${h * 0.42} 0,${h * 0.5}`} fill="none" stroke={light ? "#e2d5c1" : tone} strokeWidth={8} strokeLinecap="round" />}
       <path d={d} fill={tone} />
       <g clipPath={`url(#${id})`}>
-        {pattern !== "stone" && pattern !== "stone-dark" && <rect width={W} height={H} fill={light ? "url(#cb-speck)" : "url(#cb-speck-light)"} opacity=".55" />}
+        {pattern !== "stone" && pattern !== "stone-dark" && <rect width={W} height={H} fill={light ? "url(#cb-speck)" : "url(#cb-speck-light)"} opacity=".3" />}
         {pattern === "dots" && Array.from({ length: 18 }, (_, i) => <circle key={i} cx={20 + (i % 6) * 20 + (Math.floor(i / 6) % 2) * 10} cy={top + 30 + Math.floor(i / 6) * 28} r={5} fill="#a5552a" />)}
         {pattern === "stripes" && [0, 1, 2, 3].map((i) => <rect key={i} x={0} y={top + 20 + i * 26} width={W} height={8} fill="#5f7f96" />)}
         {pattern === "waves" && [0, 1, 2].map((i) => <path key={i} d={`M0,${top + 40 + i * 30} q17,-12 35,0 t35,0 t35,0 t35,0`} fill="none" stroke="#5f7f96" strokeWidth="5" />)}
@@ -112,6 +120,7 @@ export function Piece({ kind, tone = "#f7f1e6", pattern, handle, size = 160, lab
         {pattern === "dip" && <path d={`M0,${top + h * 0.58} C30,${top + h * 0.5} 50,${top + h * 0.72} 80,${top + h * 0.6} S120,${top + h * 0.48} 140,${top + h * 0.55} V${H} H0 Z`} fill="#8a4a22" filter="url(#cb-soft)" />}
         {pattern === "pool" && <ellipse cx={W / 2} cy={top + h * 0.35} rx={W * 0.32} ry={h * 0.32} fill="#5f7f96" opacity=".9" filter="url(#cb-soft)" />}
         {pattern === "flower" && <g transform={`translate(${W / 2} ${top + h * 0.5})`}>{[0, 60, 120, 180, 240, 300].map((a) => <ellipse key={a} rx="7" ry="16" cy="-14" fill="#a5552a" transform={`rotate(${a})`} />)}<circle r="7" fill="#c99a4a" /></g>}
+      </g>
       </g>
     </svg>
   );
