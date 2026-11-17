@@ -63,11 +63,12 @@ export function ProjectVisual({ k }: { k: string }) {
     );
   return (
     <div className="pj-vis pj-vis--ce" aria-hidden>
+      <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Outfit:wght@400;600;700&display=swap" />
       <Defs />
       <div className="pj-ce">
-        <Piece kind="amphora" tone="#1d3fbf" handle="both" size={150} />
-        <Piece kind="jug" tone="#f7f1e6" pattern="dots" handle="right" size={120} />
-        <Piece kind="tall" tone="#1f1c19" size={96} />
+        <Piece kind="amphora" tone="#f4ede1" handle="both" size={150} />
+        <Piece kind="jug" tone="#e7dccb" pattern="reactive" handle="right" size={120} />
+        <Piece kind="tall" tone="#3b2a20" size={96} />
       </div>
       <span className="pj-vis__word">A little art.</span>
     </div>

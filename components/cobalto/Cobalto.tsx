@@ -9,7 +9,8 @@ import { Defs, PROFILES, Piece, vessel } from "./shapes";
    de reservas y termina en una invitación. Marca y datos ficticios.
    ===================================================================== */
 
-const C = { cream: "#f3eadb", ink: "#1f1c19", cobalt: "#1d3fbf", tomato: "#e5482f", mustard: "#f2b632", sage: "#8fa98b", bisque: "#f7f1e6", ochre: "#d38d36" };
+// tierra: arcilla, crema, óxido, azul esmalte y celadón (de las tazas de referencia)
+const C = { cream: "#f4ede1", ink: "#3b2a20", cobalt: "#5f7f96", tomato: "#a5552a", mustard: "#c99a4a", sage: "#a9b49a", bisque: "#f4ede1", ochre: "#c08a45", clay: "#c7b59d", clayDark: "#a8937a", oat: "#e7dccb" };
 const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const money = (n: number) => new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(n);
 
@@ -28,14 +29,14 @@ const PIECES = [
   { kind: "jug", name: "Jarra Agua", price: 14000, handle: "right" as const },
 ] as const;
 const SHOP = [
-  { id: "s1", kind: "amphora", name: "Ánfora Cobalto", price: 48000, tone: C.cobalt, handle: "both" as const },
-  { id: "s2", kind: "jug", name: "Jarra Tomate", price: 36000, tone: C.bisque, pattern: "dots" as const, handle: "right" as const },
-  { id: "s3", kind: "bottle", name: "Botella Rayas", price: 29000, tone: C.bisque, pattern: "stripes" as const },
-  { id: "s4", kind: "bowl", name: "Fuente Ola", price: 33000, tone: C.bisque, pattern: "waves" as const },
-  { id: "s5", kind: "vase", name: "Florero Flor", price: 31000, tone: C.bisque, pattern: "flower" as const },
-  { id: "s6", kind: "tall", name: "Florero Noche", price: 27000, tone: C.ink },
+  { id: "s1", kind: "amphora", name: "Ánfora Celadón", price: 48000, tone: C.sage, handle: "both" as const },
+  { id: "s2", kind: "jug", name: "Jarra Óxido", price: 36000, tone: C.oat, pattern: "reactive" as const, handle: "right" as const },
+  { id: "s3", kind: "bottle", name: "Botella Inmersión", price: 29000, tone: C.oat, pattern: "dip" as const },
+  { id: "s4", kind: "bowl", name: "Fuente Lago", price: 33000, tone: C.oat, pattern: "pool" as const },
+  { id: "s5", kind: "vase", name: "Florero Tierra", price: 31000, tone: C.oat, pattern: "reactive2" as const },
+  { id: "s6", kind: "tall", name: "Florero Café", price: 27000, tone: C.ink },
 ] as const;
-const SWATCHES = [["Cobalto", C.cobalt], ["Tomate", C.tomato], ["Mostaza", C.mustard], ["Salvia", C.sage], ["Carbón", C.ink]] as const;
+const SWATCHES = [["Óxido", C.tomato], ["Cobalto", C.cobalt], ["Celadón", C.sage], ["Miel", C.mustard], ["Café", C.ink]] as const;
 
 export default function Cobalto() {
   const [active, setActive] = useState<ObjKey | null>(null);
@@ -96,7 +97,7 @@ const TABLE = 412;
 function Hero({ active, setActive, cardRef, cardHidden, onBook }: {
   active: ObjKey | null; setActive: (k: ObjKey | null) => void; cardRef: React.RefObject<HTMLButtonElement | null>; cardHidden: boolean; onBook: () => void;
 }) {
-  const [swatch, setSwatch] = useState<string>(C.cobalt);
+  const [swatch, setSwatch] = useState<string>(C.tomato);
   const toggle = (k: ObjKey) => setActive(active === k ? null : k);
   useEffect(() => {
     const k = (e: KeyboardEvent) => { if (e.key === "Escape") setActive(null); };
@@ -127,32 +128,32 @@ function Hero({ active, setActive, cardRef, cardHidden, onBook }: {
       <div className="cb-table" onClick={(e) => { if (e.target === e.currentTarget) setActive(null); }}>
         <svg viewBox="0 0 1000 460" className="cb-table__svg" role="group" aria-label="Mesa del estudio: taza, pinceles, croissant, café y tarjeta de reservas">
           {/* tablero */}
-          <path d={`M-3000,${TABLE} H4000`} stroke={C.ink} strokeWidth="3" />
-          <rect x="-3000" y={TABLE + 2} width="7000" height="46" fill="#e8dcc8" />
+          <path d={`M-3000,${TABLE} H4000`} stroke={C.cream} strokeWidth="3" />
+          <rect x="-3000" y={TABLE + 2} width="7000" height="46" fill={C.clayDark} />
           <rect x="-3000" y={TABLE + 2} width="7000" height="46" fill="url(#cb-speck)" opacity=".35" />
 
           {/* florerito decorativo con rama */}
           <g aria-hidden>
-            <path d={`M60,${TABLE - 118} C58,${TABLE - 180} 30,${TABLE - 220} 18,${TABLE - 250}`} fill="none" stroke={C.ink} strokeWidth="2.5" />
-            {[0, 1, 2, 3].map((i) => <ellipse key={i} cx={46 - i * 8} cy={TABLE - 160 - i * 24} rx="11" ry="5" fill={C.sage} transform={`rotate(${-40 + i * 8} ${46 - i * 8} ${TABLE - 160 - i * 24})`} />)}
-            <path d={bud} fill={C.ink} />
+            <path d={`M60,${TABLE - 118} C58,${TABLE - 180} 30,${TABLE - 220} 18,${TABLE - 250}`} fill="none" stroke={C.cream} strokeWidth="2.5" />
+            {[0, 1, 2, 3].map((i) => <ellipse key={i} cx={46 - i * 8} cy={TABLE - 160 - i * 24} rx="11" ry="5" fill={C.cream} transform={`rotate(${-40 + i * 8} ${46 - i * 8} ${TABLE - 160 - i * 24})`} />)}
+            <path d={bud} fill={C.cream} />
           </g>
 
           {/* pinceles + potes de pintura */}
           <g {...obj("pinceles", "Pinceles y pinturas: ver colores y piezas pintadas")}>
             <rect x="110" y={TABLE - 260} width="300" height="262" fill="transparent" />
-            {[[-0.18, C.tomato], [0.04, "#b98a5a"], [0.22, C.ink]].map(([a, col], i) => (
+            {[[-0.18, C.tomato], [0.04, "#8a6a4c"], [0.22, C.ink]].map(([a, col], i) => (
               <g key={i} transform={`rotate(${(a as number) * 57} 168 ${TABLE - 60})`}>
                 <rect x="164" y={TABLE - 230} width="8" height="150" rx="4" fill={col as string} />
-                <rect x="163" y={TABLE - 252} width="10" height="26" fill="#9a958c" />
+                <rect x="163" y={TABLE - 252} width="10" height="26" fill={C.oat} />
                 <path d={`M163,${TABLE - 252} q5,-26 10,0 z`} fill={C.ink} />
               </g>
             ))}
-            <path d={jar} fill={C.cobalt} />
-            <path d={jar} fill="url(#cb-speck-light)" />
-            {[[262, C.tomato], [318, C.mustard], [372, C.sage]].map(([x, col]) => (
+            <path d={jar} fill={C.cream} />
+            <path d={jar} fill="url(#cb-speck)" opacity=".5" />
+            {[[262, C.tomato], [318, C.cobalt], [372, C.sage]].map(([x, col]) => (
               <g key={x as number}>
-                <path d={vessel(PROFILES.pot!, x as number, TABLE, 34)} fill={C.bisque} stroke={C.ink} strokeWidth="1.6" />
+                <path d={vessel(PROFILES.pot!, x as number, TABLE, 34)} fill={C.cream} />
                 <ellipse cx={x as number} cy={TABLE - 33} rx="20" ry="5" fill={col as string} />
               </g>
             ))}
@@ -161,16 +162,15 @@ function Hero({ active, setActive, cardRef, cardHidden, onBook }: {
           {/* taza sin pintar */}
           <g {...obj("taza", "Taza sin pintar: ver piezas para pintar")}>
             <rect x="395" y={TABLE - 110} width="140" height="112" fill="transparent" />
-            <path d={`M488,${TABLE - 78} c34,2 36,52 0,58`} fill="none" stroke={C.ink} strokeWidth="9" strokeLinecap="round" />
-            <path d={`M488,${TABLE - 78} c34,2 36,52 0,58`} fill="none" stroke={C.bisque} strokeWidth="5" strokeLinecap="round" />
-            <path d={mug} fill={C.bisque} stroke={C.ink} strokeWidth="2" />
-            <path d={mug} fill="url(#cb-speck)" />
-            <ellipse cx="455" cy={TABLE - 96} rx="34" ry="5" fill="#e6dccb" stroke={C.ink} strokeWidth="1.6" />
+            <path d={`M488,${TABLE - 78} c34,2 36,52 0,58`} fill="none" stroke={C.cream} strokeWidth="9" strokeLinecap="round" />
+            <path d={mug} fill={C.cream} />
+            <path d={mug} fill="url(#cb-speck)" opacity=".7" />
+            <ellipse cx="455" cy={TABLE - 96} rx="33" ry="4.5" fill={C.oat} />
           </g>
 
           {/* café (decorativo) */}
           <g aria-hidden className="cb-coffee">
-            {[0, 1].map((i) => <path key={i} className="cb-steam" style={{ animationDelay: `${i * 1.3}s` }} d={`M${628 + i * 22},${TABLE - 84} c-10,-14 10,-22 0,-38 c-8,-12 6,-20 2,-30`} fill="none" stroke={C.ink} strokeWidth="2" strokeLinecap="round" opacity=".5" />)}
+            {[0, 1].map((i) => <path key={i} className="cb-steam" style={{ animationDelay: `${i * 1.3}s` }} d={`M${628 + i * 22},${TABLE - 84} c-10,-14 10,-22 0,-38 c-8,-12 6,-20 2,-30`} fill="none" stroke={C.cream} strokeWidth="2" strokeLinecap="round" opacity=".8" />)}
             <path d={`M672,${TABLE - 58} c24,0 24,34 -4,36`} fill="none" stroke={C.ink} strokeWidth="7" />
             <path d={cup} fill={C.ink} />
             <path d={cup} fill="url(#cb-speck-light)" />
@@ -180,10 +180,10 @@ function Hero({ active, setActive, cardRef, cardHidden, onBook }: {
           {/* croissant */}
           <g {...obj("croissant", "Croissant: ver el brunch")}>
             <rect x="700" y={TABLE - 80} width="170" height="82" fill="transparent" />
-            <ellipse cx="785" cy={TABLE - 4} rx="82" ry="7" fill={C.bisque} stroke={C.ink} strokeWidth="1.8" />
+            <ellipse cx="785" cy={TABLE - 4} rx="82" ry="7" fill={C.cream} />
             <path d={`M722,${TABLE - 10} C728,${TABLE - 56} 760,${TABLE - 74} 786,${TABLE - 74} C814,${TABLE - 74} 844,${TABLE - 56} 850,${TABLE - 10} Z`} fill={C.ochre} />
             <path d={`M722,${TABLE - 10} C728,${TABLE - 56} 760,${TABLE - 74} 786,${TABLE - 74} C814,${TABLE - 74} 844,${TABLE - 56} 850,${TABLE - 10} Z`} fill="url(#cb-speck-light)" />
-            {[748, 770, 802, 826].map((x, i) => <path key={x} d={`M${x},${TABLE - 12} q${i < 2 ? 6 : -6},-26 ${i < 2 ? 18 : -18},-${i === 1 || i === 2 ? 52 : 40}`} fill="none" stroke="#9c5f1d" strokeWidth="2.4" strokeLinecap="round" />)}
+            {[748, 770, 802, 826].map((x, i) => <path key={x} d={`M${x},${TABLE - 12} q${i < 2 ? 6 : -6},-26 ${i < 2 ? 18 : -18},-${i === 1 || i === 2 ? 52 : 40}`} fill="none" stroke="#8a5a26" strokeWidth="2.4" strokeLinecap="round" />)}
           </g>
         </svg>
 
@@ -220,7 +220,7 @@ function ObjPanel({ k, swatch, setSwatch, onClose, onBook }: { k: ObjKey; swatch
           <h3>Elegí tu lienzo.</h3>
           <ul className="cb-panel__pieces">
             {PIECES.map((p) => (
-              <li key={p.name}><Piece kind={p.kind} handle={"handle" in p ? p.handle : undefined} size={58} /><b>{p.name}</b><small>{money(p.price)}</small></li>
+              <li key={p.name}><Piece kind={p.kind} tone="#d8c7ae" handle={"handle" in p ? p.handle : undefined} size={58} /><b>{p.name}</b><small>{money(p.price)}</small></li>
             ))}
           </ul>
           <p className="cb-panel__note">El precio de la pieza se suma a la experiencia. Las horneamos y las retirás en 7 días.</p>
@@ -235,8 +235,8 @@ function ObjPanel({ k, swatch, setSwatch, onClose, onBook }: { k: ObjKey; swatch
           </div>
           <div className="cb-panel__painted">
             <Piece kind="mug" tone={swatch} handle="right" size={82} />
-            <Piece kind="bowl" tone={C.bisque} pattern="dots" size={96} />
-            <Piece kind="vase" tone={C.bisque} pattern="waves" size={78} />
+            <Piece kind="bowl" tone={C.oat} pattern="reactive" size={96} />
+            <Piece kind="vase" tone={C.oat} pattern="dip" size={78} />
           </div>
           <p className="cb-panel__note">Ejemplos pintados por personas que vinieron al estudio. Te damos ideas si no sabés por dónde empezar.</p>
         </>
@@ -388,9 +388,9 @@ function Stamp() {
 /* ------------------------------ 1 · la experiencia ------------------------------ */
 function Experience() {
   const steps = [
-    { n: "01", t: "Elegís tu pieza", d: "Tazas, bowls, floreros y jarras recién salidos del horno, listos para pintar.", art: <Piece kind="mug" handle="right" size={120} /> },
-    { n: "02", t: "Pintás con brunch", d: "Te explicamos las técnicas, servimos el brunch y el resto es tiempo para vos.", art: <Piece kind="bowl" pattern="dots" size={140} /> },
-    { n: "03", t: "La horneamos", d: "Esmaltamos y horneamos tu pieza a 1.200 °C. La retirás en siete días.", art: <Piece kind="vase" tone={C.cobalt} size={120} /> },
+    { n: "01", t: "Elegís tu pieza", d: "Tazas, bowls, floreros y jarras recién salidos del horno, listos para pintar.", art: <Piece kind="mug" tone={C.cream} handle="right" size={120} /> },
+    { n: "02", t: "Pintás con brunch", d: "Te explicamos las técnicas, servimos el brunch y el resto es tiempo para vos.", art: <Piece kind="bowl" tone={C.oat} pattern="reactive" size={140} /> },
+    { n: "03", t: "La horneamos", d: "Esmaltamos y horneamos tu pieza a 1.200 °C. La retirás en siete días.", art: <Piece kind="vase" tone={C.oat} pattern="dip" size={120} /> },
   ];
   return (
     <section className="cb-sec cb-exp" id="experiencia" aria-labelledby="cb-exp-t">
@@ -480,7 +480,7 @@ function Studio() {
         <p className="cb-kicker">El estudio</p>
         <h2 id="cb-st-t" className="cb-h2">Una casa vieja en Palermo, <em>llena de barro.</em></h2>
         <div className="cb-studio__shelf" aria-hidden>
-          {line.map((k, i) => <Piece key={i} kind={k} tone={i % 3 === 1 ? C.cobalt : C.ink} handle={k === "jug" ? "right" : k === "amphora" ? "both" : undefined} size={i % 2 ? 92 : 118} />)}
+          {line.map((k, i) => <Piece key={i} kind={k} tone={C.cream} handle={k === "jug" ? "right" : k === "amphora" ? "both" : undefined} size={i % 2 ? 92 : 118} />)}
         </div>
         <div className="cb-studio__info">
           <div><b>Dónde</b><p>Gorriti 4800, Palermo<br />Buenos Aires</p></div>

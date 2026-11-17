@@ -81,13 +81,14 @@ function CobaltoPreview() {
       aria-label={L("Ver el concepto de Cobalto completo", "Ver o conceito da Cobalto completo")}>
       <Frame url="cobalto.studio" tone="light">
         <div className="cbp" aria-hidden>
+          <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Outfit:wght@400;600;700&display=swap" />
           <Defs />
           <p className="cbp__h">A little art.<br /><span>A lot of <em>fun.</em></span></p>
           <div className="cbp__table">
-            <Piece kind="vase" tone="#1d3fbf" size={70} />
-            <Piece kind="mug" tone="#f7f1e6" handle="right" size={62} />
-            <Piece kind="jug" tone="#f7f1e6" pattern="dots" handle="right" size={70} />
-            <Piece kind="tall" tone="#1f1c19" size={46} />
+            <Piece kind="vase" tone="#e7dccb" pattern="reactive" size={70} />
+            <Piece kind="mug" tone="#f4ede1" handle="right" size={62} />
+            <Piece kind="jug" tone="#a9b49a" handle="right" size={70} />
+            <Piece kind="tall" tone="#3b2a20" size={46} />
             <span className="cbp__card">Cobalto<small>Reservá →</small></span>
           </div>
         </div>
