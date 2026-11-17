@@ -16,25 +16,21 @@ export const EXPS: Exp[] = [
 
 /** Recortes (PNG sin fondo). `src: null` = todavía no llegó la foto. */
 export type CutImg = { src: string | null; need: string; alt: string; ratio: number };
-const cut = (need: string, alt: string, ratio = 1): CutImg => ({ src: null, need, alt, ratio });
-export const CUTS = {
-  heroStack: cut("Bowls o tazas apiladas", "Bowls de cerámica apilados", 1),
-  heroVase: cut("Jarrón o ánfora", "Jarrón de cerámica", 0.8),
-  heroPlate: cut("Plato visto desde arriba", "Plato de cerámica", 1),
-  heroCup: cut("Taza con esmalte", "Taza de cerámica esmaltada", 1),
-  hands: cut("Manos pintando una pieza", "Manos pintando una taza", 1.25),
-  brunch: cut("Café y croissant", "Café y croissant", 1.2),
-  kiln: cut("Piezas recién horneadas", "Piezas recién salidas del horno", 1.1),
-  studio: cut("Estante con piezas", "Estante del estudio con piezas", 1.4),
+const img = (src: string, alt: string, ratio: number): CutImg => ({ src, need: "", alt, ratio });
+/** Piezas recortadas (PNG sin fondo) que pasó la owner como referencia de estilo. */
+export const P = {
+  marmol: img("/cobalto/marmol.webp", "Vaso de cerámica marmolada con borde negro", 347 / 477),
+  primitiva: img("/cobalto/primitiva.webp", "Vaso de gres oscuro modelado a mano, con esmalte blanco craquelado", 368 / 515),
+  tallada: img("/cobalto/tallada.webp", "Vaso tallado a mano con esmalte blanco y barro oscuro", 398 / 403),
+  circulos: img("/cobalto/circulos.webp", "Taza de cerámica clara con dos círculos dibujados", 485 / 279),
 };
-export type Product = { id: string; name: string; price: number; img: CutImg };
+export const CUTS = { heroStack: P.marmol, heroVase: P.tallada, heroCup: P.circulos, heroPlate: P.primitiva, hands: P.marmol, kiln: P.tallada, studio: P.primitiva };
+export type Product = { id: string; name: string; price: number; img: CutImg; note: string };
 export const SHOP: Product[] = [
-  { id: "s1", name: "Jarra Barro", price: 36000, img: cut("Jarra", "Jarra de cerámica", 0.85) },
-  { id: "s2", name: "Bowl Oliva", price: 18000, img: cut("Bowl", "Bowl de cerámica", 1.3) },
-  { id: "s3", name: "Taza Lunes", price: 9500, img: cut("Taza", "Taza de cerámica", 1) },
-  { id: "s4", name: "Ánfora Tierra", price: 48000, img: cut("Ánfora", "Ánfora de cerámica", 0.75) },
-  { id: "s5", name: "Plato Hondo", price: 14000, img: cut("Plato", "Plato de cerámica", 1.3) },
-  { id: "s6", name: "Vaso Raku", price: 8500, img: cut("Vaso", "Vaso de cerámica", 0.85) },
+  { id: "s1", name: "Vaso Mármol", price: 24000, img: P.marmol, note: "Barro marmolado · tallado kurinuki" },
+  { id: "s2", name: "Vaso Primitivo", price: 21000, img: P.primitiva, note: "Gres oscuro · esmalte craquelado" },
+  { id: "s3", name: "Vaso Tallado", price: 22000, img: P.tallada, note: "Tallado a mano · esmalte blanco" },
+  { id: "s4", name: "Taza Círculos", price: 18000, img: P.circulos, note: "Pellizco · línea a mano" },
 ];
 
 /** PNG recortado o marcador con la silueta punteada y qué foto falta. */

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Kalnia:wdth,wght@100,200..400&family=Karla:ital,wght@0,400;0,500;1,400&family=Archivo:wdth,wght@125,600;125,800&display=swap" />
+      <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,300;0,400;1,300&display=swap" />
       <BackToNexa />
       <Cobalto />
     </>
