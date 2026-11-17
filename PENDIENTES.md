@@ -10,4 +10,4 @@ Publicada en main el 16/11/2026. Respaldo de la versión anterior: rama `respald
 - [x] Publicada: la owner dijo "publica" el 16/11/2026 y la rama se unió a main.
 
 ## Segunda etapa
-- Diseñar las webs de Piel de Campo y del estudio de cerámica (nombre pendiente) y sumarlas a Experience.
+- Diseñar la web del estudio de cerámica (nombre pendiente) y sumarla a Experience. (Piel de Campo: descartado el 17/11/2026.)

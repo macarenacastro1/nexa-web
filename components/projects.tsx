@@ -33,22 +33,6 @@ export function useProjects() {
       cta: L("Explorar el concepto", "Explorar o conceito"),
     },
     {
-      key: "piel",
-      name: "Piel de Campo",
-      cat: L("E-commerce editorial · Indumentaria de cuero y gamuza", "E-commerce editorial · Roupas de couro e camurça"),
-      status: L("Concepto · en desarrollo", "Conceito · em desenvolvimento"),
-      challenge: L(
-        "Las piezas se confeccionan a medida: el desafío es transmitir el valor del material y del oficio, y explicar el proceso de pedido sin que parezca un configurador libre.",
-        "As peças são confeccionadas sob medida: o desafio é transmitir o valor do material e do ofício, e explicar o processo de pedido sem parecer um configurador livre.",
-      ),
-      solution: L(
-        "Una tienda con lógica editorial: colecciones presentadas como historias, fotografía de materiales en primer plano y un recorrido claro desde la elección de la pieza hasta la toma de medidas.",
-        "Uma loja com lógica editorial: coleções apresentadas como histórias, fotografia de materiais em primeiro plano e um percurso claro da escolha da peça até a tomada de medidas.",
-      ),
-      href: null,
-      cta: null,
-    },
-    {
       key: "ceramica",
       name: L("Estudio de cerámica", "Estúdio de cerâmica"),
       cat: L("Tienda y reservas · Piezas y talleres", "Loja e reservas · Peças e oficinas"),
@@ -74,13 +58,6 @@ export function ProjectVisual({ k }: { k: string }) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/criscuolo/pack.jpg" alt="" loading="lazy" width={600} height={760} />
         <span className="pj-vis__word" aria-hidden>Da fruta à xícara</span>
-      </div>
-    );
-  if (k === "piel")
-    return (
-      <div className="pj-vis pj-vis--pc" aria-hidden>
-        <span className="pj-leather" /><span className="pj-suede" /><span className="pj-stitch" />
-        <span className="pj-vis__word">Piel de Campo</span>
       </div>
     );
   return (
