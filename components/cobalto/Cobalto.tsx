@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Booking } from "./Booking";
-import { CUTS, Cut, EXPS, Jug, SHOP, money, reduced } from "./data";
+import { CUTS, Cut, EXPS, Jug, SHOP, Wordmark, money, reduced } from "./data";
 
 /* =====================================================================
    Cobalto · estudio de cerámica con brunch (concepto de NEXA)
@@ -71,7 +71,7 @@ export default function Cobalto() {
       <Shop onAdd={(id, name) => { setCart((c) => [...c, id]); say(`${name} · agregada`); }} />
       <Studio onBook={(el) => openBooking(undefined, el)} />
       <footer className="cb-foot">
-        <span className="cb-word cb-foot__w">Cobalto</span>
+        <Wordmark className="cb-foot__wm" />
         <span>Concepto de portfolio desarrollado por NEXA · marca ficticia, sin reservas ni ventas reales.</span>
       </footer>
       {booking && <Booking from={booking.from} initial={booking.exp} onClose={() => setBooking(null)} back={() => booking.origin?.getBoundingClientRect() ?? null} />}
@@ -86,7 +86,7 @@ function Nav({ count, onCart, onBook }: { count: number; onCart: () => void; onB
   const [menu, setMenu] = useState(false);
   return (
     <header className="cb-nav">
-      <a href="#main" className="cb-nav__logo" aria-label="Cobalto, inicio"><Jug className="cb-nav__jug" /><span className="cb-word">Cobalto</span></a>
+      <a href="#main" className="cb-nav__logo" aria-label="Cobalto, inicio"><Wordmark className="cb-nav__wm" /></a>
       <nav className={menu ? "open" : ""} aria-label="Principal">
         {[["#experiencia", "Experiencia"], ["#talleres", "Talleres"], ["#shop", "Shop"], ["#estudio", "Estudio"]].map(([h, t]) => <a key={h} href={h} onClick={() => setMenu(false)}>{t}</a>)}
       </nav>
@@ -109,7 +109,7 @@ function Hero({ ticket, ticketHidden, onBook }: { ticket: React.RefObject<HTMLBu
       <div className="cb-float cb-float--cup" style={{ ["--d" as string]: 32 }}><Cut img={CUTS.heroCup} /></div>
 
       <div className="cb-paper cb-paper--name" style={{ ["--d" as string]: 8 }}>
-        <h1 id="cb-hero-t" className="cb-word cb-word--xl">Cobalto</h1>
+        <h1 id="cb-hero-t" className="cb-hero__h1"><Wordmark /></h1>
         <p className="cb-tag">Ceramic café · Palermo</p>
       </div>
 
@@ -254,7 +254,7 @@ function Studio({ onBook }: { onBook: (el: HTMLElement) => void }) {
       <div className="cb-wrap cb-studio__in">
         <div className="cb-studio__img" data-reveal><Cut img={CUTS.studio} /></div>
         <div className="cb-studio__cards">
-          <div className="cb-studio__top" data-reveal><h2 id="cb-st-t" className="cb-word cb-word--brush">Cobalto</h2><p>Ceramic café en una casa vieja de Palermo.</p></div>
+          <div className="cb-studio__top" data-reveal><h2 id="cb-st-t" className="cb-studio__h"><Wordmark /></h2><p>Ceramic café en una casa vieja de Palermo.</p></div>
           <div className="cb-studio__card" data-reveal>
             <Jug className="cb-studio__jug" />
             <address>

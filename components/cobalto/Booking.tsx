@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { EXPS, Jug, money, reduced } from "./data";
+import { EXPS, Jug, Wordmark, money, reduced } from "./data";
 
 /* Reserva: la tarjeta se agranda y se transforma en el calendario; termina en una invitación. */
 const TIMES = ["10:00", "12:30", "15:00", "17:30", "20:00"];
@@ -62,10 +62,10 @@ export function Booking({ from, initial, onClose, back }: { from: DOMRect | null
       <div ref={box} className={`cb-book__card${done ? " done" : ""}`}>
         <button type="button" className="cb-book__x" onClick={close} aria-label="Cerrar">✕</button>
         {/* la cara de la tarjeta se ve mientras se agranda y se desvanece cuando aparece el calendario */}
-        {!done && <div className="cb-book__face" aria-hidden><span className="cb-word">Cobalto</span><span className="cb-book__faceSub">Reservá tu mesa</span></div>}
+        {!done && <div className="cb-book__face" aria-hidden><Wordmark className="cb-book__faceWm" /><span className="cb-book__faceSub">Reservá tu mesa</span></div>}
         {!done ? (
           <div className="cb-book__in">
-            <p className="cb-book__brand">Cobalto</p>
+            <Wordmark className="cb-book__brand" />
             <h2 id="cb-book-t">Reservá tu mesa</h2>
             <fieldset><legend>Experiencia</legend>
               <div className="cb-chips">{EXPS.map((x) => <button key={x.key} type="button" className={exp === x.key ? "on" : ""} aria-pressed={exp === x.key} onClick={() => setExp(x.key)}>{x.name}<small>{x.dur} · {money(x.price)}</small></button>)}</div>
