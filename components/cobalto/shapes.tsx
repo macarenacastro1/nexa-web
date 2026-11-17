@@ -52,6 +52,16 @@ export function Defs() {
         <pattern id="cb-speck-light" width="90" height="90" patternUnits="userSpaceOnUse">
           {dots.map((d, i) => <circle key={i} cx={(d.x + 40) % 90} cy={(d.y + 25) % 90} r={d.r * 0.9} fill="#f3eadb" opacity={d.o * 0.6} />)}
         </pattern>
+        <filter id="cb-stone" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency=".006 .07" numOctaves="4" seed="4" result="t" />
+          <feColorMatrix in="t" values=".42 0 0 0 .55  .36 0 0 0 .45  .3 0 0 0 .34  0 0 0 0 1" result="c" />
+          <feComposite in="c" in2="SourceGraphic" operator="in" />
+        </filter>
+        <filter id="cb-stone-dark" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency=".008 .05" numOctaves="3" seed="9" result="t" />
+          <feColorMatrix in="t" values=".22 0 0 0 .2  .16 0 0 0 .12  .12 0 0 0 .09  0 0 0 0 1" result="c" />
+          <feComposite in="c" in2="SourceGraphic" operator="in" />
+        </filter>
         <filter id="cb-soft" x="-20%" y="-20%" width="140%" height="140%">
           <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="11" result="t" />
           <feDisplacementMap in="SourceGraphic" in2="t" scale="22" result="d" />
@@ -68,7 +78,7 @@ export function Defs() {
 
 /** Pieza suelta (tienda, galerías). tone: color de base; pattern: dibujo pintado. */
 export function Piece({ kind, tone = "#f7f1e6", pattern, handle, size = 160, label }: {
-  kind: keyof typeof PROFILES; tone?: string; pattern?: "dots" | "stripes" | "waves" | "flower" | "reactive" | "reactive2" | "dip" | "pool" | null; handle?: "left" | "right" | "both"; size?: number; label?: string;
+  kind: keyof typeof PROFILES; tone?: string; pattern?: "dots" | "stripes" | "waves" | "flower" | "reactive" | "reactive2" | "dip" | "pool" | "stone" | "stone-dark" | null; handle?: "left" | "right" | "both"; size?: number; label?: string;
 }) {
   const W = 140, H = 170, base = 160, h = kind === "bowl" ? 70 : kind === "cup" || kind === "mug" ? 85 : 140;
   const d = vessel(PROFILES[kind]!, W / 2, base, h);
@@ -82,11 +92,13 @@ export function Piece({ kind, tone = "#f7f1e6", pattern, handle, size = 160, lab
       {handle && (handle === "left" || handle === "both") && <path d={`M${W / 2 - 28},${top + h * 0.22} c-26,4 -28,${h * 0.42} 0,${h * 0.5}`} fill="none" stroke={light ? "#e2d5c1" : tone} strokeWidth={8} strokeLinecap="round" />}
       <path d={d} fill={tone} />
       <g clipPath={`url(#${id})`}>
-        <rect width={W} height={H} fill={light ? "url(#cb-speck)" : "url(#cb-speck-light)"} />
+        {pattern !== "stone" && pattern !== "stone-dark" && <rect width={W} height={H} fill={light ? "url(#cb-speck)" : "url(#cb-speck-light)"} opacity=".55" />}
         {pattern === "dots" && Array.from({ length: 18 }, (_, i) => <circle key={i} cx={20 + (i % 6) * 20 + (Math.floor(i / 6) % 2) * 10} cy={top + 30 + Math.floor(i / 6) * 28} r={5} fill="#a5552a" />)}
         {pattern === "stripes" && [0, 1, 2, 3].map((i) => <rect key={i} x={0} y={top + 20 + i * 26} width={W} height={8} fill="#5f7f96" />)}
         {pattern === "waves" && [0, 1, 2].map((i) => <path key={i} d={`M0,${top + 40 + i * 30} q17,-12 35,0 t35,0 t35,0 t35,0`} fill="none" stroke="#5f7f96" strokeWidth="5" />)}
-        {light && pattern && <rect x="0" y={top - 2} width={W} height="7" fill="#6b3a1c" opacity=".55" filter="url(#cb-soft)" />}
+        {pattern === "stone" && <rect width={W} height={H} filter="url(#cb-stone)" />}
+        {pattern === "stone-dark" && <rect width={W} height={H} filter="url(#cb-stone-dark)" />}
+        {light && pattern && pattern !== "stone" && <rect x="0" y={top - 2} width={W} height="7" fill="#6b3a1c" opacity=".55" filter="url(#cb-soft)" />}
         {/* esmaltes reactivos, inmersión y charco: como las tazas de referencia */}
         {(pattern === "reactive" || pattern === "reactive2") && (
           <g filter="url(#cb-soft)">

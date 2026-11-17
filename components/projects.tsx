@@ -43,8 +43,8 @@ export function useProjects() {
         "Um estúdio onde se pinta cerâmica enquanto se toma um brunch vende uma experiência, não um produto: o site precisa contagiar esse programa e levar direto à reserva.",
       ),
       solution: L(
-        "Una mesa ilustrada donde cada objeto se puede tocar: la taza muestra las piezas, los pinceles los colores, el croissant el brunch, y la tarjeta del estudio se transforma en el calendario de reservas.",
-        "Uma mesa ilustrada onde cada objeto pode ser tocado: a xícara mostra as peças, os pincéis as cores, o croissant o brunch, e o cartão do estúdio se transforma no calendário de reservas.",
+        "Una portada editorial de cuatro cuadros que se abren al tocarlos: la taza muestra las piezas, los pinceles los esmaltes, el croissant el brunch, y la tarjeta del estudio se transforma en el calendario de reservas.",
+        "Uma capa editorial de quatro quadros que se abrem ao toque: a xícara mostra as peças, os pincéis os esmaltes, o croissant o brunch, e o cartão do estúdio se transforma no calendário de reservas.",
       ),
       href: "/casos/cobalto/",
       cta: L("Explorar el concepto", "Explorar o conceito"),
@@ -63,12 +63,12 @@ export function ProjectVisual({ k }: { k: string }) {
     );
   return (
     <div className="pj-vis pj-vis--ce" aria-hidden>
-      <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Outfit:wght@400;600;700&display=swap" />
+      <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Italiana&family=Hanken+Grotesk:wght@400;500&display=swap" />
       <Defs />
       <div className="pj-ce">
-        <Piece kind="amphora" tone="#f4ede1" handle="both" size={150} />
-        <Piece kind="jug" tone="#e7dccb" pattern="reactive" handle="right" size={120} />
-        <Piece kind="tall" tone="#3b2a20" size={96} />
+        <Piece kind="amphora" tone="#d8c3a5" pattern="stone" handle="both" size={150} />
+        <Piece kind="jug" tone="#efe8dc" handle="right" size={120} />
+        <Piece kind="tall" tone="#8e8b84" pattern="stone" size={96} />
       </div>
       <span className="pj-vis__word">A little art.</span>
     </div>
