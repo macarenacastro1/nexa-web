@@ -4,7 +4,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { track } from "@/lib/config";
 import { useHref, useL } from "@/lib/i18n";
-import { ExperienceDemo, IntelligenceDemo } from "./demos";
+import { ExperienceDemo, IntelligenceDemo, type ExpKey } from "./demos";
+import FitBox from "./FitBox";
 import { SystemsDemo } from "./systems-demos";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -44,9 +45,20 @@ export function useDivisions() {
   ];
 }
 
-function Demo({ k }: { k: string }) {
-  if (k === "experience") return <ExperienceDemo compact />;
-  if (k === "systems") return <SystemsDemo />;
+/* Recorrido automático: cada paso dura ~8 s. Si la persona toca algo, el conteo vuelve a empezar. */
+type Step = { div: number; sub?: string; ms: number };
+const TOUR: Step[] = [
+  { div: 0, sub: "criscuolo", ms: 8000 },
+  { div: 0, sub: "cobalto", ms: 8000 },
+  { div: 1, sub: "stock", ms: 8000 },
+  { div: 1, sub: "turnos", ms: 8000 },
+  { div: 1, sub: "radar", ms: 8000 },
+  { div: 2, ms: 10000 },
+];
+
+function Demo({ k, sub, onSub }: { k: string; sub?: string | undefined; onSub: (s: string) => void }) {
+  if (k === "experience") return <ExperienceDemo compact {...(sub ? { active: sub as ExpKey } : {})} onPick={onSub} />;
+  if (k === "systems") return <SystemsDemo {...(sub ? { active: sub } : {})} onPick={onSub} />;
   return <IntelligenceDemo />;
 }
 
@@ -56,6 +68,40 @@ export default function Services() {
   const D = useDivisions();
   const root = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(0);
+  const [sub, setSub] = useState<Record<number, string>>({ 0: "criscuolo", 1: "stock" });
+  const [step, setStep] = useState(0);
+  const [run, setRun] = useState(0); // cambia para reiniciar el conteo
+  const [visible, setVisible] = useState(false);
+  const step0 = TOUR[step]!;
+
+  // avanza solo mientras la sección está en pantalla y la pestaña visible
+  useEffect(() => {
+    if (!visible || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setTimeout(() => {
+      if (document.hidden) return setRun((r) => r + 1);
+      const next = (step + 1) % TOUR.length;
+      const n = TOUR[next]!;
+      setStep(next);
+      setOpen(n.div);
+      if (n.sub) setSub((x) => ({ ...x, [n.div]: n.sub! }));
+    }, step0.ms);
+    return () => clearTimeout(t);
+  }, [step, run, visible, step0.ms]);
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setVisible(!!e?.isIntersecting), { threshold: 0.35 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  // cualquier interacción reinicia el conteo desde donde está la persona
+  const touch = () => setRun((r) => r + 1);
+  const syncStep = (div: number, sb?: string) => {
+    const i = TOUR.findIndex((t) => t.div === div && (sb === undefined || t.sub === undefined || t.sub === sb));
+    if (i >= 0) setStep(i);
+    setRun((r) => r + 1);
+  };
+  const onSub = (div: number) => (sb: string) => { setSub((x) => ({ ...x, [div]: sb })); syncStep(div, sb); };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -66,11 +112,12 @@ export default function Services() {
 
   const pick = (i: number) => {
     setOpen(i);
+    syncStep(i, sub[i]);
     track("division_select", { division: D[i]!.key });
   };
 
   return (
-    <section className="svc" id="servicios" ref={root} aria-labelledby="svc-title">
+    <section className="svc" id="servicios" ref={root} aria-labelledby="svc-title" onPointerDown={touch} onKeyDown={touch}>
       <div className="container">
         <div className="svc__head">
           <div>
@@ -100,17 +147,30 @@ export default function Services() {
                     <a className="btn btn--line btn--sm" href={href(d.path)} onClick={() => track("cta_click", { cta: `servicios_${d.key}` })}>
                       {d.cta} <span className="arr">→</span>
                     </a>
-                    {open === i && <div className="svc__inline"><Demo k={d.key} /></div>}
+                    {open === i && <div className="svc__inline"><Hint run={`${step}-${run}`} ms={step0.ms} active={visible} /><Demo k={d.key} sub={sub[i]} onSub={onSub(i)} /></div>}
                   </div>
                 </div>
               </li>
             ))}
           </ul>
           <div className="svc__visual">
-            <div key={D[open]!.key} className="svc__stage"><Demo k={D[open]!.key} /></div>
+            <Hint run={`${step}-${run}`} ms={step0.ms} active={visible} />
+            <div key={D[open]!.key} className="svc__stage"><FitBox reserve={190}><Demo k={D[open]!.key} sub={sub[open]} onSub={onSub(open)} /></FitBox></div>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/** Cartel "es interactivo" con una barra que muestra cuánto falta para pasar a la siguiente demo. */
+function Hint({ run, ms, active }: { run: string; ms: number; active: boolean }) {
+  const L = useL();
+  return (
+    <p className="svc__hint">
+      <span className="svc__hand" aria-hidden>☝</span>
+      {L("Es interactivo: tocá y probá cada demo", "É interativo: toque e teste cada demo")}
+      <span className="svc__timer" aria-hidden><i key={run} style={{ animationDuration: `${ms}ms`, animationPlayState: active ? "running" : "paused" }} /></span>
+    </p>
   );
 }

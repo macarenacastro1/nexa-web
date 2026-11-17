@@ -151,7 +151,7 @@ function StockSystem() {
       if (ok) { take(sku, n); setOrders((o) => o + 1); }
     }, 1300);
   };
-  const ref = useLive(step, 5200);
+  const ref = useLive(step, 3400);
 
   const approve = () => {
     if (!po) return;
@@ -286,7 +286,7 @@ function BookingSystem() {
       setAgenda((g) => ({ ...g, [k]: { who, what: T.c, st: "new" } }));
     }
   };
-  const ref = useLive(cycle, 4200);
+  const ref = useLive(cycle, 3000);
 
   const book = (k: string) => {
     if (agenda[k]) return;
@@ -677,20 +677,21 @@ function RadarSystem() {
   );
 }
 
-export function SystemsDemo() {
+export function SystemsDemo({ active, onPick }: { active?: string; onPick?: (k: string) => void } = {}) {
   const L = useL();
   const SYS = [
     { k: "stock", name: L("Stock y pedidos", "Estoque e pedidos"), desc: L("Rivera Insumos vende packaging a comercios. Su sistema descuenta el stock con cada venta, contesta solo las consultas por WhatsApp y prepara el pedido al proveedor antes de quedarse sin mercadería.", "A Rivera Insumos vende embalagens para o comércio. O sistema baixa o estoque a cada venda, responde sozinho as consultas no WhatsApp e prepara o pedido ao fornecedor antes de faltar mercadoria.") },
     { k: "turnos", name: L("Turnos", "Agendamentos"), desc: L("Odonto Prisma tiene dos profesionales y la agenda siempre llena. Los pacientes reservan desde la web, confirman por WhatsApp y, si alguien cancela, el hueco se ofrece solo a la lista de espera.", "A Odonto Prisma tem dois profissionais e a agenda sempre cheia. Os pacientes reservam pelo site, confirmam pelo WhatsApp e, se alguém cancela, a vaga é oferecida sozinha à lista de espera.") },
     { k: "radar", name: L("Gestión comercial", "Gestão comercial"), desc: L("Vértice es un estudio que vende servicios todos los meses. Su sistema busca negocios que necesitan lo que ofrece, los sigue en el CRM, junta WhatsApp, mail e Instagram en una sola bandeja con respuestas sugeridas, propone mejoras en los anuncios para aprobar y muestra la caja y el margen de cada proyecto.", "A Vértice é um estúdio que vende serviços todo mês. O sistema encontra negócios que precisam do que ela oferece, acompanha tudo no CRM, reúne WhatsApp, e-mail e Instagram numa só caixa com respostas sugeridas, propõe melhorias nos anúncios para aprovar e mostra o caixa e a margem de cada projeto.") },
   ];
-  const [k, setK] = useState(SYS[0]!.k);
+  const [own, setK] = useState(SYS[0]!.k);
+  const k = active ?? own;
   const s = SYS.find((x) => x.k === k)!;
   return (
     <div className="demo demo--sys3">
       <div className="demo__tabs" role="tablist" aria-label={L("Sistemas", "Sistemas")}>
         {SYS.map((x) => (
-          <button key={x.k} type="button" role="tab" aria-selected={k === x.k} className={k === x.k ? "on" : ""} onClick={() => { setK(x.k); track("systems_demo_select", { system: x.k }); }}>{x.name}</button>
+          <button key={x.k} type="button" role="tab" aria-selected={k === x.k} className={k === x.k ? "on" : ""} onClick={() => { setK(x.k); onPick?.(x.k); track("systems_demo_select", { system: x.k }); }}>{x.name}</button>
         ))}
       </div>
       <div key={k} className="sys3__stage">

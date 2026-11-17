@@ -25,8 +25,8 @@ export function useExperienceProjects() {
       shows: L(["Storytelling", "Dirección de arte", "Diseño editorial", "Transiciones inmersivas"], ["Storytelling", "Direção de arte", "Design editorial", "Transições imersivas"]),
     },
     cobalto: {
-      name: "Cobalto",
-      status: L("Concepto navegable", "Conceito navegável"),
+      name: L("Estudio de cerámica", "Estúdio de cerâmica"),
+      status: L("Concepto · en desarrollo", "Conceito · em desenvolvimento"),
       summary: L("Un estudio de cerámica con brunch: una mesa ilustrada donde cada objeto se toca y la tarjeta del estudio se convierte en el calendario de reservas.", "Um estúdio de cerâmica com brunch: uma mesa ilustrada onde cada objeto pode ser tocado e o cartão do estúdio vira o calendário de reservas."),
       shows: L(["Ilustración propia", "Interacción", "Reservas online", "Tienda"], ["Ilustração própria", "Interação", "Reservas online", "Loja"]),
     },
@@ -102,16 +102,17 @@ function CobaltoPreview() {
   );
 }
 
-export function ExperienceDemo({ compact = false }: { compact?: boolean }) {
+export function ExperienceDemo({ compact = false, active, onPick }: { compact?: boolean; active?: ExpKey; onPick?: (k: ExpKey) => void }) {
   const L = useL();
   const all = useExperienceProjects();
-  const [k, setK] = useState<ExpKey>("criscuolo");
+  const [own, setK] = useState<ExpKey>("criscuolo");
+  const k = active ?? own;
   const p = all[k];
   return (
     <div className="demo demo--exp">
       <div className="demo__tabs" role="tablist" aria-label={L("Proyectos", "Projetos")}>
         {EXPERIENCE_PROJECTS.map((x) => (
-          <button key={x} type="button" role="tab" aria-selected={k === x} className={k === x ? "on" : ""} onClick={() => { setK(x); track("experience_project_select", { project: x }); }}>{all[x].name}</button>
+          <button key={x} type="button" role="tab" aria-selected={k === x} className={k === x ? "on" : ""} onClick={() => { setK(x); onPick?.(x); track("experience_project_select", { project: x }); }}>{all[x].name}</button>
         ))}
       </div>
       <div className="demo__stage" aria-label={p.name} key={k}>

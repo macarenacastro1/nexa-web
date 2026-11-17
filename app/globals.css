@@ -1988,3 +1988,16 @@ tr.low .ap-qty s { background: #e8890c; }
 .cbp__table svg:nth-of-type(4) { width: 8%; }
 .cbp__card { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 12%; aspect-ratio: 1; margin-left: 2%; border: 0; border-radius: 3px; background: #f4ede1; box-shadow: 0 12px 24px -14px rgba(59,42,32,.6); color: #a5552a; font-weight: 400; font-style: italic; font-size: 2.2cqw; letter-spacing: -.03em; transform: rotate(4deg); }
 .cbp__card small { font-size: .65em; color: #3b2a20; font-family: Outfit, var(--sans); font-weight: 600; letter-spacing: 0; }
+
+/* Servicios: demo entera en pantalla + recorrido automático */
+.fitbox { width: 100%; display: flex; justify-content: center; align-items: flex-start; }
+.fitbox__in { width: 100%; transform-origin: top center; flex: none; }
+.svc3 .svc__visual { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 12px; top: 84px; min-height: 0; }
+.svc__hint { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 13px; color: #cfd2d6; }
+.svc__hand { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(45,226,208,.14); color: var(--teal); font-size: 13px; animation: svcTap 2.4s ease-in-out infinite; }
+@keyframes svcTap { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px) scale(1.06); } }
+.svc__timer { flex: 1; max-width: 160px; height: 2px; margin-left: auto; border-radius: 2px; background: rgba(255,255,255,.1); overflow: hidden; }
+.svc__timer i { display: block; height: 100%; background: var(--teal); transform-origin: left; animation: svcTime linear forwards; }
+@keyframes svcTime { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.svc__inline .svc__hint { margin: 18px 0 10px; }
+@media (prefers-reduced-motion: reduce) { .svc__timer { display: none; } .svc__hand { animation: none; } }

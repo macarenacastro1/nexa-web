@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import Contact, { type NeedKey } from "@/components/Contact";
 import { ExperienceDemo, IntelligenceDemo } from "@/components/demos";
 import { SystemsDemo } from "@/components/systems-demos";
+import FitBox from "@/components/FitBox";
 import { HeroArt, ServiceVisual } from "@/components/service-visuals";
 import Flow from "@/components/Flow";
 import Simulator from "@/components/Simulator";
@@ -311,7 +312,7 @@ export default function DivisionPage({ k }: { k: Key }) {
                 <h2 className="h2 dp-h2" id="dp-demo">{c.demoTitle[0]} <span className="serif ctrl">{c.demoTitle[1]}</span></h2>
                 <p className="lead">{c.demoLead}</p>
               </div>
-              <ExperienceDemo />
+              <FitBox reserve={110}><ExperienceDemo /></FitBox>
             </div>
           </section>
         )}
@@ -322,7 +323,7 @@ export default function DivisionPage({ k }: { k: Key }) {
                 <h2 className="h2 dp-h2" id="dp-demo">{c.demoTitle[0]} <span className="serif ctrl">{c.demoTitle[1]}</span></h2>
                 <p className="lead">{c.demoLead}</p>
               </div>
-              <SystemsDemo />
+              <FitBox reserve={110}><SystemsDemo /></FitBox>
             </div>
           </section>
         )}
