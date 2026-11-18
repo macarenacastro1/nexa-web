@@ -147,15 +147,15 @@ export default function Services() {
                     <a className="btn btn--line btn--sm" href={href(d.path)} onClick={() => track("cta_click", { cta: `servicios_${d.key}` })}>
                       {d.cta} <span className="arr">→</span>
                     </a>
-                    {open === i && <div className="svc__inline"><Hint run={`${step}-${run}`} ms={step0.ms} active={visible} /><Demo k={d.key} sub={sub[i]} onSub={onSub(i)} /></div>}
+                    {open === i && <div className="svc__inline"><div className="svc__ghosted"><Demo k={d.key} sub={sub[i]} onSub={onSub(i)} /><Ghost run={`${step}-${run}`} ms={step0.ms} active={visible} /></div><Progress run={`${step}-${run}`} ms={step0.ms} active={visible} /></div>}
                   </div>
                 </div>
               </li>
             ))}
           </ul>
           <div className="svc__visual">
-            <Hint run={`${step}-${run}`} ms={step0.ms} active={visible} />
-            <div key={D[open]!.key} className="svc__stage"><FitBox reserve={190}><Demo k={D[open]!.key} sub={sub[open]} onSub={onSub(open)} /></FitBox></div>
+            <div key={D[open]!.key} className="svc__stage svc__ghosted"><FitBox reserve={170}><Demo k={D[open]!.key} sub={sub[open]} onSub={onSub(open)} /></FitBox><Ghost run={`${step}-${run}`} ms={step0.ms} active={visible} /></div>
+            <Progress run={`${step}-${run}`} ms={step0.ms} active={visible} />
           </div>
         </div>
       </div>
@@ -163,14 +163,20 @@ export default function Services() {
   );
 }
 
-/** Cartel "es interactivo" con una barra que muestra cuánto falta para pasar a la siguiente demo. */
-function Hint({ run, ms, active }: { run: string; ms: number; active: boolean }) {
+/** Cursor fantasma: un puntero de Nexa recorre la demo, "toca" y dice "probá vos".
+ *  Se reinicia en cada paso del recorrido y se esconde mientras la persona usa la demo. */
+function Ghost({ run, ms, active }: { run: string; ms: number; active: boolean }) {
   const L = useL();
+  const st = { animationDuration: `${ms}ms`, animationPlayState: active ? "running" : "paused" };
   return (
-    <p className="svc__hint">
-      <span className="svc__hand" aria-hidden>☝</span>
-      {L("Es interactivo: tocá y probá cada demo", "É interativo: toque e teste cada demo")}
-      <span className="svc__timer" aria-hidden><i key={run} style={{ animationDuration: `${ms}ms`, animationPlayState: active ? "running" : "paused" }} /></span>
-    </p>
+    <span key={run} className="svc__ghost" style={st} aria-hidden>
+      <span className="svc__ghost-dot" style={st} />
+      <em>{L("probá", "teste")} <span className="serif">{L("vos", "você")}</span></em>
+    </span>
   );
+}
+
+/** Línea fina que muestra cuánto falta para pasar a la siguiente demo. */
+function Progress({ run, ms, active }: { run: string; ms: number; active: boolean }) {
+  return <span className="svc__line" aria-hidden><i key={run} style={{ animationDuration: `${ms}ms`, animationPlayState: active ? "running" : "paused" }} /></span>;
 }
