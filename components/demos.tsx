@@ -82,7 +82,7 @@ function CobaltoPreview() {
       <Frame url="cobalto.studio" tone="light">
         <CbDefs />
         <div className="cbp" aria-hidden>
-          <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Jost:wght@400&display=swap" />
+          <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Syne:wght@600&family=Inter:wght@400&display=swap" />
           <div className="cbp__card"><span className="cbp__logo">COBALTO</span><span className="cbp__caps">Ceramic café · Hecho para tocar</span></div>
           <div className="cbp__grid">
             {([["#a9bfcb", "#4a1117", "bowl"], ["#5b4318", "#a9bfcb", "bottle"], ["#cfb183", "#8a451b", "cup"], ["#4a1117", "#cfb183", "vase"]] as const).map(([bg, fg, k]) => (

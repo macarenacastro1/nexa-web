@@ -2023,11 +2023,11 @@ tr.low .ap-qty s { background: #e8890c; }
 /* vista previa de Cobalto (Experience) y tarjeta de Proyectos */
 .cbp { container-type: inline-size; position: relative; aspect-ratio: 16 / 10; background: #e4e1b8; display: grid; grid-template-columns: 1.15fr 1fr; overflow: hidden; }
 .cbp__card { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2cqw; color: #5b4318; }
-.cbp__logo { font-family: "Caveat Brush", cursive; font-size: 10cqw; line-height: .9; }
-.cbp__caps { font-family: Jost, var(--sans); font-size: 1.3cqw; letter-spacing: .16em; text-transform: uppercase; }
+.cbp__logo { font-family: Syne, var(--sans); font-weight: 600; font-size: 7.5cqw; letter-spacing: -.02em; line-height: 1; }
+.cbp__caps { font-family: Inter, var(--sans); font-size: 1.3cqw; letter-spacing: .16em; text-transform: uppercase; }
 .cbp__grid { display: grid; grid-template-columns: 1fr 1fr; }
 .cbp__grid span, .pj-vis--cb > span:not(.pj-cb__seal) { display: grid; place-items: center; }
 .cbp__grid svg { width: 46%; }
 .pj-vis--cb { display: grid; grid-template-columns: 1fr 1fr; background: #e4e1b8; }
 .pj-vis--cb svg { width: 42%; }
-.pj-cb__seal { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 30%; aspect-ratio: 1; border-radius: 50%; background: #e4e1b8; color: #4a1117; display: grid; place-items: center; text-align: center; font-family: "Caveat Brush", cursive; font-size: clamp(20px, 2.6vw, 34px); line-height: .9; letter-spacing: .06em; }
+.pj-cb__seal { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 30%; aspect-ratio: 1; border-radius: 50%; background: #e4e1b8; color: #4a1117; display: grid; place-items: center; text-align: center; font-family: Syne, var(--sans); font-weight: 600; font-size: clamp(16px, 2vw, 26px); line-height: 1; letter-spacing: 0; }

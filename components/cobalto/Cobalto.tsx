@@ -139,8 +139,8 @@ function Table({ hov }: { hov: string | null }) {
         <g className={on("card")} style={{ transformOrigin: "140px 120px" }}>
           <g transform="rotate(-9 140 120)">
             <rect x="52" y="66" width="176" height="108" rx="6" fill={C.olive} />
-            <text x="140" y="122" textAnchor="middle" fill={C.blue} fontFamily="Caveat Brush, cursive" fontSize="34">RESERVÁ</text>
-            <text x="140" y="148" textAnchor="middle" fill={C.light} fontFamily="Jost, sans-serif" fontSize="10" letterSpacing="2.4">MESA PARA 2 · SÁB 16 H</text>
+            <text x="140" y="122" textAnchor="middle" fill={C.blue} fontFamily="Syne, sans-serif" fontWeight="700" fontSize="27">RESERVÁ</text>
+            <text x="140" y="148" textAnchor="middle" fill={C.light} fontFamily="Inter, sans-serif" fontSize="9.5" letterSpacing="2.4">MESA PARA 2 · SÁB 16 H</text>
           </g>
         </g>
         {/* café */}
@@ -352,9 +352,9 @@ function FoodIcon({ k }: { k: "cup" | "croissant" | "toast" | "cake" }) {
   const d = {
     croissant: "M8 68 C12 22 88 22 92 68 C78 60 64 57 50 57 C36 57 22 60 8 68Z",
     toast: "M22 30 C22 18 40 14 50 20 C60 14 78 18 78 30 C78 36 74 38 72 40 L72 78 L28 78 L28 40 C26 38 22 36 22 30Z",
-    cake: "M10 78 L90 78 L90 50 L10 64Z",
+    cake: "M14 48 C14 34 86 34 86 48 L84 78 L16 78Z",
   }[k];
-  return <svg className="cb-shape" viewBox="0 0 100 100" aria-hidden><g filter="url(#cb-rough)"><path d={d} fill={k === "toast" ? C.tan : k === "cake" ? C.cream : C.rust} />{k === "croissant" && <path d="M34 36 L38 54 M50 32 L50 52 M66 36 L62 54" stroke={C.tan} strokeWidth="4" strokeLinecap="round" />}{k === "cake" && <path d="M10 64 L90 50" stroke={C.wine} strokeWidth="6" />}</g></svg>;
+  return <svg className="cb-shape" viewBox="0 0 100 100" aria-hidden><g filter="url(#cb-rough)"><path d={d} fill={k === "toast" ? C.tan : k === "cake" ? C.tan : C.rust} />{k === "croissant" && <path d="M34 36 L38 54 M50 32 L50 52 M66 36 L62 54" stroke={C.tan} strokeWidth="4" strokeLinecap="round" />}{k === "cake" && <path d="M16 46 C30 40 70 40 84 46 L84 52 C78 56 74 50 70 56 C64 62 60 50 54 54 C46 60 42 50 36 56 C28 60 24 50 16 54Z" fill={C.light} />}</g></svg>;
 }
 function Cafe({ onMenu }: { onMenu: () => void }) {
   return (
