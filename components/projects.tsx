@@ -32,6 +32,22 @@ export function useProjects() {
       href: "/casos/criscuolo/",
       cta: L("Explorar el concepto", "Explorar o conceito"),
     },
+    {
+      key: "cobalto",
+      name: "Cobalto",
+      cat: L("Experiencia web · Ceramic café", "Experiência web · Ceramic café"),
+      status: L("Concepto · demo navegable", "Conceito · demo navegável"),
+      challenge: L(
+        "Un estudio donde se pinta cerámica mientras se toma café vende un plan, no un producto: la web tiene que contagiar las ganas de ir y llevar directo a reservar.",
+        "Um estúdio onde se pinta cerâmica enquanto se toma café vende um programa, não um produto: o site precisa dar vontade de ir e levar direto à reserva.",
+      ),
+      solution: L(
+        "Un sitio limpio donde las piezas son las protagonistas: se mueven con el cursor, se compran en dos toques y cualquier botón abre la reserva con día, horario y cupos.",
+        "Um site limpo onde as peças são as protagonistas: se movem com o cursor, se compram em dois toques e qualquer botão abre a reserva com dia, horário e vagas.",
+      ),
+      href: "/casos/cobalto/",
+      cta: L("Explorar el concepto", "Explorar o conceito"),
+    },
   ];
 }
 
@@ -44,7 +60,15 @@ export function ProjectVisual({ k }: { k: string }) {
         <span className="pj-vis__word" aria-hidden>Da fruta à xícara</span>
       </div>
     );
-  return null;
+  return (
+    <div className="pj-vis pj-vis--cb" aria-hidden>
+      {["marmol", "circulos", "tallada"].map((n) => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img key={n} src={`/cobalto/${n}.webp`} alt="" loading="lazy" />
+      ))}
+      <span className="pj-vis__word">Pintá tu taza.</span>
+    </div>
+  );
 }
 
 export function ProjectCard({ p, i, detail = false }: { p: ReturnType<typeof useProjects>[number]; i: number; detail?: boolean }) {

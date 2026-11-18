@@ -11,7 +11,7 @@ import { rememberReturn } from "./criscuolo/BackToNexa";
    ===================================================================== */
 
 /* ---------------------------- EXPERIENCE ---------------------------- */
-export const EXPERIENCE_PROJECTS = ["criscuolo"] as const;
+export const EXPERIENCE_PROJECTS = ["criscuolo", "cobalto"] as const;
 export type ExpKey = (typeof EXPERIENCE_PROJECTS)[number];
 
 export function useExperienceProjects() {
@@ -22,6 +22,12 @@ export function useExperienceProjects() {
       status: L("Concepto navegable", "Conceito navegável"),
       summary: L("Una experiencia de café que cuenta el camino del fruto a la taza.", "Uma experiência de café que conta o caminho da fruta à xícara."),
       shows: L(["Storytelling", "Dirección de arte", "Diseño editorial", "Transiciones inmersivas"], ["Storytelling", "Direção de arte", "Design editorial", "Transições imersivas"]),
+    },
+    cobalto: {
+      name: "Cobalto",
+      status: L("Concepto navegable", "Conceito navegável"),
+      summary: L("Un ceramic café de Palermo: pintás tu taza, tomás el café en ella, comprás piezas y reservás tu mesa en el momento.", "Um ceramic café em Palermo: você pinta sua xícara, toma o café nela, compra peças e reserva sua mesa na hora."),
+      shows: L(["Dirección de arte", "Tienda online", "Reservas", "Microinteracciones"], ["Direção de arte", "Loja online", "Reservas", "Microinterações"]),
     },
   } satisfies Record<ExpKey, { name: string; status: string; summary: string; shows: string[] }>;
 }
@@ -66,6 +72,33 @@ function CriscuoloPreview() {
   );
 }
 
+function CobaltoPreview() {
+  const L = useL();
+  const { lang } = useLang();
+  return (
+    <a className="vid-card" href="/casos/cobalto/" onClick={() => { rememberReturn(lang); track("project_open", { project: "cobalto", from: "preview" }); }}
+      aria-label={L("Ver el concepto de Cobalto completo", "Ver o conceito da Cobalto completo")}>
+      <Frame url="cobalto.studio" tone="light">
+        <div className="cbp" aria-hidden>
+          <p className="cbp__k">Ceramic café · Palermo</p>
+          <p className="cbp__h">Pintá tu taza.<br /><em>Tomá el café en ella.</em></p>
+          <div className="cbp__shelf">
+            {["marmol", "circulos", "tallada", "primitiva"].map((n) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={n} src={`/cobalto/${n}.webp`} alt="" loading="lazy" className={`cbp__p cbp__p--${n}`} />
+            ))}
+          </div>
+        </div>
+      </Frame>
+      <span className="vid-card__cta">
+        <span className="vid-card__play" aria-hidden>▶</span>
+        {L("Ver el concepto completo", "Ver o conceito completo")}
+        <span aria-hidden>→</span>
+      </span>
+    </a>
+  );
+}
+
 export function ExperienceDemo({ compact = false, active, onPick }: { compact?: boolean; active?: ExpKey; onPick?: (k: ExpKey) => void }) {
   const L = useL();
   const all = useExperienceProjects();
@@ -80,7 +113,7 @@ export function ExperienceDemo({ compact = false, active, onPick }: { compact?: 
         ))}
       </div>}
       <div className="demo__stage" aria-label={p.name} key={k}>
-        <CriscuoloPreview />
+        {k === "criscuolo" ? <CriscuoloPreview /> : <CobaltoPreview />}
       </div>
       <div className="demo__caption">
         <span className="status">{p.name} · {p.status}</span>

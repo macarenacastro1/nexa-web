@@ -49,6 +49,7 @@ export function useDivisions() {
 type Step = { div: number; sub?: string; ms: number };
 const TOUR: Step[] = [
   { div: 0, sub: "criscuolo", ms: 8000 },
+  { div: 0, sub: "cobalto", ms: 8000 },
   { div: 1, sub: "stock", ms: 8000 },
   { div: 1, sub: "turnos", ms: 8000 },
   { div: 1, sub: "radar", ms: 8000 },

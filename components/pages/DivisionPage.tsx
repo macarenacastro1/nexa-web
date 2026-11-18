@@ -49,8 +49,8 @@ function useContent(k: Key) {
       ),
       demoTitle: [L("Una marca,", "Uma marca,"), L("un lenguaje.", "uma linguagem.")],
       demoLead: L(
-        "Un café de especialidad contado como un recorrido, del fruto a la taza. Entrá y miralo completo.",
-        "Um café especial contado como um percurso, da fruta à xícara. Entre e veja completo.",
+        "Un café de especialidad contado como un recorrido y un ceramic café donde todo se toca: dos conceptos con identidades muy distintas. Elegí uno para verlo.",
+        "Um café especial contado como um percurso e um ceramic café onde tudo se toca: dois conceitos com identidades muito diferentes. Escolha um para ver.",
       ),
       blockTitle: [L("Proceso y", "Processo e"), L("entregables.", "entregáveis.")],
       block: L<Item[]>(
