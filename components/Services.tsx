@@ -147,32 +147,19 @@ export default function Services() {
                     <a className="btn btn--line btn--sm" href={href(d.path)} onClick={() => track("cta_click", { cta: `servicios_${d.key}` })}>
                       {d.cta} <span className="arr">→</span>
                     </a>
-                    {open === i && <div className="svc__inline"><div className="svc__ghosted"><Demo k={d.key} sub={sub[i]} onSub={onSub(i)} /><Ghost run={`${step}-${run}`} ms={step0.ms} active={visible} /></div><Progress run={`${step}-${run}`} ms={step0.ms} active={visible} /></div>}
+                    {open === i && <div className="svc__inline"><Demo k={d.key} sub={sub[i]} onSub={onSub(i)} /><Progress run={`${step}-${run}`} ms={step0.ms} active={visible} /></div>}
                   </div>
                 </div>
               </li>
             ))}
           </ul>
           <div className="svc__visual">
-            <div key={D[open]!.key} className="svc__stage svc__ghosted"><FitBox reserve={170}><Demo k={D[open]!.key} sub={sub[open]} onSub={onSub(open)} /></FitBox><Ghost run={`${step}-${run}`} ms={step0.ms} active={visible} /></div>
+            <div key={D[open]!.key} className="svc__stage"><FitBox reserve={170}><Demo k={D[open]!.key} sub={sub[open]} onSub={onSub(open)} /></FitBox></div>
             <Progress run={`${step}-${run}`} ms={step0.ms} active={visible} />
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-/** Cursor fantasma: un puntero de Nexa recorre la demo, "toca" y dice "probá vos".
- *  Se reinicia en cada paso del recorrido y se esconde mientras la persona usa la demo. */
-function Ghost({ run, ms, active }: { run: string; ms: number; active: boolean }) {
-  const L = useL();
-  const st = { animationDuration: `${ms}ms`, animationPlayState: active ? "running" : "paused" };
-  return (
-    <span key={run} className="svc__ghost" style={st} aria-hidden>
-      <span className="svc__ghost-dot" style={st} />
-      <em>{L("probá", "teste")} <span className="serif">{L("vos", "você")}</span></em>
-    </span>
   );
 }
 

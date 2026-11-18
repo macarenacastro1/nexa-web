@@ -11,6 +11,7 @@ import Contact, { type NeedKey } from "@/components/Contact";
 import { ExperienceDemo, IntelligenceDemo } from "@/components/demos";
 import { SystemsDemo } from "@/components/systems-demos";
 import FitBox from "@/components/FitBox";
+import Ghost from "@/components/Ghost";
 import { HeroArt, ServiceVisual } from "@/components/service-visuals";
 import Flow from "@/components/Flow";
 import Simulator from "@/components/Simulator";
@@ -323,7 +324,7 @@ export default function DivisionPage({ k }: { k: Key }) {
                 <h2 className="h2 dp-h2" id="dp-demo">{c.demoTitle[0]} <span className="serif ctrl">{c.demoTitle[1]}</span></h2>
                 <p className="lead">{c.demoLead}</p>
               </div>
-              <FitBox reserve={110}><SystemsDemo /></FitBox>
+              <Ghost><FitBox reserve={110}><SystemsDemo /></FitBox></Ghost>
             </div>
           </section>
         )}
@@ -335,7 +336,7 @@ export default function DivisionPage({ k }: { k: Key }) {
                 <h2 className="h2 dp-h2" id="dp-demo">{L("Lo automático,", "O automático,")} <span className="serif ctrl">{L("con control.", "com controle.")}</span></h2>
                 <p className="lead">{L("Elegí un caso y mirá cómo una consulta, un turno o una factura pasan por el sistema. Lo importante siempre lo aprueba una persona.", "Escolha um caso e veja como uma consulta, um horário ou uma nota passam pelo sistema. O importante sempre é aprovado por uma pessoa.")}</p>
               </div>
-              <IntelligenceDemo />
+              <Ghost><IntelligenceDemo /></Ghost>
             </div>
           </section>
         )}
