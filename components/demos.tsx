@@ -12,7 +12,9 @@ import { Defs, Piece } from "./cobalto/shapes";
    ===================================================================== */
 
 /* ---------------------------- EXPERIENCE ---------------------------- */
-export const EXPERIENCE_PROJECTS = ["criscuolo", "cobalto"] as const;
+// El estudio de cerámica (cobalto) vuelve a la lista cuando su experiencia esté terminada.
+export const EXPERIENCE_PROJECTS = ["criscuolo"] as const;
+export type ExpAll = "criscuolo" | "cobalto";
 export type ExpKey = (typeof EXPERIENCE_PROJECTS)[number];
 
 export function useExperienceProjects() {
@@ -30,7 +32,7 @@ export function useExperienceProjects() {
       summary: L("Un estudio de cerámica con brunch: una mesa ilustrada donde cada objeto se toca y la tarjeta del estudio se convierte en el calendario de reservas.", "Um estúdio de cerâmica com brunch: uma mesa ilustrada onde cada objeto pode ser tocado e o cartão do estúdio vira o calendário de reservas."),
       shows: L(["Ilustración propia", "Interacción", "Reservas online", "Tienda"], ["Ilustração própria", "Interação", "Reservas online", "Loja"]),
     },
-  } satisfies Record<ExpKey, { name: string; status: string; summary: string; shows: string[] }>;
+  } satisfies Record<ExpAll, { name: string; status: string; summary: string; shows: string[] }>;
 }
 
 function Frame({ url, tone, children }: { url: string; tone: "light" | "dark"; children: React.ReactNode }) {
@@ -110,11 +112,11 @@ export function ExperienceDemo({ compact = false, active, onPick }: { compact?: 
   const p = all[k];
   return (
     <div className="demo demo--exp">
-      <div className="demo__tabs" role="tablist" aria-label={L("Proyectos", "Projetos")}>
+      {EXPERIENCE_PROJECTS.length > 1 && <div className="demo__tabs" role="tablist" aria-label={L("Proyectos", "Projetos")}>
         {EXPERIENCE_PROJECTS.map((x) => (
           <button key={x} type="button" role="tab" aria-selected={k === x} className={k === x ? "on" : ""} onClick={() => { setK(x); onPick?.(x); track("experience_project_select", { project: x }); }}>{all[x].name}</button>
         ))}
-      </div>
+      </div>}
       <div className="demo__stage" aria-label={p.name} key={k}>
         {k === "criscuolo" ? <CriscuoloPreview /> : <CobaltoPreview />}
       </div>
@@ -130,7 +132,7 @@ export function ExperienceDemo({ compact = false, active, onPick }: { compact?: 
 /* --------------------------- INTELLIGENCE --------------------------- */
 type Case = { k: string; tab: string; from: string; msg: string; fields: [string, string][]; tools: string[]; draft: string };
 
-export function IntelligenceDemo() {
+export function IntelligenceDemo({ compact = false }: { compact?: boolean } = {}) {
   const L = useL();
   const CASES: Case[] = L(
     [
@@ -201,7 +203,7 @@ export function IntelligenceDemo() {
         <div className="ai__wire" aria-hidden><i /></div>
         <div className="ai__col ai__out">
           <small>{L("Herramientas conectadas", "Ferramentas conectadas")}</small>
-          <div className="ai-tools">{ALL_TOOLS.map((t) => <span key={t} className={phase >= 2 && c.tools.includes(t) ? "on" : ""}>{t}</span>)}</div>
+          <div className="ai-tools">{(compact ? c.tools : ALL_TOOLS).map((t) => <span key={t} className={phase >= 2 && c.tools.includes(t) ? "on" : ""}>{t}</span>)}</div>
           {phase >= 3 && (
             <div key={`d-${ci}`} className={`ai-draft${phase === 4 ? " sent" : ""}`}>
               <span className="kind kind--h">{phase === 4 ? L("Aprobado", "Aprovado") : L("Espera tu aprobación", "Aguarda sua aprovação")}</span>

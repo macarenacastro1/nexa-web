@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { track } from "@/lib/config";
 import { useL } from "@/lib/i18n";
 
@@ -9,11 +9,15 @@ import { useL } from "@/lib/i18n";
    reales de una empresa: logo, menú, datos y automatizaciones en vivo.
    ===================================================================== */
 
+/** En modo "calm" la actividad automática arranca recién cuando la persona toca la demo. */
+const LiveCtx = createContext<{ current: boolean }>({ current: true });
+
 /** Ejecuta `fn` cada `ms` solo mientras el bloque está en pantalla, la pestaña visible y sin movimiento reducido. */
 function useLive(fn: () => void, ms: number) {
   const ref = useRef<HTMLDivElement>(null);
-  const cb = useRef(fn);
-  cb.current = fn;
+  const armed = useContext(LiveCtx);
+  const cb = useRef(() => { if (armed.current) fn(); });
+  cb.current = () => { if (armed.current) fn(); };
   useEffect(() => {
     const el = ref.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -677,7 +681,8 @@ function RadarSystem() {
   );
 }
 
-export function SystemsDemo({ active, onPick }: { active?: string; onPick?: (k: string) => void } = {}) {
+export function SystemsDemo({ active, onPick, calm = false }: { active?: string; onPick?: (k: string) => void; calm?: boolean } = {}) {
+  const armed = useRef({ current: !calm }).current;
   const L = useL();
   const SYS = [
     { k: "stock", name: L("Stock y pedidos", "Estoque e pedidos"), desc: L("Rivera Insumos vende packaging a comercios. Su sistema descuenta el stock con cada venta, contesta solo las consultas por WhatsApp y prepara el pedido al proveedor antes de quedarse sin mercadería.", "A Rivera Insumos vende embalagens para o comércio. O sistema baixa o estoque a cada venda, responde sozinho as consultas no WhatsApp e prepara o pedido ao fornecedor antes de faltar mercadoria.") },
@@ -688,7 +693,8 @@ export function SystemsDemo({ active, onPick }: { active?: string; onPick?: (k: 
   const k = active ?? own;
   const s = SYS.find((x) => x.k === k)!;
   return (
-    <div className="demo demo--sys3">
+    <LiveCtx.Provider value={armed}>
+    <div className="demo demo--sys3" onPointerDown={() => { armed.current = true; }} onKeyDown={() => { armed.current = true; }}>
       <div className="demo__tabs" role="tablist" aria-label={L("Sistemas", "Sistemas")}>
         {SYS.map((x) => (
           <button key={x.k} type="button" role="tab" aria-selected={k === x.k} className={k === x.k ? "on" : ""} onClick={() => { setK(x.k); onPick?.(x.k); track("systems_demo_select", { system: x.k }); }}>{x.name}</button>
@@ -698,6 +704,99 @@ export function SystemsDemo({ active, onPick }: { active?: string; onPick?: (k: 
         {k === "stock" ? <StockSystem /> : k === "turnos" ? <BookingSystem /> : <RadarSystem />}
       </div>
       <p className="sys3__desc">{s.desc}</p>
+    </div>
+    </LiveCtx.Provider>
+  );
+}
+
+/* =====================================================================
+   Demo de la home: una sola acción (registrar una venta) y su efecto:
+   baja el stock, se suma el pedido y, si corresponde, aparece la alerta.
+   ===================================================================== */
+export function HomeSystemsDemo() {
+  const L = useL();
+  const toast = useToast();
+  const [items, setItems] = useState<Item[]>(() => [
+    { sku: "CJ-3020", name: L("Caja kraft 30×20", "Caixa kraft 30×20"), qty: 120, min: 80, tone: "#c9a27a" },
+    { sku: "VT-240", name: L("Vaso térmico 240 cc", "Copo térmico 240 ml"), qty: 104, min: 90, tone: "#e9e4dc" },
+    { sku: "BP-05", name: L("Bolsa papel madera N.º 5", "Saco de papel pardo n.º 5"), qty: 610, min: 200, tone: "#b8895c" },
+    { sku: "CE-48", name: L("Cinta de embalar 48 mm", "Fita de embalagem 48 mm"), qty: 132, min: 60, tone: "#d7c9a8" },
+  ]);
+  const clientsList = L(["Café Molino", "Panadería La Espiga", "Heladería Polo", "Rotisería Don Beto"], ["Café Moinho", "Padaria Espiga", "Sorveteria Polo", "Rotisseria Seu Beto"]);
+  const [sku, setSku] = useState("VT-240");
+  const [qty, setQty] = useState(24);
+  const [orders, setOrders] = useState<{ n: number; who: string; what: string; q: number }[]>([
+    { n: 1041, who: clientsList[2]!, what: L("Cinta de embalar 48 mm", "Fita de embalagem 48 mm"), q: 12 },
+  ]);
+  const [flash, setFlash] = useState<string | null>(null);
+  const [alert, setAlert] = useState<Item | null>(null);
+  const [done, setDone] = useState(false);
+  const auto = useRef(false);
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
+
+  const register = (s = sku, q = qty, sample = false) => {
+    const it = itemsRef.current.find((x) => x.sku === s)!;
+    const n = Math.min(q, it.qty);
+    if (n <= 0) return;
+    const left = it.qty - n;
+    setItems((xs) => xs.map((x) => (x.sku === s ? { ...x, qty: left } : x)));
+    setOrders((o) => [{ n: (o[0]?.n ?? 1040) + 1, who: clientsList[(o.length + 0) % clientsList.length]!, what: it.name, q: n }, ...o].slice(0, 3));
+    setFlash(s);
+    setTimeout(() => setFlash(null), 1400);
+    if (left < it.min) setTimeout(() => setAlert({ ...it, qty: left }), 600);
+    toast.show(sample ? L("Venta de ejemplo registrada", "Venda de exemplo registrada") : L("Venta registrada · stock actualizado", "Venda registrada · estoque atualizado"));
+    if (!sample) { setDone(true); track("systems_demo_action", { system: "home_stock", action: "sell" }); }
+  };
+  // una venta de ejemplo al aparecer, para que se vea el efecto sin tocar nada
+  const ref = useLive(() => { if (!auto.current) { auto.current = true; register("VT-240", 24, true); } }, 60000);
+  const sel = items.find((x) => x.sku === sku)!;
+
+  return (
+    <div ref={ref} className="ap-wrap">
+      <Shell brand="Rivera Insumos" logo={<Mark c1="#ff8a3d" c2="#e2452b" shape="rv" />} url="gestion.riverainsumos.com"
+        nav={[{ k: "stock", label: L("Stock", "Estoque"), icon: "box" }, { k: "orders", label: L("Pedidos", "Pedidos"), icon: "cart" }]} active="stock"
+        title={L("Stock y pedidos", "Estoque e pedidos")} sub={L("Depósito central", "Depósito central")} user="MR" bell={alert ? 1 : 0}>
+        <div className="hs">
+          <form className="hs__sell" onSubmit={(e) => { e.preventDefault(); register(); }}>
+            <b>{L("Registrar una venta", "Registrar uma venda")}</b>
+            <label><span>{L("Producto", "Produto")}</span>
+              <select value={sku} onChange={(e) => setSku(e.target.value)}>{items.map((x) => <option key={x.sku} value={x.sku}>{x.name}</option>)}</select>
+            </label>
+            <label><span>{L("Cantidad", "Quantidade")}</span>
+              <input type="number" min={1} max={sel.qty} value={qty} onChange={(e) => setQty(Math.max(1, Math.min(999, Number(e.target.value) || 1)))} />
+            </label>
+            <button type="submit" className={`ap-btn ap-btn--pri${done ? "" : " hs__cta"}`} disabled={sel.qty === 0}>{L("Registrar venta", "Registrar venda")}</button>
+          </form>
+          {alert && (
+            <div className="ap-alert" role="status">
+              <div><b>{L("Stock bajo", "Estoque baixo")} · {alert.name}</b><span>{L(`Quedan ${alert.qty} u. (mínimo ${alert.min}). Conviene reponer.`, `Restam ${alert.qty} un. (mínimo ${alert.min}). Convém repor.`)}</span></div>
+              <button type="button" className="ap-btn" onClick={() => { setItems((xs) => xs.map((x) => (x.sku === alert.sku ? { ...x, qty: x.qty + 200 } : x))); setAlert(null); toast.show(L("Pedido al proveedor enviado · +200 u.", "Pedido ao fornecedor enviado · +200 un.")); }}>{L("Reponer", "Repor")}</button>
+            </div>
+          )}
+          <div className="hs__cols">
+            <table className="ap-table hs__table">
+              <thead><tr><th>{L("Producto", "Produto")}</th><th>{L("Stock", "Estoque")}</th></tr></thead>
+              <tbody>
+                {items.map((x) => {
+                  const low = x.qty < x.min;
+                  return (
+                    <tr key={x.sku} className={`${low ? "low" : ""}${flash === x.sku ? " hs__flash" : ""}`}>
+                      <td><span className="ap-thumb" style={{ background: x.tone }} /><span className="ap-prod"><b>{x.name}</b><small>{low ? L("Bajo el mínimo", "Abaixo do mínimo") : L(`Mínimo ${x.min}`, `Mínimo ${x.min}`)}</small></span></td>
+                      <td><span className="ap-qty"><b key={x.qty} className="tick">{x.qty}</b><i><s style={{ width: `${Math.min(100, (x.qty / (x.min * 3)) * 100)}%` }} /></i></span></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            <div className="hs__orders">
+              <b>{L("Pedidos de hoy", "Pedidos de hoje")}</b>
+              <ul>{orders.map((o) => <li key={o.n} className="hs__order"><span>#{o.n} · {o.who}</span><small>{o.q} × {o.what}</small></li>)}</ul>
+            </div>
+          </div>
+        </div>
+        {toast.node}
+      </Shell>
     </div>
   );
 }

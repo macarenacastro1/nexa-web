@@ -36,14 +36,15 @@ export default function Impact() {
   const { lang } = useLang();
   LOC = locale(lang);
   const root = useRef<HTMLElement>(null);
-  const [tasks, setTasks] = useState(150);
-  const [mins, setMins] = useState(10);
-  const [pct, setPct] = useState(60);
+  const [tasks, setTasks] = useState(100);
+  const [mins, setMins] = useState(8);
+  const [pct, setPct] = useState(50);
 
   const manualH = (tasks * mins) / 60; // horas / semana
   const savedW = manualH * (pct / 100);
-  const savedM = savedW * 4.33;
-  const savedY = savedW * 48;
+  // 48 semanas de trabajo por año = 4 semanas por mes (mes y año quedan coherentes: año = 12 meses)
+  const savedM = savedW * 4;
+  const savedY = savedM * 12;
   const days = savedM / 8;
 
   // curva acumulada de 12 semanas (adopción gradual: rampa en las primeras 4)
@@ -71,7 +72,7 @@ export default function Impact() {
     <section className="impact" id="impacto" ref={root} aria-label={L("Calculadora de impacto", "Calculadora de impacto")}>
       <div className="container">
         <p className="label rv">{L("Calculadora de impacto", "Calculadora de impacto")}</p>
-        <h2 className="h2 rv">{L("¿Cuánto tiempo se va", "Quanto tempo vai")}<br /><span className="serif ctrl">{L("en tareas repetidas?", "em tarefas repetidas?")}</span></h2>
+        <h2 className="h2 rv">{L("¿Cuánto tiempo se va en tareas repetidas?", "Quanto tempo vai em tarefas repetidas?")}</h2>
         <p className="lead rv">{L("Mové los controles con los números de tu empresa. Es una estimación orientativa, basada en los supuestos que se explican abajo.", "Mova os controles com os números da sua empresa. É uma estimativa orientativa, baseada nos pressupostos explicados abaixo.")}</p>
 
         <div className="calc">
@@ -106,13 +107,13 @@ export default function Impact() {
               </svg>
               <div className="split__leg" style={{ marginTop: 6 }}><span style={{ visibility: "hidden" }} />{L("Horas acumuladas en las primeras 12 semanas:", "Horas acumuladas nas primeiras 12 semanas:")} <b style={{ color: "var(--text)", fontWeight: 500 }}>{nf(maxC)} h</b></div>
             </div>
-            <p className="calc__note">{L("Estimación orientativa, no una garantía de resultados.", "Estimativa orientativa, não uma garantia de resultados.")}</p>
+            <p className="calc__note">{L("Estimaciones ilustrativas. Los resultados reales dependen de cada proceso y deben evaluarse antes de implementar una solución.", "Estimativas ilustrativas. Os resultados reais dependem de cada processo e devem ser avaliados antes de implementar uma solução.")}</p>
             <details className="calc__how">
               <summary>{L("Cómo se calcula", "Como é calculado")}</summary>
               <ul>
                 <li>{L("Horas manuales por semana = tareas × minutos ÷ 60.", "Horas manuais por semana = tarefas × minutos ÷ 60.")}</li>
                 <li>{L("Horas recuperables = horas manuales × el porcentaje que elegiste.", "Horas recuperáveis = horas manuais × a porcentagem que você escolheu.")}</li>
-                <li>{L("Mes = 4,33 semanas · año = 48 semanas de trabajo · jornada = 8 h.", "Mês = 4,33 semanas · ano = 48 semanas de trabalho · jornada = 8 h.")}</li>
+                <li>{L("Año = 48 semanas de trabajo · mes = 4 semanas (un año son 12 meses) · jornada = 8 h.", "Ano = 48 semanas de trabalho · mês = 4 semanas (um ano são 12 meses) · jornada = 8 h.")}</li>
                 <li>{L("El gráfico supone una adopción gradual durante las primeras 4 semanas.", "O gráfico considera uma adoção gradual nas primeiras 4 semanas.")}</li>
               </ul>
             </details>

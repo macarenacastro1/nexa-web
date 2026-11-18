@@ -4,21 +4,17 @@ import { CALC_KEY, CONFIG, CONSENT_VERSION, LEAD_ENDPOINT, track, type CalcSumma
 import { sound } from "@/lib/sound";
 import { useHref, useL, useLang } from "@/lib/i18n";
 
-const Check = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="m8 12 3 3 5-6" /></svg>
-);
-
 /** Tipos de proyecto. El valor que llega al CRM es siempre el mismo, en español. */
 export const NEEDS = [
   { key: "web", value: "Sitio web o e-commerce", es: "Sitio web o e-commerce", pt: "Site ou e-commerce" },
-  { key: "sistema", value: "Sistema o aplicación a medida", es: "Sistema o aplicación a medida", pt: "Sistema ou aplicativo sob medida" },
-  { key: "ia", value: "Automatización o inteligencia artificial", es: "Automatización o inteligencia artificial", pt: "Automação ou inteligência artificial" },
+  { key: "sistema", value: "Sistema o aplicación a medida", es: "Sistema o aplicación", pt: "Sistema ou aplicativo" },
+  { key: "ia", value: "Automatización o inteligencia artificial", es: "Automatización o IA", pt: "Automação ou IA" },
   { key: "orientacion", value: "Necesito orientación", es: "Necesito orientación", pt: "Preciso de orientação" },
-  { key: "otro", value: "Otro proyecto", es: "Otro proyecto", pt: "Outro projeto" },
+  { key: "otro", value: "Otro proyecto", es: "Otro", pt: "Outro" },
 ] as const;
 export type NeedKey = (typeof NEEDS)[number]["key"];
 
-/** Rubro o sector. "Otro" pide escribirlo. */
+/** Rubro o sector: ya no se pide en el formulario (revisión UX). Se conserva la lista por si vuelve. */
 export const SECTORS: [string, string][] = [
   ["Gastronomía", "Gastronomia"],
   ["Salud y bienestar", "Saúde e bem-estar"],
@@ -80,7 +76,6 @@ export default function Contact({ need }: { need?: NeedKey }) {
   const [state, setState] = useState<"idle" | "sending" | "ok">("idle");
   const [error, setError] = useState("");
   const started = useRef(false);
-  const [sector, setSector] = useState("");
   const msgRef = useRef<HTMLTextAreaElement>(null);
 
   // Si viene de la calculadora (en /intelligence), sugerimos el mensaje con sus números
@@ -141,14 +136,6 @@ export default function Contact({ need }: { need?: NeedKey }) {
     needFld.classList.toggle("err", !needSel);
     needFld.querySelector("small")!.textContent = needSel ? "" : L("Elegí una opción", "Escolha uma opção");
     if (!needSel) { ok = false; first ??= form.querySelector<HTMLInputElement>('input[name="need"]'); }
-    // rubro "Otro": hay que escribirlo
-    if (sector === "__otro") {
-      const o = form.querySelector<HTMLInputElement>("#f-so")!;
-      const valid = o.value.trim().length > 1;
-      o.closest(".field")!.classList.toggle("err", !valid);
-      o.closest(".field")!.querySelector("small")!.textContent = valid ? "" : L("Contanos cuál es tu rubro", "Conte qual é o seu setor");
-      if (!valid) { ok = false; first ??= o; }
-    }
     if (!ok) {
       (first as HTMLElement | null)?.focus();
       return;
@@ -166,7 +153,7 @@ export default function Contact({ need }: { need?: NeedKey }) {
           email: v("f-e"),
           phone: v("f-w"),
           need: needSel?.value ?? "",
-          sector: sector === "__otro" ? v("f-so") : sector,
+          sector: "",
           message: v("f-m"),
           consent: form.querySelector<HTMLInputElement>("#f-ok")?.checked === true,
           consent_version: lang === "pt" ? `${CONSENT_VERSION}-pt` : CONSENT_VERSION,
@@ -183,7 +170,6 @@ export default function Contact({ need }: { need?: NeedKey }) {
       // Solo el tipo de proyecto: nada de datos personales en analítica
       track("generate_lead", { need: NEEDS.find((n) => n.value === needSel?.value)?.key ?? "otro" });
       form.reset();
-      setSector("");
       try { sessionStorage.removeItem(CALC_KEY); } catch { /* nada */ }
       sound.chime();
       setState("ok");
@@ -204,20 +190,16 @@ export default function Contact({ need }: { need?: NeedKey }) {
       <div className="container contact__grid">
         <div>
           <p className="label">{L("Contacto", "Contato")}</p>
-          <h2 className="h2" id="contact-title">{L("Contanos qué querés", "Conte o que você quer")} <span className="serif ctrl">{L("construir.", "construir.")}</span></h2>
-          <p className="lead">{L("¿Tenés una idea, un proyecto en marcha o un problema que necesitás resolver? Conversemos sobre cómo podemos ayudarte.", "Tem uma ideia, um projeto em andamento ou um problema que precisa resolver? Vamos conversar sobre como podemos ajudar.")}</p>
-          <ul className="trust">
-            <li><Check /><div>{L("La lee una persona del equipo", "Uma pessoa da equipe lê")}<small>{L("Te respondemos por mail con los próximos pasos.", "Respondemos por e-mail com os próximos passos.")}</small></div></li>
-            <li><Check /><div>{L("Para las tres especialidades", "Para as três especialidades")}<small>{L("Web y e-commerce, sistemas a medida o automatización: contanos tu caso.", "Web e e-commerce, sistemas sob medida ou automação: conte o seu caso.")}</small></div></li>
-            <li><Check /><div>{L("Argentina y toda Latinoamérica", "Argentina e toda a América Latina")}<small>{L("Trabajamos en español y en portugués.", "Trabalhamos em espanhol e em português.")}</small></div></li>
-          </ul>
+          <h2 className="h2" id="contact-title">{L("Hablemos de lo que", "Vamos falar do que você")} <span className="serif ctrl">{L("necesitás.", "precisa.")}</span></h2>
+          <p className="lead">{L("Contanos qué querés construir o qué problema necesitás resolver. Te ayudamos a encontrar el próximo paso.", "Conte o que você quer construir ou qual problema precisa resolver. Ajudamos você a encontrar o próximo passo.")}</p>
+          <p className="contact__trust">{L("Tu consulta la lee una persona de Nexa. Te respondemos por email para conversar sobre tu proyecto.", "Sua mensagem é lida por uma pessoa da Nexa. Respondemos por e-mail para conversar sobre o seu projeto.")}</p>
         </div>
 
         {state === "ok" ? (
           <div className="form form--done" role="status" aria-live="polite">
             <span className="form__ok" aria-hidden>✓</span>
             <h3>{L("Recibimos tu consulta.", "Recebemos sua mensagem.")}</h3>
-            <p>{L("Gracias por escribirnos. Te vamos a responder al email que nos dejaste.", "Obrigado por escrever. Vamos responder no e-mail que você deixou.")}</p>
+            <p>{L("Gracias por escribirnos. Una persona de Nexa la va a leer y te va a responder al email que nos dejaste.", "Obrigado por escrever. Uma pessoa da Nexa vai ler e responder no e-mail que você deixou.")}</p>
             <button className="btn btn--line btn--sm" onClick={() => setState("idle")}>{L("Enviar otra consulta", "Enviar outra mensagem")}</button>
           </div>
         ) : (
@@ -227,19 +209,8 @@ export default function Contact({ need }: { need?: NeedKey }) {
             <div className="field"><label htmlFor="f-e">Email *</label><input id="f-e" type="email" required autoComplete="email" maxLength={200} /><small /></div>
             <div className="field"><label htmlFor="f-c">{L("Empresa o marca", "Empresa ou marca")} <span className="opt">(opcional)</span></label><input id="f-c" autoComplete="organization" maxLength={200} /><small /></div>
             <div className="field"><label htmlFor="f-w">{L("WhatsApp o teléfono", "WhatsApp ou telefone")} <span className="opt">(opcional)</span></label><input id="f-w" type="tel" placeholder={L("Con código de área", "Com DDD")} autoComplete="tel" maxLength={40} /><small /></div>
-            <div className="field field--full">
-              <label htmlFor="f-sector">{L("Rubro o sector", "Setor de atuação")} <span className="opt">(opcional)</span></label>
-              <select id="f-sector" value={sector} onChange={(e) => setSector(e.target.value)}>
-                <option value="">{L("Elegí tu rubro", "Escolha seu setor")}</option>
-                {SECTORS.map(([es, pt]) => <option key={es} value={es}>{L(es, pt)}</option>)}
-                <option value="__otro">{L("Otro", "Outro")}</option>
-              </select><small />
-            </div>
-            {sector === "__otro" && (
-              <div className="field field--full"><label htmlFor="f-so">{L("¿Cuál es tu rubro?", "Qual é o seu setor?")} *</label><input id="f-so" maxLength={80} autoFocus /><small /></div>
-            )}
             <fieldset className="field field--full field--need">
-              <legend>{L("¿Qué querés construir?", "O que você quer construir?")} *</legend>
+              <legend>{L("¿Qué necesitás?", "Do que você precisa?")} *</legend>
               <div className="chips" role="radiogroup">
                 {NEEDS.map((n) => (
                   <label key={n.key} className="chip">
@@ -251,7 +222,7 @@ export default function Contact({ need }: { need?: NeedKey }) {
               <small />
             </fieldset>
             <div className="field field--full">
-              <label htmlFor="f-m">{L("¿Qué te gustaría resolver o mejorar?", "O que você gostaria de resolver ou melhorar?")} *</label>
+              <label htmlFor="f-m">{L("Contanos tu proyecto", "Conte sobre o seu projeto")} *</label>
               <textarea id="f-m" ref={msgRef} rows={4} required maxLength={3000}
                 placeholder={L("Por ejemplo: tenemos una tienda y queremos que los pedidos de WhatsApp se carguen solos en el sistema.", "Por exemplo: temos uma loja e queremos que os pedidos do WhatsApp entrem sozinhos no sistema.")} />
               <p className="hint">{L("Unas líneas alcanzan. Lo charlamos en detalle después.", "Algumas linhas bastam. Conversamos em detalhe depois.")}</p>
@@ -272,7 +243,7 @@ export default function Contact({ need }: { need?: NeedKey }) {
             </div>
             {error && <p className="field--full form__err" role="alert">{error}</p>}
             <button className="btn btn--solid field--full" type="submit" disabled={state === "sending"} aria-busy={state === "sending"}>
-              {state === "sending" ? L("Enviando…", "Enviando…") : <>{L("Enviar consulta", "Enviar mensagem")} <span className="arr">→</span></>}
+              {state === "sending" ? L("Enviando…", "Enviando…") : <>{L("Hablemos de mi proyecto", "Vamos falar do meu projeto")} <span className="arr">→</span></>}
             </button>
           </form>
         )}

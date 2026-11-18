@@ -4,9 +4,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { track } from "@/lib/config";
 import { useHref, useL } from "@/lib/i18n";
-import { ExperienceDemo, IntelligenceDemo, type ExpKey } from "./demos";
+import { ExperienceDemo, IntelligenceDemo } from "./demos";
 import FitBox from "./FitBox";
-import { SystemsDemo } from "./systems-demos";
+import { HomeSystemsDemo } from "./systems-demos";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,45 +21,40 @@ export function useDivisions() {
     {
       key: "experience", path: "/experience/", name: "Nexa Experience",
       cat: L("Experiencias web y diseño digital", "Experiências web e design digital"),
-      title: L("Tu marca merece una experiencia propia.", "Sua marca merece uma experiência própria."),
-      desc: L("Diseñamos sitios web, tiendas online e interfaces que combinan estética, interacción y facilidad de uso.", "Criamos sites, lojas online e interfaces que combinam estética, interação e facilidade de uso."),
+      title: L("Sitios web que hacen destacar tu marca.", "Sites que fazem sua marca se destacar."),
+      desc: L("Diseñamos sitios web, tiendas online y experiencias digitales que combinan identidad, diseño y facilidad de uso.", "Criamos sites, lojas online e experiências digitais que unem identidade, design e facilidade de uso."),
       feats: L(["Sitios web premium", "E-commerce", "Diseño UI/UX"], ["Sites premium", "E-commerce", "Design UI/UX"]),
-      cta: L("Explorar Experience", "Explorar Experience"),
+      cta: L("Explorar Experience", "Explorar Experience"), tag: L("Concepto interactivo · Desarrollado por Nexa", "Conceito interativo · Desenvolvido pela Nexa"),
     },
     {
       key: "systems", path: "/systems/", name: "Nexa Systems",
       cat: L("Sistemas y plataformas a medida", "Sistemas e plataformas sob medida"),
-      title: L("Software pensado para tu manera de trabajar.", "Software pensado para o seu jeito de trabalhar."),
-      desc: L("Desarrollamos herramientas digitales para centralizar información, organizar operaciones y facilitar el trabajo de equipos y clientes.", "Desenvolvemos ferramentas digitais para centralizar informações, organizar operações e facilitar o trabalho de equipes e clientes."),
-      feats: L(["Aplicaciones web", "Sistemas de gestión", "Portales y dashboards"], ["Aplicações web", "Sistemas de gestão", "Portais e dashboards"]),
-      cta: L("Explorar Systems", "Explorar Systems"),
+      title: L("Un sistema pensado para tu negocio.", "Um sistema pensado para o seu negócio."),
+      desc: L("Desarrollamos herramientas a medida para organizar pedidos, clientes, operaciones e información en un solo lugar.", "Desenvolvemos ferramentas sob medida para organizar pedidos, clientes, operações e informações em um só lugar."),
+      feats: L(["Sistemas de gestión", "Aplicaciones web", "Portales y dashboards"], ["Sistemas de gestão", "Aplicações web", "Portais e dashboards"]),
+      cta: L("Explorar Systems", "Explorar Systems"), tag: L("Demo interactiva · Datos ficticios", "Demo interativa · Dados fictícios"),
     },
     {
       key: "intelligence", path: "/intelligence/", name: "Nexa Intelligence",
       cat: L("Automatización e inteligencia artificial", "Automação e inteligência artificial"),
-      title: L("Menos tareas repetidas. Más tiempo para lo importante.", "Menos tarefas repetidas. Mais tempo para o que importa."),
-      desc: L("Conectamos herramientas y automatizamos procesos para reducir el trabajo manual y mejorar el control de la información.", "Conectamos ferramentas e automatizamos processos para reduzir o trabalho manual e melhorar o controle das informações."),
-      feats: L(["Automatización de procesos", "Integraciones entre herramientas", "Asistentes inteligentes"], ["Automação de processos", "Integrações entre ferramentas", "Assistentes inteligentes"]),
-      cta: L("Explorar Intelligence", "Explorar Intelligence"),
+      title: L("Menos trabajo manual. Más tiempo para tu negocio.", "Menos trabalho manual. Mais tempo para o seu negócio."),
+      desc: L("Conectamos tus herramientas y automatizamos tareas repetitivas para que tu equipo pueda concentrarse en lo importante.", "Conectamos suas ferramentas e automatizamos tarefas repetitivas para que sua equipe possa se concentrar no que importa."),
+      feats: L(["Automatización de procesos", "Integración de herramientas", "Asistentes inteligentes"], ["Automação de processos", "Integração de ferramentas", "Assistentes inteligentes"]),
+      cta: L("Explorar Intelligence", "Explorar Intelligence"), tag: L("Ejemplo ilustrativo · Datos simulados", "Exemplo ilustrativo · Dados simulados"),
     },
   ];
 }
 
-/* Recorrido automático: cada paso dura ~8 s. Si la persona toca algo, el conteo vuelve a empezar. */
-type Step = { div: number; sub?: string; ms: number };
-const TOUR: Step[] = [
-  { div: 0, sub: "criscuolo", ms: 8000 },
-  { div: 0, sub: "cobalto", ms: 8000 },
-  { div: 1, sub: "stock", ms: 8000 },
-  { div: 1, sub: "turnos", ms: 8000 },
-  { div: 1, sub: "radar", ms: 8000 },
-  { div: 2, ms: 10000 },
-];
+/* Recorrido automático por las tres divisiones; si la persona interactúa, el conteo vuelve a empezar. */
+const STEP_MS = [9000, 9000, 11000];
 
-function Demo({ k, sub, onSub }: { k: string; sub?: string | undefined; onSub: (s: string) => void }) {
-  if (k === "experience") return <ExperienceDemo compact {...(sub ? { active: sub as ExpKey } : {})} onPick={onSub} />;
-  if (k === "systems") return <SystemsDemo {...(sub ? { active: sub } : {})} onPick={onSub} />;
-  return <IntelligenceDemo />;
+function Demo({ k, tag }: { k: string; tag: string }) {
+  return (
+    <div className="svc__demo">
+      {k === "experience" ? <ExperienceDemo compact /> : k === "systems" ? <HomeSystemsDemo /> : <IntelligenceDemo compact />}
+      <p className="svc__tag">{tag}</p>
+    </div>
+  );
 }
 
 export default function Services() {
@@ -68,25 +63,14 @@ export default function Services() {
   const D = useDivisions();
   const root = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(0);
-  const [sub, setSub] = useState<Record<number, string>>({ 0: "criscuolo", 1: "stock" });
-  const [step, setStep] = useState(0);
   const [run, setRun] = useState(0); // cambia para reiniciar el conteo
   const [visible, setVisible] = useState(false);
-  const step0 = TOUR[step]!;
-
-  // avanza solo mientras la sección está en pantalla y la pestaña visible
+  const [hover, setHover] = useState(false);
   useEffect(() => {
-    if (!visible || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = setTimeout(() => {
-      if (document.hidden) return setRun((r) => r + 1);
-      const next = (step + 1) % TOUR.length;
-      const n = TOUR[next]!;
-      setStep(next);
-      setOpen(n.div);
-      if (n.sub) setSub((x) => ({ ...x, [n.div]: n.sub! }));
-    }, step0.ms);
+    if (!visible || hover || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setTimeout(() => { if (!document.hidden) setOpen((o) => (o + 1) % 3); else setRun((r) => r + 1); }, STEP_MS[open]);
     return () => clearTimeout(t);
-  }, [step, run, visible, step0.ms]);
+  }, [open, run, visible, hover]);
   useEffect(() => {
     const el = root.current;
     if (!el) return;
@@ -94,14 +78,8 @@ export default function Services() {
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  // cualquier interacción reinicia el conteo desde donde está la persona
   const touch = () => setRun((r) => r + 1);
-  const syncStep = (div: number, sb?: string) => {
-    const i = TOUR.findIndex((t) => t.div === div && (sb === undefined || t.sub === undefined || t.sub === sb));
-    if (i >= 0) setStep(i);
-    setRun((r) => r + 1);
-  };
-  const onSub = (div: number) => (sb: string) => { setSub((x) => ({ ...x, [div]: sb })); syncStep(div, sb); };
+  const paused = !visible || hover;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -112,7 +90,7 @@ export default function Services() {
 
   const pick = (i: number) => {
     setOpen(i);
-    syncStep(i, sub[i]);
+    setRun((r) => r + 1);
     track("division_select", { division: D[i]!.key });
   };
 
@@ -122,9 +100,9 @@ export default function Services() {
         <div className="svc__head">
           <div>
             <p className="label rv">{L("Servicios", "Serviços")}</p>
-            <h2 className="h2 rv" id="svc-title">{L("Lo que", "O que")} <span className="serif ctrl">{L("hacemos.", "fazemos.")}</span></h2>
+            <h2 className="h2 rv" id="svc-title">{L("Lo que hacemos.", "O que fazemos.")}</h2>
           </div>
-          <p className="lead rv">{L("Diseño, desarrollo y automatización. Tres especialidades que combinamos según lo que necesita cada proyecto.", "Design, desenvolvimento e automação. Três especialidades que combinamos conforme o que cada projeto precisa.")}</p>
+          <p className="lead rv">{L("Tres especialidades que combinamos según lo que necesita cada negocio.", "Três especialidades que combinamos conforme o que cada negócio precisa.")}</p>
         </div>
 
         <div className="svc__body svc3 rv">
@@ -137,7 +115,7 @@ export default function Services() {
                     <span className="svc__name">{d.name}</span>
                     <span className="svc__cat">{d.cat}</span>
                   </span>
-                  <span className="svc__plus" aria-hidden>+</span>
+                  <span className="svc__plus" aria-hidden>{open === i ? "−" : "+"}</span>
                 </button>
                 <div className="svc__detail" id={`div-${d.key}-panel`} role="region" aria-labelledby={`div-${d.key}`}>
                   <div>
@@ -147,15 +125,15 @@ export default function Services() {
                     <a className="btn btn--line btn--sm" href={href(d.path)} onClick={() => track("cta_click", { cta: `servicios_${d.key}` })}>
                       {d.cta} <span className="arr">→</span>
                     </a>
-                    {open === i && <div className="svc__inline"><Hint run={`${step}-${run}`} ms={step0.ms} active={visible} /><Demo k={d.key} sub={sub[i]} onSub={onSub(i)} /></div>}
+                    {open === i && <div className="svc__inline"><Demo k={d.key} tag={d.tag} /></div>}
                   </div>
                 </div>
               </li>
             ))}
           </ul>
-          <div className="svc__visual">
-            <Hint run={`${step}-${run}`} ms={step0.ms} active={visible} />
-            <div key={D[open]!.key} className="svc__stage"><FitBox reserve={190}><Demo k={D[open]!.key} sub={sub[open]} onSub={onSub(open)} /></FitBox></div>
+          <div className="svc__visual" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+            <Live open={open} run={run} paused={paused} />
+            <div key={D[open]!.key} className="svc__stage"><FitBox reserve={200}><Demo k={D[open]!.key} tag={D[open]!.tag} /></FitBox></div>
           </div>
         </div>
       </div>
@@ -163,14 +141,19 @@ export default function Services() {
   );
 }
 
-/** Cartel "es interactivo" con una barra que muestra cuánto falta para pasar a la siguiente demo. */
-function Hint({ run, ms, active }: { run: string; ms: number; active: boolean }) {
+/** Tres rayitas (una por división): la activa se llena mientras corre el tiempo. */
+function Live({ open, run, paused }: { open: number; run: number; paused: boolean }) {
   const L = useL();
   return (
-    <p className="svc__hint">
-      <span className="svc__hand" aria-hidden>☝</span>
-      {L("Es interactivo: tocá y probá cada demo", "É interativo: toque e teste cada demo")}
-      <span className="svc__timer" aria-hidden><i key={run} style={{ animationDuration: `${ms}ms`, animationPlayState: active ? "running" : "paused" }} /></span>
-    </p>
+    <div className="svc__live">
+      <div className="svc__segs" aria-hidden>
+        {STEP_MS.map((ms, i) => (
+          <span key={i} className={i < open ? "done" : i === open ? "now" : ""}>
+            {i === open && <i key={`${open}-${run}`} style={{ animationDuration: `${ms}ms`, animationPlayState: paused ? "paused" : "running" }} />}
+          </span>
+        ))}
+      </div>
+      <p><span className="svc__dot" aria-hidden />{L("Demo en vivo", "Demo ao vivo")}<span className="serif">{L("tocá y probá", "toque e teste")}</span></p>
+    </div>
   );
 }

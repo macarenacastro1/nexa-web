@@ -18,12 +18,13 @@ const rand = (a: number, b: number) => a + Math.random() * (b - a);
 type Spawn = { id: number; tpl: Tpl; x: number; y: number; r: number };
 type P = { sx: number; sy: number; mx: number; my: number; ex: number; ey: number; c: number; ph: number; s: number };
 
+const QUIET = new Set(["ig", "file", "sticky3", "backup"]);
 let uid = 1;
 const pickPos = () => {
   for (let i = 0; i < 20; i++) {
     // fuera del texto central y lejos de la barra de control (abajo) y del contador (arriba)
     const x = rand(2, 78), y = rand(14, 62);
-    if (!(x > 24 && x < 64 && y > 26 && y < 66)) return { x, y };
+    if (!(x > 16 && x < 70 && y > 22 && y < 72)) return { x, y };
   }
   return { x: rand(2, 20), y: rand(16, 58) };
 };
@@ -32,7 +33,8 @@ export default function ChaosStage() {
   const { lang } = useLang();
   const L = useL();
   const fmt = (n: number) => Math.round(n).toLocaleString(locale(lang));
-  const WINDOWS = useMemo(() => getWindows(L), [L]);
+  // UX: ~30 % menos ventanas simultáneas; se quitan las que tapaban el título.
+  const WINDOWS = useMemo(() => getWindows(L).filter((w) => !QUIET.has(w.id)), [L]);
   const NOTIFS = useMemo(() => getNotifs(L), [L]);
   const notifsRef = useRef(NOTIFS);
   const eyebrow = L("Tecnología, diseño y transformación digital.", "Tecnologia, design e transformação digital.");
@@ -83,10 +85,10 @@ export default function ChaosStage() {
       // así se entiende que son parte del caos y que se pueden cerrar.
       const list = notifsRef.current;
       const tpl = list[(n++ * 5) % list.length];
-      setSpawns((sp) => [...sp, { id: uid++, tpl, ...pickPos(), r: rand(-6, 6) }].slice(smallRef.current ? -3 : -12));
+      setSpawns((sp) => [...sp, { id: uid++, tpl, ...pickPos(), r: rand(-6, 6) }].slice(smallRef.current ? -2 : -5));
       setArrived((x) => x + 1);
       sound.ding();
-    }, 4200);
+    }, 6500);
     return () => { clearInterval(a); clearInterval(b); };
   }, [calm]);
 
@@ -98,7 +100,7 @@ export default function ChaosStage() {
     setSpawns((s) => {
       const list = notifsRef.current;
       const add: Spawn[] = [0, 1].map(() => ({ id: uid++, tpl: list[Math.floor(Math.random() * list.length)], ...pickPos(), r: rand(-6, 6) }));
-      return [...s, ...add].slice(smallRef.current ? -4 : -16);
+      return [...s, ...add].slice(smallRef.current ? -3 : -7);
     });
   }, []);
   const closeWin = (id: string) => { setClosed((c) => new Set(c).add(id)); multiply(); };
@@ -117,13 +119,13 @@ export default function ChaosStage() {
         // las ventanas empiezan a flotar después de la primera pintura
         floats.current = gsap.utils.toArray<HTMLElement>(".win-float").map((f, i) =>
           gsap.to(f, {
-            x: () => gsap.utils.random(-22, 22), y: () => gsap.utils.random(-16, 16), rotation: () => gsap.utils.random(-2.5, 2.5),
-            duration: () => gsap.utils.random(2.4, 4.4), ease: "sine.inOut", repeat: -1, yoyo: true, repeatRefresh: true, delay: 1.2 + i * 0.05,
+            x: () => gsap.utils.random(-12, 12), y: () => gsap.utils.random(-9, 9), rotation: () => gsap.utils.random(-1.5, 1.5),
+            duration: () => gsap.utils.random(4.5, 7), ease: "sine.inOut", repeat: -1, yoyo: true, repeatRefresh: true, delay: 1.2 + i * 0.05,
           })
         );
         gsap.utils.toArray<HTMLElement>("[data-shake]").forEach((s, i) => {
-          gsap.timeline({ repeat: -1, repeatDelay: 3 + i, delay: 2 + i * 1.4 })
-            .to(s, { x: -6, duration: 0.05 }).to(s, { x: 6, duration: 0.05, repeat: 5, yoyo: true }).to(s, { x: 0, duration: 0.05 });
+          gsap.timeline({ repeat: -1, repeatDelay: 9 + i * 3, delay: 4 + i * 2.5 })
+            .to(s, { x: -4, duration: 0.08 }).to(s, { x: 4, duration: 0.08, repeat: 3, yoyo: true }).to(s, { x: 0, duration: 0.08 });
         });
       }
       gsap.from(".win-pos", { opacity: 0, scale: 0.6, duration: 0.9, ease: "back.out(1.5)", stagger: { each: 0.05, from: "random" }, delay: 0.1 });
@@ -504,6 +506,10 @@ export default function ChaosStage() {
           <p className="hero-eyebrow">{eyebrow}</p>
           <h1 className="display">{L("Tu negocio puede", "Seu negócio pode")}<span className="l2">{L("funcionar", "funcionar")} <span className="serif">{L("mejor.", "melhor.")}</span></span></h1>
           <p className="hero-sub">{subtitle}</p>
+          <div className="hero-ctas">
+            <a href="#servicios" onClick={() => trackEvent("cta_click", { cta: "hero_explorar" })} className="btn btn--solid">{L("Explorar servicios", "Explorar serviços")} <span className="arr">↓</span></a>
+            <a href="#contacto" onClick={() => trackEvent("cta_click", { cta: "hero_hablemos" })} className="btn btn--line">{L("Hablemos de tu proyecto", "Vamos falar do seu projeto")}</a>
+          </div>
         </div>
       </div>
 
@@ -535,12 +541,10 @@ export default function ChaosStage() {
         </div>
       </div>
 
-      {!calm && (
-        <a href="#servicios" className="stage__skip">{L("Ver servicios", "Ver serviços")} <span aria-hidden>↓</span></a>
-      )}
 
       <div className="stage__end">
-        <a href="#servicios" onClick={() => trackEvent("cta_click", { cta: "hero_explorar" })} className="btn btn--solid">{L("Explorar soluciones", "Explorar soluções")} <span className="arr">↓</span></a>
+        <a href="#servicios" onClick={() => trackEvent("cta_click", { cta: "hero_explorar" })} className="btn btn--solid">{L("Explorar servicios", "Explorar serviços")} <span className="arr">↓</span></a>
+        <a href="#contacto" onClick={() => trackEvent("cta_click", { cta: "hero_hablemos" })} className="btn btn--line">{L("Hablemos de tu proyecto", "Vamos falar do seu projeto")}</a>
         <button className="btn btn--ghost" onClick={reset}>↺ {L("Volver al caos", "Voltar ao caos")}</button>
       </div>
     </section>

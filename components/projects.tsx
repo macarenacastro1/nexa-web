@@ -35,19 +35,19 @@ export function useProjects() {
     },
     {
       key: "ceramica",
-      name: "Cobalto",
+      name: L("Estudio de cerámica", "Estúdio de cerâmica"),
       cat: L("Experiencia web · Estudio de cerámica y brunch", "Experiência web · Estúdio de cerâmica e brunch"),
-      status: L("Concepto · demo navegable", "Conceito · demo navegável"),
+      status: L("Concepto · en desarrollo", "Conceito · em desenvolvimento"),
       challenge: L(
         "Un estudio donde se pinta cerámica mientras se toma un brunch vende una experiencia, no un producto: la web tiene que contagiar ese plan y llevar directo a reservar.",
         "Um estúdio onde se pinta cerâmica enquanto se toma um brunch vende uma experiência, não um produto: o site precisa contagiar esse programa e levar direto à reserva.",
       ),
       solution: L(
-        "Una mesa ilustrada donde cada objeto se puede tocar: la taza muestra las piezas, los pinceles los colores, el croissant el brunch, y la tarjeta del estudio se transforma en el calendario de reservas.",
-        "Uma mesa ilustrada onde cada objeto pode ser tocado: a xícara mostra as peças, os pincéis as cores, o croissant o brunch, e o cartão do estúdio se transforma no calendário de reservas.",
+        "Una experiencia que combina reservas de talleres con fechas y cupos y una tienda de piezas terminadas. La publicamos cuando esté terminada.",
+        "Uma experiência que combina reservas de oficinas com datas e vagas e uma loja de peças prontas. Publicamos quando estiver pronta.",
       ),
-      href: "/casos/cobalto/",
-      cta: L("Explorar el concepto", "Explorar o conceito"),
+      href: null,
+      cta: null,
     },
   ];
 }

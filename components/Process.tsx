@@ -1,15 +1,13 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useL } from "@/lib/i18n";
 
 /**
- * 04 · Cómo trabajamos. Cinco etapas que avanzan con el scroll (al ritmo de
- * quien lee, nunca solas): a la izquierda el texto de cada etapa, a la derecha
- * una pantalla que muestra qué pasa en esa etapa. En celular, cada etapa trae
- * su pantalla debajo.
+ * 03 · Cómo trabajamos. Cuatro etapas generales (sirven para Experience,
+ * Systems e Intelligence) en una sola pantalla: una línea de pasos
+ * seleccionables y una ilustración que cambia según la etapa.
  */
 
-/* ------------------------------ pantallas ------------------------------ */
 function Win({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="pw">
@@ -19,212 +17,139 @@ function Win({ title, children }: { title: string; children: React.ReactNode }) 
   );
 }
 
-function Diagnose() {
+/* 01 · una conversación */
+function Talk() {
   const L = useL();
-  const people = L(
-    [["SV", "Sofía · Ventas", "Paso los pedidos de WhatsApp a una planilla, uno por uno."], ["MA", "Martín · Administración", "Todos los días copio facturas al sistema contable."], ["JD", "Julia · Depósito", "Cuando falta algo, aviso por mensaje y alguien lo pide."]],
-    [["SV", "Sofia · Vendas", "Passo os pedidos do WhatsApp para uma planilha, um por um."], ["MA", "Marcos · Financeiro", "Todo dia copio notas fiscais para o sistema contábil."], ["JD", "Julia · Estoque", "Quando falta algo, aviso por mensagem e alguém pede."]],
-  );
-  const tags = L(["Automatizable", "Automatizable", "Se puede conectar"], ["Automatizável", "Automatizável", "Dá para conectar"]);
   return (
-    <Win title={L("Diagnóstico · entrevistas", "Diagnóstico · entrevistas")}>
-      <div className="pd">
-        {people.map(([av, who, said], i) => (
-          <div key={who} className="pd-note" style={{ animationDelay: `${0.2 + i * 0.7}s` }}>
-            <span className="pd-av">{av}</span>
-            <div><b>{who}</b><p>“{said}”</p></div>
-            <em style={{ animationDelay: `${0.8 + i * 0.7}s` }}>{tags[i]}</em>
-          </div>
-        ))}
-        <div className="pd-sum" style={{ animationDelay: "2.8s" }}>
-          <b>{L("Lo que encontramos", "O que encontramos")}</b>
-          <div><span><strong>7</strong>{L("tareas repetitivas", "tarefas repetitivas")}</span><span><strong>4</strong>{L("se pueden automatizar", "dá para automatizar")}</span><span><strong>2</strong>{L("sistemas para conectar", "sistemas para conectar")}</span></div>
+    <Win title={L("Primera conversación", "Primeira conversa")}>
+      <div className="p4-talk">
+        <p className="p4-msg">{L("Queremos vender online y dejar de anotar los pedidos a mano.", "Queremos vender online e parar de anotar os pedidos à mão.")}</p>
+        <p className="p4-msg p4-msg--nx">{L("Contanos cómo trabajan hoy y qué les gustaría lograr.", "Conte como vocês trabalham hoje e o que gostariam de alcançar.")}</p>
+        <div className="p4-note">
+          <b>{L("Lo que queremos lograr", "O que queremos alcançar")}</b>
+          <span>{L("Vender por la web", "Vender pelo site")}</span>
+          <span>{L("Pedidos en un solo lugar", "Pedidos em um só lugar")}</span>
+          <span>{L("Responder más rápido", "Responder mais rápido")}</span>
         </div>
       </div>
     </Win>
   );
 }
 
-function Design() {
+/* 02 · la propuesta: boceto + alcance */
+function Plan() {
   const L = useL();
   return (
-    <Win title={L("Diseño · propuesta de pantallas", "Design · proposta de telas")}>
-      <div className="pz">
-        <div className="pz-frame pz-frame--a">
-          <small>{L("Pedidos", "Pedidos")}</small>
-          <i className="pz-h" /><div className="pz-kpis"><i /><i /><i /></div>
-          <div className="pz-rows">{[0, 1, 2, 3].map((r) => <i key={r} style={{ animationDelay: `${0.9 + r * 0.18}s` }} />)}</div>
+    <Win title={L("Propuesta", "Proposta")}>
+      <div className="p4-plan">
+        <div className="p4-sketch" aria-hidden>
+          <i className="h" /><i className="hero" /><div className="row"><i /><i /><i /></div><i className="line" /><i className="line s" />
         </div>
-        <div className="pz-frame pz-frame--b">
-          <small>{L("Celular", "Celular")}</small>
-          <i className="pz-h" />{[0, 1, 2].map((r) => <i key={r} className="pz-card" style={{ animationDelay: `${1.5 + r * 0.2}s` }} />)}
-        </div>
-        <div className="pz-flow">
-          {L(["Llega el pedido", "Se descuenta el stock", "Se factura", "Se avisa al cliente"], ["Chega o pedido", "Baixa o estoque", "Emite a nota", "Avisa o cliente"]).map((s, i) => (
-            <span key={s} style={{ animationDelay: `${2.1 + i * 0.3}s` }}>{s}</span>
-          ))}
-        </div>
-        <span className="pz-cursor" aria-hidden />
-      </div>
-    </Win>
-  );
-}
-
-function Approve() {
-  const L = useL();
-  return (
-    <Win title={L("Revisión del diseño", "Revisão do design")}>
-      <div className="pa">
-        <div className="pa-c" style={{ animationDelay: ".2s" }}><span className="pd-av">LG</span><div><b>Laura · {L("Gerencia", "Gerência")}</b><p>{L("¿Podemos sumar el CUIT del cliente en el pedido?", "Dá para incluir o CNPJ do cliente no pedido?")}</p></div></div>
-        <div className="pa-c pa-c--nx" style={{ animationDelay: "1s" }}><span className="pd-av nx">N</span><div><b>NEXA</b><p>{L("Listo, ya está en la pantalla de pedidos.", "Pronto, já está na tela de pedidos.")}</p></div></div>
-        <ul className="pa-list">
-          {L(["Pantallas principales", "Flujo de pedidos", "Permisos por rol", "Alcance y entregas"], ["Telas principais", "Fluxo de pedidos", "Permissões por perfil", "Escopo e entregas"]).map((t, i) => (
-            <li key={t} style={{ animationDelay: `${1.8 + i * 0.25}s` }}><span aria-hidden>✓</span>{t}</li>
-          ))}
+        <ul className="p4-scope">
+          <li><b>{L("Alcance", "Escopo")}</b>{L("Qué incluye y qué no", "O que inclui e o que não")}</li>
+          <li><b>{L("Experiencia", "Experiência")}</b>{L("Cómo se va a ver y usar", "Como vai ficar e ser usado")}</li>
+          <li><b>{L("Funcionamiento", "Funcionamento")}</b>{L("Qué pasa en cada paso", "O que acontece em cada passo")}</li>
+          <li><b>{L("Plazos", "Prazos")}</b>{L("Etapas y fechas", "Etapas e datas")}</li>
         </ul>
-        <div className="pa-ok" style={{ animationDelay: "3s" }}><span aria-hidden>✓</span>{L("Diseño aprobado por Laura", "Design aprovado pela Laura")}</div>
       </div>
     </Win>
   );
 }
 
+/* 03 · la construcción: de boceto a terminado */
 function Build() {
   const L = useL();
-  const mods = L([["Entrega 1", "Pedidos", 100], ["Entrega 2", "Stock y avisos", 100], ["Entrega 3", "Facturación", 64]], [["Entrega 1", "Pedidos", 100], ["Entrega 2", "Estoque e avisos", 100], ["Entrega 3", "Faturamento", 64]]) as [string, string, number][];
   return (
-    <Win title={L("Desarrollo · avance", "Desenvolvimento · andamento")}>
-      <div className="pb">
-        {mods.map(([e, m, p], i) => (
-          <div key={e} className="pb-row" style={{ animationDelay: `${0.2 + i * 0.5}s` }}>
-            <div><small>{e}</small><b>{m}</b></div>
-            <div className="pb-bar"><i style={{ width: `${p}%`, animationDelay: `${0.4 + i * 0.5}s` }} /></div>
-            <em className={p === 100 ? "ok" : ""} style={{ animationDelay: `${1.4 + i * 0.5}s` }}>{p === 100 ? L("En uso", "Em uso") : L("En pruebas", "Em testes")}</em>
-          </div>
-        ))}
-        <div className="pb-shot" style={{ animationDelay: "2.2s" }}>
-          <b>{L("Ya lo está usando tu equipo", "Sua equipe já está usando")}</b>
-          <span>{L("Cada entrega se prueba con datos reales antes de pasar a la siguiente.", "Cada entrega é testada com dados reais antes de passar para a próxima.")}</span>
+    <Win title={L("Desarrollo", "Desenvolvimento")}>
+      <div className="p4-build">
+        <div className="p4-screen" aria-hidden>
+          <i className="h" /><i className="hero" /><div className="row"><i /><i /><i /></div>
         </div>
+        <ul className="p4-checks">
+          <li>{L("Desarrollo", "Desenvolvimento")}</li>
+          <li>{L("Pruebas", "Testes")}</li>
+          <li>{L("Ajustes de detalle", "Ajustes de detalhe")}</li>
+        </ul>
       </div>
     </Win>
   );
 }
 
-function Support() {
+/* 04 · puesta en marcha y soporte */
+function Care() {
   const L = useL();
   return (
-    <Win title={L("Acompañamiento", "Acompanhamento")}>
-      <div className="ps">
-        <div className="ps-chat">
-          <p className="in" style={{ animationDelay: ".2s" }}>{L("Entró alguien nuevo a ventas, ¿cómo le doy acceso?", "Entrou alguém novo em vendas, como dou acesso?")}</p>
-          <p className="out" style={{ animationDelay: "1.1s" }}>{L("Ya le creamos el usuario y le mandamos una guía de 2 minutos.", "Já criamos o usuário e mandamos um guia de 2 minutos.")}</p>
-        </div>
-        <div className="ps-grid">
-          <div style={{ animationDelay: "1.8s" }}><small>{L("Capacitación", "Treinamento")}</small><b>{L("Equipo de ventas y depósito", "Equipe de vendas e estoque")}</b></div>
-          <div style={{ animationDelay: "2.1s" }}><small>{L("Mejoras de este mes", "Melhorias deste mês")}</small><b>{L("Reporte semanal por mail", "Relatório semanal por e-mail")}</b></div>
+    <Win title={L("Puesta en marcha", "Lançamento")}>
+      <div className="p4-care">
+        <div className="p4-live"><span className="dot" />{L("Publicado y funcionando", "No ar e funcionando")}</div>
+        <div className="p4-plan2">
+          <b>{L("Soporte acordado", "Suporte combinado")}</b>
+          <span>{L("Consultas y ajustes", "Dúvidas e ajustes")}</span>
+          <span>{L("Mejoras cuando las necesites", "Melhorias quando precisar")}</span>
         </div>
       </div>
     </Win>
   );
 }
 
-const VIS = [Diagnose, Design, Approve, Build, Support];
+const VIS = [Talk, Plan, Build, Care];
 
 export default function Process() {
   const L = useL();
   const steps = L(
     [
-      { t: "Diagnóstico", d: "Nos sentamos con vos y con tu equipo. Entrevistamos a quienes hacen cada tarea, o trabajamos juntos, para entender todas las funciones, dónde se pierde tiempo y qué se puede automatizar.", you: "Contarnos cómo trabajan hoy y presentarnos a quienes hacen cada tarea.", get: "Un mapa de tus procesos con lo que conviene automatizar primero." },
-      { t: "Diseño", d: "Proponemos la solución: pantallas, flujos y qué hace cada parte. La ves y la entendés antes de que se programe una sola línea.", you: "Mirar la propuesta y decirnos qué cambiarías.", get: "Las pantallas y el recorrido de cada tarea, listos para revisar." },
-      { t: "Aprobación", d: "Revisás el diseño con tu equipo, hacemos los ajustes necesarios y lo aprobás. Recién ahí empezamos a construir.", you: "Aprobar el diseño y el alcance.", get: "Un plan claro de entregas: qué se hace, en qué orden y qué incluye." },
-      { t: "Desarrollo", d: "Construimos por etapas. Cada entrega se prueba con datos reales y tu equipo la puede empezar a usar antes de pasar a la siguiente.", you: "Probar cada entrega y contarnos cómo les va.", get: "Partes del sistema funcionando desde las primeras entregas." },
-      { t: "Acompañamiento", d: "Te acompañamos en la puesta en marcha: capacitamos al equipo, ajustamos lo que haga falta y damos soporte para que funcione en el día a día.", you: "Usarlo y pedirnos lo que necesites.", get: "Capacitación, soporte y mejoras a medida que el negocio cambia." },
+      { t: "Nos contás tu idea", d: "Entendemos tu negocio, qué necesitás y qué querés lograr." },
+      { t: "Diseñamos la propuesta", d: "Definimos el alcance, la experiencia y cómo va a funcionar la solución." },
+      { t: "La hacemos realidad", d: "Desarrollamos el proyecto, lo probamos y ajustamos los detalles." },
+      { t: "Te acompañamos", d: "Te ayudamos con la puesta en marcha y acordamos el soporte que necesites." },
     ],
     [
-      { t: "Diagnóstico", d: "Sentamos com você e sua equipe. Entrevistamos quem faz cada tarefa, ou trabalhamos juntos, para entender todas as funções, onde se perde tempo e o que dá para automatizar.", you: "Contar como vocês trabalham hoje e apresentar quem faz cada tarefa.", get: "Um mapa dos seus processos com o que vale automatizar primeiro." },
-      { t: "Design", d: "Propomos a solução: telas, fluxos e o que cada parte faz. Você vê e entende antes de programarmos uma única linha.", you: "Olhar a proposta e dizer o que mudaria.", get: "As telas e o percurso de cada tarefa, prontos para revisar." },
-      { t: "Aprovação", d: "Você revisa o design com sua equipe, fazemos os ajustes e você aprova. Só então começamos a construir.", you: "Aprovar o design e o escopo.", get: "Um plano claro de entregas: o que será feito, em que ordem e o que inclui." },
-      { t: "Desenvolvimento", d: "Construímos por etapas. Cada entrega é testada com dados reais e sua equipe já pode começar a usar antes de passarmos à próxima.", you: "Testar cada entrega e contar como está indo.", get: "Partes do sistema funcionando desde as primeiras entregas." },
-      { t: "Acompanhamento", d: "Acompanhamos a implantação: treinamos a equipe, ajustamos o que for preciso e damos suporte para funcionar no dia a dia.", you: "Usar e pedir o que precisar.", get: "Treinamento, suporte e melhorias conforme o negócio muda." },
+      { t: "Você conta sua ideia", d: "Entendemos seu negócio, o que você precisa e o que quer alcançar." },
+      { t: "Desenhamos a proposta", d: "Definimos o escopo, a experiência e como a solução vai funcionar." },
+      { t: "Tiramos do papel", d: "Desenvolvemos o projeto, testamos e ajustamos os detalhes." },
+      { t: "Acompanhamos você", d: "Ajudamos no lançamento e combinamos o suporte que você precisar." },
     ],
   );
   const [i, setI] = useState(0);
-  const [wide, setWide] = useState(true);
-  const panels = useRef<(HTMLElement | null)[]>([]);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 961px)");
-    const up = () => setWide(mq.matches);
-    up();
-    mq.addEventListener("change", up);
-    // La etapa activa es la que tiene su texto más cerca del centro de la pantalla:
-    // la pantalla de la derecha y el brillo del texto cambian recién cuando llega la próxima.
-    let raf = 0;
-    const pick = () => {
-      raf = 0;
-      const mid = window.innerHeight / 2;
-      let best = 0, dist = Infinity;
-      panels.current.forEach((p, j) => {
-        const c = p?.querySelector(".proc3__copy");
-        if (!c) return;
-        const r = c.getBoundingClientRect();
-        const d = Math.abs(r.top + r.height / 2 - mid);
-        if (d < dist) { dist = d; best = j; }
-      });
-      setI(best);
-    };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(pick); };
-    pick();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); cancelAnimationFrame(raf); mq.removeEventListener("change", up); };
-  }, []);
-
-  const go = (j: number) => (panels.current[j]?.querySelector(".proc3__copy") ?? panels.current[j])?.scrollIntoView({ behavior: "smooth", block: "center" });
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const V = VIS[i]!;
+  const onKey = (e: React.KeyboardEvent) => {
+    const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!d) return;
+    e.preventDefault();
+    const n = (i + d + steps.length) % steps.length;
+    setI(n);
+    tabs.current[n]?.focus();
+  };
   return (
-    <section className="proc3" id="proceso" aria-labelledby="proc-title">
+    <section className="proc4" id="proceso" aria-labelledby="proc-title">
       <div className="container">
-        <div className="proc3__head">
+        <div className="proc4__head">
           <p className="label">{L("Cómo trabajamos", "Como trabalhamos")}</p>
-          <h2 className="h2" id="proc-title">{L("De la idea", "Da ideia")} <span className="serif ctrl">{L("a la solución.", "à solução.")}</span></h2>
-          <p className="lead">{L("Antes de diseñar o programar, entendemos cómo funciona tu negocio. Son cinco etapas y cada una termina con algo que podés ver y aprobar.", "Antes de desenhar ou programar, entendemos como seu negócio funciona. São cinco etapas e cada uma termina com algo que você pode ver e aprovar.")}</p>
+          <h2 className="h2" id="proc-title">{L("De la idea a la solución.", "Da ideia à solução.")}</h2>
+          <p className="lead">{L("Primero entendemos lo que necesitás. Después diseñamos, desarrollamos y te acompañamos en cada etapa.", "Primeiro entendemos o que você precisa. Depois desenhamos, desenvolvemos e acompanhamos você em cada etapa.")}</p>
         </div>
-        <div className="proc3__body">
-          <nav className="proc3__rail" aria-label={L("Etapas", "Etapas")}>
-            {steps.map((s, j) => (
-              <button key={s.t} type="button" className={j === i ? "on" : j < i ? "done" : ""} onClick={() => go(j)} aria-current={j === i ? "step" : undefined}>
-                <span className="n">0{j + 1}</span><span className="t">{s.t}</span>
-              </button>
-            ))}
-          </nav>
-          <ol className="proc3__steps">
-            {steps.map((s, j) => {
-              const Vj = VIS[j]!;
-              return (
-                <li key={s.t} ref={(el) => { panels.current[j] = el; }} data-i={j} className={`proc3__step${j === i ? " on" : ""}`}>
-                  <div className="proc3__copy">
-                  <span className="proc3__num" aria-hidden>0{j + 1}</span>
-                  <h3>{s.t}</h3>
-                  <p className="proc3__d">{s.d}</p>
-                  <dl className="proc3__meta">
-                    <div><dt>{L("Qué hacés vos", "O que você faz")}</dt><dd>{s.you}</dd></div>
-                    <div><dt>{L("Qué te llevás", "O que você recebe")}</dt><dd>{s.get}</dd></div>
-                  </dl>
-                  </div>
-                  {!wide && <div className="proc3__inline">{j === i ? <Vj /> : <div className="proc3__ph" />}</div>}
-                </li>
-              );
-            })}
-          </ol>
-          {wide && (
-            <div className="proc3__sticky">
-              <div className="proc3__visual" aria-hidden>
-                <div key={i} className="proc3__stage"><V /></div>
-                <div className="proc3__dots">{steps.map((s, j) => <i key={s.t} className={j === i ? "on" : j < i ? "done" : ""} />)}</div>
-              </div>
+        <div className="proc4__steps" role="tablist" aria-label={L("Etapas", "Etapas")} onKeyDown={onKey}>
+          {steps.map((s, j) => (
+            <button key={s.t} ref={(el) => { tabs.current[j] = el; }} type="button" role="tab" id={`p4-t${j}`} aria-selected={i === j} aria-controls="p4-panel" tabIndex={i === j ? 0 : -1}
+              className={j === i ? "on" : j < i ? "done" : ""} onClick={() => setI(j)}>
+              <span className="n">0{j + 1}</span><span className="t">{s.t}</span>
+            </button>
+          ))}
+        </div>
+        <div className="proc4__body" id="p4-panel" role="tabpanel" aria-labelledby={`p4-t${i}`}>
+          <div className="proc4__copy" key={`c${i}`}>
+            <span className="proc4__num" aria-hidden>0{i + 1}</span>
+            <h3>{steps[i]!.t}</h3>
+            <p>{steps[i]!.d}</p>
+            <div className="proc4__nav">
+              <button type="button" onClick={() => setI((i + steps.length - 1) % steps.length)} aria-label={L("Etapa anterior", "Etapa anterior")}>←</button>
+              <button type="button" onClick={() => setI((i + 1) % steps.length)} aria-label={L("Etapa siguiente", "Próxima etapa")}>→</button>
             </div>
-          )}
+          </div>
+          <div className="proc4__visual" aria-hidden>
+            <div key={i} className="proc4__stage"><V /></div>
+          </div>
         </div>
       </div>
     </section>

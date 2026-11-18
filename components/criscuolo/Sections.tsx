@@ -211,8 +211,10 @@ function Postmark() {
     </svg>
   );
 }
-/* ---- A marca: la historia como un recorrido postal en capítulos ---- */
-const CHAPTERS = [
+/* ---- A marca: la historia como un recorrido postal en capítulos ----
+   Solo se muestran los capítulos con información confirmada (el origen y el café).
+   La familia y la trayectoria internacional quedan ocultas hasta tener los datos reales. */
+const ALL_CHAPTERS = [
   {
     n: "I", k: "A terra", t: "Onde tudo começa.", place: "Cerrado Mineiro",
     body: "O solo, o clima e a altitude do Cerrado Mineiro dão ao café de Campos Altos o seu caráter.",
@@ -242,6 +244,8 @@ const CHAPTERS = [
     stamp: { bg: "#cfccc3", ink: "#4a2232" },
   },
 ];
+const CONFIRMED = new Set(["I", "III"]);
+const CHAPTERS = ALL_CHAPTERS.filter((c) => CONFIRMED.has(c.n));
 
 export function Brand() {
   const root = useRef<HTMLElement>(null);
@@ -281,7 +285,7 @@ export function Brand() {
         <div className="cc-story__track" ref={track}>
           <div className="cc-story__intro">
             <span className="cc-tech">A marca</span>
-            <h2 className="cc-display cc-display--md">Mais do que café.<br />Uma história de origem.</h2>
+            <h2 className="cc-display cc-display--md">Mais do que café.<br />Um café de origem.</h2>
             <p className="cc-italic">Entre a terra, o tempo e o cuidado, cada grão carrega uma história que merece ser conhecida.</p>
             <span className="cc-story__hint">Siga o caminho →</span>
           </div>
@@ -299,7 +303,6 @@ export function Brand() {
                 <span className="cc-tech">{c.n} · {c.k}</span>
                 <h3 className="cc-display">{c.t}</h3>
                 <p className="cc-ch__body">{c.body}</p>
-                <p className="cc-ch__todo">{c.todo}</p>
               </div>
               <div className="cc-ch__stamp" style={{ ["--sbg" as any]: c.stamp.bg, color: c.stamp.ink }}>
                 <svg className="cc-stamp__shape" viewBox="0 0 100 125" preserveAspectRatio="none" aria-hidden><path d={STAMP_D} /></svg>

@@ -10,10 +10,7 @@ import Footer from "@/components/Footer";
 import Contact, { type NeedKey } from "@/components/Contact";
 import { ExperienceDemo, IntelligenceDemo } from "@/components/demos";
 import { SystemsDemo } from "@/components/systems-demos";
-import FitBox from "@/components/FitBox";
 import { HeroArt, ServiceVisual } from "@/components/service-visuals";
-import Flow from "@/components/Flow";
-import Simulator from "@/components/Simulator";
 import Impact from "@/components/Impact";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -48,8 +45,8 @@ function useContent(k: Key) {
       ),
       demoTitle: [L("Una marca,", "Uma marca,"), L("un lenguaje.", "uma linguagem.")],
       demoLead: L(
-        "Café de especialidad, indumentaria de cuero y un estudio de cerámica: tres conceptos con identidades muy distintas. Elegí uno para verlo.",
-        "Café especial, roupas de couro e um estúdio de cerâmica: três conceitos com identidades muito diferentes. Escolha um para ver.",
+        "Criscuolo Coffee es un concepto interactivo que desarrollamos para mostrar cómo trabajamos la dirección de arte, la narrativa y la interacción. No es el sitio oficial de la marca.",
+        "Criscuolo Coffee é um conceito interativo que desenvolvemos para mostrar como trabalhamos direção de arte, narrativa e interação. Não é o site oficial da marca.",
       ),
       blockTitle: [L("Proceso y", "Processo e"), L("entregables.", "entregáveis.")],
       block: L<Item[]>(
@@ -94,21 +91,21 @@ function useContent(k: Key) {
       ),
       demoTitle: [L("Tres sistemas,", "Três sistemas,"), L("tres formas de ordenar.", "três formas de organizar.")],
       demoLead: L(
-        "Ejemplos ficticios que podés usar: un gestor de stock que responde consultas solo, una agenda de turnos con lista de espera y un radar comercial para buscar clientes, seguir métricas y mirar a la competencia.",
-        "Exemplos fictícios que você pode usar: um gestor de estoque que responde consultas sozinho, uma agenda com lista de espera e um radar comercial para buscar clientes, acompanhar métricas e olhar a concorrência.",
+        "Tres operaciones distintas, con datos ficticios: stock y pedidos de un distribuidor, la agenda de turnos de un consultorio y la gestión comercial de un estudio. Tocá los botones para ver qué cambia.",
+        "Três operações diferentes, com dados fictícios: estoque e pedidos de um distribuidor, a agenda de um consultório e a gestão comercial de um estúdio. Toque nos botões para ver o que muda.",
       ),
       blockTitle: [L("Diseño funcional,", "Design funcional,"), L("integraciones y mantenimiento.", "integrações e manutenção.")],
       block: L<Item[]>(
         [
           ["Diseño funcional", "Antes de programar, definimos con tu equipo los procesos, los roles y los permisos. Las funcionalidades quedan por escrito en la propuesta."],
           ["Integraciones", "Conectamos con las herramientas que ya usás cuando ofrecen una vía de integración (API, exportaciones o conectores)."],
-          ["Pruebas y puesta en marcha", "Probamos con datos reales de ejemplo y acompañamos la carga inicial y la capacitación del equipo."],
+          ["Pruebas y puesta en marcha", "Probamos antes de lanzar y acompañamos la puesta en marcha. Si hace falta, también la carga inicial y la capacitación del equipo."],
           ["Mantenimiento y evolución", "Acordamos cómo se mantiene: soporte, respaldos, mejoras y nuevas funciones según lo que necesite tu operación."],
         ],
         [
           ["Design funcional", "Antes de programar, definimos com sua equipe os processos, os papéis e as permissões. As funcionalidades ficam por escrito na proposta."],
           ["Integrações", "Conectamos com as ferramentas que você já usa quando oferecem uma via de integração (API, exportações ou conectores)."],
-          ["Testes e implantação", "Testamos com dados de exemplo reais e acompanhamos a carga inicial e o treinamento da equipe."],
+          ["Testes e implantação", "Testamos antes de lançar e acompanhamos a implantação. Se precisar, também a carga inicial e o treinamento da equipe."],
           ["Manutenção e evolução", "Combinamos como será mantido: suporte, backups, melhorias e novas funções conforme o que sua operação precisar."],
         ],
       ),
@@ -206,6 +203,28 @@ function useIncludes(k: Key): string[][] {
   );
 }
 
+/** Hero de Experience: composición editorial con el concepto disponible (Criscuolo Coffee), sin mockups genéricos. */
+function ExpHeroArt() {
+  const L = useL();
+  return (
+    <a className="xh" href="/casos/criscuolo/" aria-label={L("Ver el concepto de Criscuolo Coffee", "Ver o conceito da Criscuolo Coffee")} onClick={() => track("project_open", { project: "criscuolo", from: "experience_hero" })}>
+      <figure className="xh__main">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/criscuolo/recorrido-v3-poster.jpg" alt="" width={1280} height={800} />
+      </figure>
+      <figure className="xh__pack">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/criscuolo/pack.jpg" alt="" width={600} height={760} />
+      </figure>
+      <figcaption className="xh__cap">
+        <b>Criscuolo Coffee</b>
+        <span>{L("Concepto interactivo · Desarrollado por Nexa", "Conceito interativo · Desenvolvido pela Nexa")}</span>
+        <em>{L("Ver el concepto", "Ver o conceito")} →</em>
+      </figcaption>
+    </a>
+  );
+}
+
 function Rows({ k, items }: { k: Key; items: Item[] }) {
   const L = useL();
   const inc = useIncludes(k);
@@ -223,24 +242,6 @@ function Rows({ k, items }: { k: Key; items: Item[] }) {
         </article>
       ))}
     </div>
-  );
-}
-
-function useExamples() {
-  const L = useL();
-  return L<Item[]>(
-    [
-      ["Consultas que se ordenan solas", "Lo que llega por la web, el mail o WhatsApp se clasifica y se carga en el CRM con sus datos."],
-      ["Documentos que se leen", "Facturas y comprobantes: se extraen los datos y quedan listos para que alguien los revise."],
-      ["Reportes que se arman solos", "Información de varias herramientas reunida en un reporte periódico."],
-      ["Avisos a tiempo", "Una alerta cuando algo necesita atención: un pedido demorado, un stock bajo, un pago por vencer."],
-    ],
-    [
-      ["Contatos que se organizam sozinhos", "O que chega pelo site, e-mail ou WhatsApp é classificado e cadastrado no CRM com seus dados."],
-      ["Documentos que são lidos", "Notas e comprovantes: os dados são extraídos e ficam prontos para alguém revisar."],
-      ["Relatórios que se montam sozinhos", "Informações de várias ferramentas reunidas em um relatório periódico."],
-      ["Avisos na hora certa", "Um alerta quando algo precisa de atenção: um pedido atrasado, um estoque baixo, um pagamento a vencer."],
-    ],
   );
 }
 
@@ -262,7 +263,6 @@ export default function DivisionPage({ k }: { k: Key }) {
   const L = useL();
   const href = useHref();
   const c = useContent(k);
-  const examples = useExamples();
   const d = DIVISIONS.find((x) => x.key === k)!;
   const others = DIVISIONS.filter((x) => x.key !== k);
   const root = useRef<HTMLElement>(null);
@@ -294,13 +294,13 @@ export default function DivisionPage({ k }: { k: Key }) {
               <a href="#que-hacemos" className="btn btn--line">{L("Qué hacemos", "O que fazemos")}</a>
             </div>
             </div>
-            <HeroArt division={k} />
+            {k === "experience" ? <ExpHeroArt /> : <HeroArt division={k} />}
           </div>
         </section>
 
         <section className="dp-sec" id="que-hacemos" aria-labelledby="dp-what">
           <div className="container">
-            <h2 className="h2 dp-h2" id="dp-what">{L("Qué", "O que")} <span className="serif ctrl">{L("hacemos.", "fazemos.")}</span></h2>
+            <h2 className="h2 dp-h2" id="dp-what">{L("Qué hacemos.", "O que fazemos.")}</h2>
             <Rows k={k} items={c.items} />
           </div>
         </section>
@@ -309,10 +309,10 @@ export default function DivisionPage({ k }: { k: Key }) {
           <section className="dp-sec dp-demo" aria-labelledby="dp-demo">
             <div className="container dp-demo__stack">
               <div className="dp-demo__head">
-                <h2 className="h2 dp-h2" id="dp-demo">{c.demoTitle[0]} <span className="serif ctrl">{c.demoTitle[1]}</span></h2>
+                <h2 className="h2 dp-h2" id="dp-demo">{c.demoTitle[0]} {c.demoTitle[1]}</h2>
                 <p className="lead">{c.demoLead}</p>
               </div>
-              <FitBox reserve={110}><ExperienceDemo /></FitBox>
+              <ExperienceDemo />
             </div>
           </section>
         )}
@@ -320,10 +320,11 @@ export default function DivisionPage({ k }: { k: Key }) {
           <section className="dp-sec dp-demo" aria-labelledby="dp-demo">
             <div className="container dp-demo__stack">
               <div className="dp-demo__head">
-                <h2 className="h2 dp-h2" id="dp-demo">{c.demoTitle[0]} <span className="serif ctrl">{c.demoTitle[1]}</span></h2>
+                <h2 className="h2 dp-h2" id="dp-demo">{c.demoTitle[0]} {c.demoTitle[1]}</h2>
                 <p className="lead">{c.demoLead}</p>
               </div>
-              <FitBox reserve={110}><SystemsDemo /></FitBox>
+              <SystemsDemo calm />
+              <p className="dp-note">{L("Demo interactiva · Datos ficticios", "Demo interativa · Dados fictícios")}</p>
             </div>
           </section>
         )}
@@ -332,32 +333,24 @@ export default function DivisionPage({ k }: { k: Key }) {
           <section className="dp-sec dp-demo" aria-labelledby="dp-demo">
             <div className="container dp-demo__grid">
               <div>
-                <h2 className="h2 dp-h2" id="dp-demo">{L("Lo automático,", "O automático,")} <span className="serif ctrl">{L("con control.", "com controle.")}</span></h2>
+                <h2 className="h2 dp-h2" id="dp-demo">{L("Lo automático, con control.", "O automático, com controle.")}</h2>
                 <p className="lead">{L("Elegí un caso y mirá cómo una consulta, un turno o una factura pasan por el sistema. Lo importante siempre lo aprueba una persona.", "Escolha um caso e veja como uma consulta, um horário ou uma nota passam pelo sistema. O importante sempre é aprovado por uma pessoa.")}</p>
+                <p className="dp-note">{L("Ejemplo ilustrativo · Datos simulados", "Exemplo ilustrativo · Dados simulados")}</p>
               </div>
               <IntelligenceDemo />
             </div>
           </section>
         )}
-        {k === "intelligence" && <Flow />}
 
         <section className="dp-sec" aria-labelledby="dp-block">
           <div className="container">
-            <h2 className="h2 dp-h2" id="dp-block">{c.blockTitle[0]} <span className="serif ctrl">{c.blockTitle[1]}</span></h2>
+            <h2 className="h2 dp-h2" id="dp-block">{c.blockTitle[0]} {c.blockTitle[1]}</h2>
             <List items={c.block} cols={2} />
           </div>
         </section>
 
         {k === "intelligence" && (
           <>
-            <Simulator />
-            <section className="dp-sec" aria-labelledby="dp-examples">
-              <div className="container">
-                <h2 className="h2 dp-h2" id="dp-examples">{L("Ejemplos", "Exemplos")} <span className="serif ctrl">{L("prácticos.", "práticos.")}</span></h2>
-                <p className="lead">{L("Situaciones habituales donde la automatización suele ayudar. Cada caso se evalúa antes de proponer una solución.", "Situações comuns em que a automação costuma ajudar. Cada caso é avaliado antes de propor uma solução.")}</p>
-                <List items={examples} cols={2} />
-              </div>
-            </section>
             <Impact />
           </>
         )}
