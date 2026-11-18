@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { track } from "@/lib/config";
 import { useHref, useL, useLang } from "@/lib/i18n";
 import { rememberReturn } from "./criscuolo/BackToNexa";
+import { Defs as CbDefs, Shape } from "./cobalto/data";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -62,11 +63,12 @@ export function ProjectVisual({ k }: { k: string }) {
     );
   return (
     <div className="pj-vis pj-vis--cb" aria-hidden>
-      {["marmol", "circulos", "tallada"].map((n) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img key={n} src={`/cobalto/${n}.webp`} alt="" loading="lazy" />
+      <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap" />
+      <CbDefs />
+      {([["#a9bfcb", "#4a1117", "bowl"], ["#5b4318", "#a9bfcb", "bottle"], ["#cfb183", "#8a451b", "cup"], ["#4a1117", "#cfb183", "vase"]] as const).map(([bg, fg, k]) => (
+        <span key={k} style={{ background: bg }}><Shape k={k} color={fg} /></span>
       ))}
-      <span className="pj-vis__word">Pintá tu taza.</span>
+      <span className="pj-cb__seal">CO<br />BAL<br />TO</span>
     </div>
   );
 }

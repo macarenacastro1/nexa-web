@@ -1,80 +1,68 @@
 /* =====================================================================
-   Cobalto · datos del concepto y piezas comunes.
-   Todas las fotos van como recortes sin fondo (WebP con transparencia).
+   Cobalto · datos del concepto y dibujos.
+   Nada de fotos: solo siluetas planas dibujadas, con borde irregular.
    ===================================================================== */
 
 export const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 export const money = (n: number) => new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(n);
 
-export type Exp = { key: string; name: string; dur: string; price: number; desc: string; when: string; img: Img };
-export type Img = { src: string; alt: string; w: number; h: number };
+/** Paleta tomada de las referencias. */
+export const C = {
+  olive: "#5b4318", blue: "#a9bfcb", wine: "#4a1117", rust: "#8a451b", tan: "#cfb183", cream: "#e4e1b8", light: "#efecd0",
+} as const;
 
-export const IMG = {
-  marmol: { src: "/cobalto/marmol.webp", alt: "Vaso de cerámica marmolada con borde negro", w: 347, h: 477 },
-  primitiva: { src: "/cobalto/primitiva.webp", alt: "Vaso de gres oscuro modelado a mano, con esmalte blanco craquelado", w: 368, h: 515 },
-  tallada: { src: "/cobalto/tallada.webp", alt: "Vaso tallado a mano con esmalte blanco y barro oscuro", w: 398, h: 403 },
-  circulos: { src: "/cobalto/circulos.webp", alt: "Taza de cerámica clara con dos círculos dibujados", w: 485, h: 279 },
-  cafe: { src: "/cobalto/cafe.webp", alt: "Siete tazas de cerámica esmaltada con café latte, sobre bloques de madera", w: 425, h: 440 },
-} satisfies Record<string, Img>;
+export type ShapeKey = "bowl" | "bottle" | "cup" | "vase" | "tumbler" | "jug";
 
-export const EXPS: Exp[] = [
-  { key: "brunch", name: "Brunch & Paint", dur: "2 h", price: 32000, when: "Martes a domingo · 10 a 18 h", img: IMG.circulos, desc: "Elegís una pieza en bizcocho, la pintás a tu ritmo y te servimos brunch con café de especialidad." },
-  { key: "torno", name: "Torno inicial", dur: "3 h", price: 45000, when: "Sábados · 15 h", img: IMG.tallada, desc: "Tu primera vez en el torno, en grupos de seis. Hacés dos piezas y elegís cuál esmaltamos." },
-  { key: "noche", name: "Wine & Clay", dur: "2 h 30", price: 38000, when: "Jueves y viernes · 20 h", img: IMG.primitiva, desc: "Modelado a mano, vino natural y algo para picar. Una noche tranquila con amigos." },
-];
+/** Siluetas en un lienzo de 100 × 100. La taza y la jarra llevan asa como trazo. */
+const PATHS: Record<ShapeKey, { d: string; handle?: string }> = {
+  bowl: { d: "M6 34 C30 30 70 30 94 34 C90 50 74 58 58 60 L58 68 C66 70 72 74 74 80 L26 80 C28 74 34 70 42 68 L42 60 C26 58 10 50 6 34Z" },
+  bottle: { d: "M44 6 L56 6 L56 12 C58 14 58 18 55 20 L55 30 C64 36 66 44 66 54 L66 86 C56 92 44 92 34 86 L34 54 C34 44 36 36 45 30 L45 20 C42 18 42 14 44 12Z" },
+  cup: { d: "M18 34 C40 31 60 31 76 34 C78 52 76 66 68 76 C56 82 38 82 28 76 C20 66 17 52 18 34Z", handle: "M76 44 C92 42 94 62 72 64" },
+  vase: { d: "M38 14 L62 14 L60 24 C78 32 84 44 82 58 C80 76 66 84 50 84 C34 84 20 76 18 58 C16 44 22 32 40 24Z" },
+  tumbler: { d: "M24 20 C42 17 58 17 76 20 L70 82 C56 87 44 87 30 82Z" },
+  jug: { d: "M36 12 C44 10 56 10 64 12 L62 22 C74 30 78 46 76 62 C74 76 64 84 50 84 C36 84 26 76 24 62 C22 46 26 30 38 22 L36 16Z M36 12 L28 8 L36 18Z", handle: "M70 32 C88 30 90 56 74 60" },
+};
 
-export type Product = { id: string; name: string; price: number; img: Img; note: string; tint: string };
-export const SHOP: Product[] = [
-  { id: "s1", name: "Vaso Mármol", price: 24000, img: IMG.marmol, note: "Barro marmolado · tallado kurinuki", tint: "#e3ddd3" },
-  { id: "s2", name: "Vaso Primitivo", price: 21000, img: IMG.primitiva, note: "Gres oscuro · esmalte craquelado", tint: "#d9cfc2" },
-  { id: "s3", name: "Vaso Tallado", price: 22000, img: IMG.tallada, note: "Tallado a mano · esmalte blanco", tint: "#e7e1d6" },
-  { id: "s4", name: "Taza Círculos", price: 18000, img: IMG.circulos, note: "Pellizco · línea a mano", tint: "#ddd6ca" },
-];
-
-export function Pic({ img, className = "", eager = false, sizes }: { img: Img; className?: string; eager?: boolean; sizes?: string }) {
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img className={`cb-pic ${className}`} src={img.src} alt={img.alt} width={img.w} height={img.h} loading={eager ? "eager" : "lazy"} decoding="async" {...(sizes ? { sizes } : {})} />;
-}
-
-/* ------------------------------------------------------------------
-   Logotipo "cobalto" dibujado a mano: muy alto y angosto, palos gruesos
-   y curvas finas (alto contraste), con remates en gota.
-   ------------------------------------------------------------------ */
-type Mark = { k: "stem"; d: string } | { k: "thin"; d: string } | { k: "ball"; cx: number; cy: number };
-const WM: { marks: Mark[]; w: number } = (() => {
-  const T = 17, B = 286, X = 78, A = 8, W = 58, G = 22;
-  const m: Mark[] = [];
-  let x = 0;
-  const stem = (sx: number, y1: number, y2: number) => m.push({ k: "stem", d: `M${sx},${y1 + 5} L${sx + T},${y1} L${sx + T},${y2} L${sx},${y2} Z` });
-  const thin = (d: string) => m.push({ k: "thin", d });
-  const ball = (cx: number, cy: number) => m.push({ k: "ball", cx, cy });
-  const c = () => { stem(x, X + 24, B - 22); thin(`M${x + 8},${X + 26} C${x + 14},${X - 2} ${x + 44},${X - 4} ${x + W - 4},${X + 18}`); ball(x + W - 6, X + 22); thin(`M${x + 8},${B - 24} C${x + 16},${B + 4} ${x + 46},${B + 2} ${x + W},${B - 26}`); x += W + G - 6; };
-  const o = () => { stem(x, X + 24, B - 22); stem(x + W - T, X + 24, B - 22); thin(`M${x + 8},${X + 26} C${x + 14},${X - 4} ${x + W - 14},${X - 4} ${x + W - 8},${X + 26}`); thin(`M${x + 8},${B - 24} C${x + 14},${B + 6} ${x + W - 14},${B + 6} ${x + W - 8},${B - 24}`); x += W + G; };
-  const b = () => { stem(x, A, B); stem(x + W - T, X + 30, B - 22); thin(`M${x + T},${X + 40} C${x + 26},${X - 2} ${x + W - 12},${X} ${x + W - 8},${X + 32}`); thin(`M${x + T},${B - 30} C${x + 26},${B + 6} ${x + W - 12},${B + 6} ${x + W - 8},${B - 24}`); x += W + G; };
-  const a = () => { stem(x + W - T, X + 22, B); thin(`M${x + 4},${X + 30} C${x + 10},${X - 6} ${x + W - 18},${X - 8} ${x + W - 12},${X + 26}`); ball(x + 8, X + 32); thin(`M${x + W - T},${X + 104} C${x + 2},${X + 112} ${x - 4},${B - 6} ${x + 18},${B - 2} C${x + 30},${B + 2} ${x + W - T - 4},${B - 14} ${x + W - T},${B - 30}`); x += W + G - 4; };
-  const l = () => { stem(x, A, B); thin(`M${x + T},${B - 2} C${x + 24},${B} ${x + 30},${B - 4} ${x + 34},${B - 10}`); x += T + G + 10; };
-  const t = () => { stem(x + 10, A + 34, B); thin(`M${x - 4},${X + 4} L${x + 44},${X + 4}`); thin(`M${x + 10 + T},${B - 2} C${x + 36},${B} ${x + 42},${B - 4} ${x + 46},${B - 12}`); x += T + G + 26; };
-  c(); o(); b(); a(); l(); t(); o();
-  return { marks: m, w: x - G };
-})();
-
-/** Logotipo de Cobalto (SVG). El ancho lo define el CSS. */
-export function Wordmark({ className = "", title = "Cobalto" }: { className?: string; title?: string }) {
+export function Shape({ k, color, className = "", title }: { k: ShapeKey; color: string; className?: string; title?: string }) {
+  const p = PATHS[k];
   return (
-    <svg className={`cb-wm ${className}`} viewBox={`-6 0 ${WM.w + 12} 300`} role="img" aria-label={title} fill="currentColor">
-      {WM.marks.map((m, i) =>
-        m.k === "stem" ? <path key={i} d={m.d} /> : m.k === "thin" ? <path key={i} d={m.d} fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" /> : <ellipse key={i} cx={m.cx} cy={m.cy} rx="5.6" ry="7" />,
-      )}
+    <svg className={`cb-shape ${className}`} viewBox="0 0 100 100" role={title ? "img" : undefined} aria-label={title} aria-hidden={title ? undefined : true}>
+      <g filter="url(#cb-rough)" fill={color}>
+        <path d={p.d} />
+        {p.handle && <path d={p.handle} fill="none" stroke={color} strokeWidth="7" strokeLinecap="round" />}
+      </g>
     </svg>
   );
 }
 
-/** Siluetas de vasijas (dibujo propio) para la franja "hecho a mano". */
-export const VESSELS = [
-  "M20 4h20v8c0 6 14 12 14 34 0 26-10 40-24 40S6 72 6 46c0-22 14-28 14-34z",
-  "M24 4h12v14c10 4 18 16 18 34s-10 34-24 34S6 70 6 52s8-30 18-34z",
-  "M18 6h24l-2 10c8 6 10 20 10 36 0 20-8 34-20 34S10 72 10 52c0-16 2-30 10-36z",
-  "M14 20c0-8 8-14 16-14s16 6 16 14c0 6-6 8-6 14 0 10 14 16 14 32 0 12-10 20-24 20S6 78 6 66c0-16 14-22 14-32 0-6-6-8-6-14z",
-  "M22 4h16v6c0 4 6 6 6 14s-6 10-6 16c0 6 16 12 16 28 0 10-10 18-24 18S6 78 6 68c0-16 16-22 16-28 0-6-6-8-6-16s6-10 6-14z",
-  "M8 30c0-14 10-24 22-24s22 10 22 24c0 26-10 56-22 56S8 56 8 30z",
+/** Filtro que vuelve irregular el borde de los dibujos (como recortados a mano). */
+export function Defs() {
+  return (
+    <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
+      <filter id="cb-rough" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" />
+        <feDisplacementMap in="SourceGraphic" scale="3.2" />
+      </filter>
+    </svg>
+  );
+}
+
+export type Exp = { key: string; name: string; dur: string; price: number; desc: string; when: string; shape: ShapeKey };
+export const EXPS: Exp[] = [
+  { key: "brunch", name: "Brunch & Paint", dur: "2 h", price: 32000, when: "Martes a domingo · 10 a 18 h", shape: "cup", desc: "Elegís una pieza, la pintás a tu ritmo y te servimos brunch con café de especialidad." },
+  { key: "torno", name: "Torno inicial", dur: "3 h", price: 45000, when: "Sábados · 15 h", shape: "bowl", desc: "Tu primera vez en el torno, en grupos de seis. Hacés dos piezas y elegís cuál esmaltamos." },
+  { key: "noche", name: "Wine & Clay", dur: "2 h 30", price: 38000, when: "Jueves y viernes · 20 h", shape: "bottle", desc: "Modelado a mano, vino natural y algo para picar. Una noche tranquila con amigos." },
+];
+
+export type Product = { id: string; name: string; price: number; shape: ShapeKey; fg: string; bg: string };
+/** Ocho piezas para la grilla de 3 × 3 (el centro es el sello de la marca). */
+export const SHOP: Product[] = [
+  { id: "p1", name: "Compotera", price: 26000, shape: "bowl", fg: C.wine, bg: C.blue },
+  { id: "p2", name: "Botella alta", price: 24000, shape: "bottle", fg: C.blue, bg: C.olive },
+  { id: "p3", name: "Taza", price: 16000, shape: "cup", fg: C.rust, bg: C.tan },
+  { id: "p4", name: "Florero bajo", price: 22000, shape: "vase", fg: C.rust, bg: C.wine },
+  { id: "p5", name: "Botella", price: 24000, shape: "bottle", fg: C.blue, bg: C.rust },
+  { id: "p6", name: "Taza ancha", price: 17000, shape: "cup", fg: C.cream, bg: C.olive },
+  { id: "p7", name: "Cuenco", price: 21000, shape: "bowl", fg: C.olive, bg: C.blue },
+  { id: "p8", name: "Jarrón", price: 28000, shape: "vase", fg: C.tan, bg: C.wine },
 ];

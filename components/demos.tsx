@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { track } from "@/lib/config";
 import { useHref, useL, useLang } from "@/lib/i18n";
 import { rememberReturn } from "./criscuolo/BackToNexa";
+import { Defs as CbDefs, Shape } from "./cobalto/data";
 
 /* =====================================================================
    Demostraciones de las tres divisiones. Son vistas conceptuales: los
@@ -79,13 +80,13 @@ function CobaltoPreview() {
     <a className="vid-card" href="/casos/cobalto/" onClick={() => { rememberReturn(lang); track("project_open", { project: "cobalto", from: "preview" }); }}
       aria-label={L("Ver el concepto de Cobalto completo", "Ver o conceito da Cobalto completo")}>
       <Frame url="cobalto.studio" tone="light">
+        <CbDefs />
         <div className="cbp" aria-hidden>
-          <p className="cbp__k">Ceramic café · Palermo</p>
-          <p className="cbp__h">Pintá tu taza.<br /><em>Tomá el café en ella.</em></p>
-          <div className="cbp__shelf">
-            {["marmol", "circulos", "tallada", "primitiva"].map((n) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={n} src={`/cobalto/${n}.webp`} alt="" loading="lazy" className={`cbp__p cbp__p--${n}`} />
+          <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Jost:wght@400&display=swap" />
+          <div className="cbp__card"><span className="cbp__logo">COBALTO</span><span className="cbp__caps">Ceramic café · Hecho para tocar</span></div>
+          <div className="cbp__grid">
+            {([["#a9bfcb", "#4a1117", "bowl"], ["#5b4318", "#a9bfcb", "bottle"], ["#cfb183", "#8a451b", "cup"], ["#4a1117", "#cfb183", "vase"]] as const).map(([bg, fg, k]) => (
+              <span key={k} style={{ background: bg }}><Shape k={k} color={fg} /></span>
             ))}
           </div>
         </div>
