@@ -10,4 +10,4 @@ Publicada en main el 16/11/2026. Respaldo de la versión anterior: rama `respald
 - [x] Publicada: la owner dijo "publica" el 16/11/2026 y la rama se unió a main.
 
 ## Segunda etapa
-- [x] Cobalto (estudio de cerámica con brunch, concepto ilustrado) en /casos/cobalto/, sumado a Experience y Proyectos el 17/11/2026. Falta el "publicalo". (Piel de Campo: descartado.)
+- [ ] Estudio de cerámica: se descartó Cobalto el 18/11/2026; se rehace desde cero con el brief nuevo.

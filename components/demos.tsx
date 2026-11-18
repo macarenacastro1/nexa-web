@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { track } from "@/lib/config";
 import { useHref, useL, useLang } from "@/lib/i18n";
 import { rememberReturn } from "./criscuolo/BackToNexa";
-import { Defs, Piece } from "./cobalto/shapes";
 
 /* =====================================================================
    Demostraciones de las tres divisiones. Son vistas conceptuales: los
@@ -12,7 +11,7 @@ import { Defs, Piece } from "./cobalto/shapes";
    ===================================================================== */
 
 /* ---------------------------- EXPERIENCE ---------------------------- */
-export const EXPERIENCE_PROJECTS = ["criscuolo", "cobalto"] as const;
+export const EXPERIENCE_PROJECTS = ["criscuolo"] as const;
 export type ExpKey = (typeof EXPERIENCE_PROJECTS)[number];
 
 export function useExperienceProjects() {
@@ -23,12 +22,6 @@ export function useExperienceProjects() {
       status: L("Concepto navegable", "Conceito navegável"),
       summary: L("Una experiencia de café que cuenta el camino del fruto a la taza.", "Uma experiência de café que conta o caminho da fruta à xícara."),
       shows: L(["Storytelling", "Dirección de arte", "Diseño editorial", "Transiciones inmersivas"], ["Storytelling", "Direção de arte", "Design editorial", "Transições imersivas"]),
-    },
-    cobalto: {
-      name: L("Estudio de cerámica", "Estúdio de cerâmica"),
-      status: L("Concepto · en desarrollo", "Conceito · em desenvolvimento"),
-      summary: L("Un estudio de cerámica con brunch: una mesa ilustrada donde cada objeto se toca y la tarjeta del estudio se convierte en el calendario de reservas.", "Um estúdio de cerâmica com brunch: uma mesa ilustrada onde cada objeto pode ser tocado e o cartão do estúdio vira o calendário de reservas."),
-      shows: L(["Ilustración propia", "Interacción", "Reservas online", "Tienda"], ["Ilustração própria", "Interação", "Reservas online", "Loja"]),
     },
   } satisfies Record<ExpKey, { name: string; status: string; summary: string; shows: string[] }>;
 }
@@ -73,35 +66,6 @@ function CriscuoloPreview() {
   );
 }
 
-function CobaltoPreview() {
-  const L = useL();
-  const { lang } = useLang();
-  return (
-    <a className="vid-card" href="/casos/cobalto/" onClick={() => { rememberReturn(lang); track("project_open", { project: "cobalto", from: "preview" }); }}
-      aria-label={L("Ver el concepto de Cobalto completo", "Ver o conceito da Cobalto completo")}>
-      <Frame url="cobalto.studio" tone="light">
-        <div className="cbp" aria-hidden>
-          <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;600;700&display=swap" />
-          <Defs />
-          <p className="cbp__h">A little art.<br /><span>A lot of <em>fun.</em></span></p>
-          <div className="cbp__table">
-            <Piece kind="vase" tone="#e7dccb" pattern="reactive" size={70} />
-            <Piece kind="mug" tone="#f4ede1" handle="right" size={62} />
-            <Piece kind="jug" tone="#a9b49a" handle="right" size={70} />
-            <Piece kind="tall" tone="#3b2a20" size={46} />
-            <span className="cbp__card">Cobalto<small>Reservá →</small></span>
-          </div>
-        </div>
-      </Frame>
-      <span className="vid-card__cta">
-        <span className="vid-card__play" aria-hidden>▶</span>
-        {L("Ver el concepto completo", "Ver o conceito completo")}
-        <span aria-hidden>→</span>
-      </span>
-    </a>
-  );
-}
-
 export function ExperienceDemo({ compact = false, active, onPick }: { compact?: boolean; active?: ExpKey; onPick?: (k: ExpKey) => void }) {
   const L = useL();
   const all = useExperienceProjects();
@@ -110,13 +74,13 @@ export function ExperienceDemo({ compact = false, active, onPick }: { compact?: 
   const p = all[k];
   return (
     <div className="demo demo--exp">
-      <div className="demo__tabs" role="tablist" aria-label={L("Proyectos", "Projetos")}>
+      {EXPERIENCE_PROJECTS.length > 1 && <div className="demo__tabs" role="tablist" aria-label={L("Proyectos", "Projetos")}>
         {EXPERIENCE_PROJECTS.map((x) => (
           <button key={x} type="button" role="tab" aria-selected={k === x} className={k === x ? "on" : ""} onClick={() => { setK(x); onPick?.(x); track("experience_project_select", { project: x }); }}>{all[x].name}</button>
         ))}
-      </div>
+      </div>}
       <div className="demo__stage" aria-label={p.name} key={k}>
-        {k === "criscuolo" ? <CriscuoloPreview /> : <CobaltoPreview />}
+        <CriscuoloPreview />
       </div>
       <div className="demo__caption">
         <span className="status">{p.name} · {p.status}</span>

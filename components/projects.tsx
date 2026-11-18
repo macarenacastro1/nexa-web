@@ -5,7 +5,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { track } from "@/lib/config";
 import { useHref, useL, useLang } from "@/lib/i18n";
 import { rememberReturn } from "./criscuolo/BackToNexa";
-import { Defs, Piece } from "./cobalto/shapes";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -33,22 +32,6 @@ export function useProjects() {
       href: "/casos/criscuolo/",
       cta: L("Explorar el concepto", "Explorar o conceito"),
     },
-    {
-      key: "ceramica",
-      name: "Cobalto",
-      cat: L("Experiencia web · Estudio de cerámica y brunch", "Experiência web · Estúdio de cerâmica e brunch"),
-      status: L("Concepto · demo navegable", "Conceito · demo navegável"),
-      challenge: L(
-        "Un estudio donde se pinta cerámica mientras se toma un brunch vende una experiencia, no un producto: la web tiene que contagiar ese plan y llevar directo a reservar.",
-        "Um estúdio onde se pinta cerâmica enquanto se toma um brunch vende uma experiência, não um produto: o site precisa contagiar esse programa e levar direto à reserva.",
-      ),
-      solution: L(
-        "Una mesa ilustrada donde cada objeto se puede tocar: la taza muestra las piezas, los pinceles los colores, el croissant el brunch, y la tarjeta del estudio se transforma en el calendario de reservas.",
-        "Uma mesa ilustrada onde cada objeto pode ser tocado: a xícara mostra as peças, os pincéis as cores, o croissant o brunch, e o cartão do estúdio se transforma no calendário de reservas.",
-      ),
-      href: "/casos/cobalto/",
-      cta: L("Explorar el concepto", "Explorar o conceito"),
-    },
   ];
 }
 
@@ -61,18 +44,7 @@ export function ProjectVisual({ k }: { k: string }) {
         <span className="pj-vis__word" aria-hidden>Da fruta à xícara</span>
       </div>
     );
-  return (
-    <div className="pj-vis pj-vis--ce" aria-hidden>
-      <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;600;700&display=swap" />
-      <Defs />
-      <div className="pj-ce">
-        <Piece kind="amphora" tone="#f4ede1" handle="both" size={150} />
-        <Piece kind="jug" tone="#e7dccb" pattern="reactive" handle="right" size={120} />
-        <Piece kind="tall" tone="#3b2a20" size={96} />
-      </div>
-      <span className="pj-vis__word">A little art.</span>
-    </div>
-  );
+  return null;
 }
 
 export function ProjectCard({ p, i, detail = false }: { p: ReturnType<typeof useProjects>[number]; i: number; detail?: boolean }) {
