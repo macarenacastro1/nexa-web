@@ -47,22 +47,51 @@ export function Defs() {
   );
 }
 
-export type Exp = { key: string; name: string; dur: string; price: number; desc: string; when: string; shape: ShapeKey };
+/* ---------------------------------------------------------------------
+   Datos comerciales. Cobalto es una marca ficticia: precios, horarios y
+   cupos son de ejemplo para la demo (se aclara en la página).
+   --------------------------------------------------------------------- */
+export type Exp = {
+  key: string; name: string; short: string; kind: "plan" | "taller";
+  dur: string; price: number; from?: boolean; when: string; times: string[];
+  includes: string[]; booking: string; seats?: string; shape: ShapeKey; desc: string;
+};
 export const EXPS: Exp[] = [
-  { key: "brunch", name: "Brunch & Paint", dur: "2 h", price: 32000, when: "Martes a domingo · 10 a 18 h", shape: "cup", desc: "Elegís una pieza, la pintás a tu ritmo y te servimos brunch con café de especialidad." },
-  { key: "torno", name: "Torno inicial", dur: "3 h", price: 45000, when: "Sábados · 15 h", shape: "bowl", desc: "Tu primera vez en el torno, en grupos de seis. Hacés dos piezas y elegís cuál esmaltamos." },
-  { key: "noche", name: "Wine & Clay", dur: "2 h 30", price: 38000, when: "Jueves y viernes · 20 h", shape: "bottle", desc: "Modelado a mano, vino natural y algo para picar. Una noche tranquila con amigos." },
+  { key: "pinta", name: "Pintá & Café", short: "Pintá & Café", kind: "plan", dur: "2 h aprox.", price: 18000, from: true, when: "Martes a domingo · 10 a 19 h", times: ["10:00", "12:00", "14:00", "16:00", "17:30"],
+    includes: ["Una pieza a elección", "Pinturas, pinceles y delantal", "Un café o bebida", "Horneado y esmaltado"], booking: "Recomendada (también podés venir sin reserva si hay lugar)", shape: "cup",
+    desc: "Elegís una pieza de cerámica, la pintás mientras disfrutás de un café y nosotros nos encargamos del horneado." },
+  { key: "brunch", name: "Brunch & Paint", short: "Brunch & Paint", kind: "plan", dur: "2 h 30", price: 32000, when: "Sábados y domingos · 10 y 13 h", times: ["10:00", "13:00"],
+    includes: ["Una pieza a elección", "Brunch para una persona (bebida caliente, jugo, tostado y algo dulce)", "Materiales y horneado"], booking: "Necesaria", seats: "Hasta 12 personas por turno", shape: "bowl",
+    desc: "Una experiencia que combina cerámica, café y algo rico para compartir." },
+  { key: "torno", name: "Torno Inicial", short: "Torno Inicial", kind: "taller", dur: "3 h", price: 45000, when: "Sábados · 15 h", times: ["15:00"],
+    includes: ["Uso del torno y barro", "Dos piezas por persona", "Esmaltado y horneado de una pieza"], booking: "Necesaria", seats: "6 lugares por clase", shape: "vase",
+    desc: "Tu primera vez en el torno. Aprendés a centrar el barro y levantar tus primeras piezas." },
+  { key: "noche", name: "Wine & Clay", short: "Wine & Clay", kind: "taller", dur: "2 h 30", price: 38000, when: "Jueves y viernes · 20 h", times: ["20:00"],
+    includes: ["Modelado a mano", "Dos copas de vino natural", "Algo para picar", "Horneado de tu pieza"], booking: "Necesaria", seats: "10 lugares por noche", shape: "bottle",
+    desc: "Modelado a mano, vino natural y algo para picar. Una noche tranquila para crear con amigos." },
+];
+export const PICKUP = "Tu pieza está lista para retirar a los 7 días (ejemplo).";
+
+export type Product = { id: string; name: string; price: number; shape: ShapeKey; fg: string; bg: string; note: string; stock: number };
+export const SHOP: Product[] = [
+  { id: "p1", name: "Compotera", price: 26000, shape: "bowl", fg: C.wine, bg: C.blue, note: "Gres esmaltado · 22 cm", stock: 3 },
+  { id: "p2", name: "Botella alta", price: 24000, shape: "bottle", fg: C.blue, bg: C.olive, note: "Para agua o flores · 28 cm", stock: 5 },
+  { id: "p3", name: "Taza", price: 16000, shape: "cup", fg: C.rust, bg: C.tan, note: "300 ml · apta lavavajillas", stock: 12 },
+  { id: "p4", name: "Florero bajo", price: 22000, shape: "vase", fg: C.tan, bg: C.wine, note: "Esmalte arena · 16 cm", stock: 0 },
+  { id: "p5", name: "Vaso", price: 14000, shape: "tumbler", fg: C.cream, bg: C.rust, note: "250 ml · terminación mate", stock: 8 },
+  { id: "p6", name: "Jarra", price: 29000, shape: "jug", fg: C.olive, bg: C.blue, note: "1 litro · pico vertedor", stock: 2 },
 ];
 
-export type Product = { id: string; name: string; price: number; shape: ShapeKey; fg: string; bg: string };
-/** Ocho piezas para la grilla de 3 × 3 (el centro es el sello de la marca). */
-export const SHOP: Product[] = [
-  { id: "p1", name: "Compotera", price: 26000, shape: "bowl", fg: C.wine, bg: C.blue },
-  { id: "p2", name: "Botella alta", price: 24000, shape: "bottle", fg: C.blue, bg: C.olive },
-  { id: "p3", name: "Taza", price: 16000, shape: "cup", fg: C.rust, bg: C.tan },
-  { id: "p4", name: "Florero bajo", price: 22000, shape: "vase", fg: C.rust, bg: C.wine },
-  { id: "p5", name: "Botella", price: 24000, shape: "bottle", fg: C.blue, bg: C.rust },
-  { id: "p6", name: "Taza ancha", price: 17000, shape: "cup", fg: C.cream, bg: C.olive },
-  { id: "p7", name: "Cuenco", price: 21000, shape: "bowl", fg: C.olive, bg: C.blue },
-  { id: "p8", name: "Jarrón", price: 28000, shape: "vase", fg: C.tan, bg: C.wine },
+export type MenuItem = { name: string; price: number; desc?: string };
+export const MENU_TOP: (MenuItem & { icon: "cup" | "croissant" | "toast" | "cake" })[] = [
+  { name: "Flat white", price: 4200, desc: "Café de especialidad con leche texturizada.", icon: "cup" },
+  { name: "Medialuna de manteca", price: 2400, desc: "Hojaldrada, del día.", icon: "croissant" },
+  { name: "Tostado de masa madre", price: 7800, desc: "Jamón cocido natural y queso.", icon: "toast" },
+  { name: "Budín de limón", price: 3600, desc: "Con glaseado de limón.", icon: "cake" },
+];
+export const MENU_FULL: { group: string; items: MenuItem[] }[] = [
+  { group: "Café", items: [{ name: "Espresso", price: 3000 }, { name: "Flat white", price: 4200 }, { name: "Latte", price: 4400 }, { name: "Filtrado del día", price: 3800 }] },
+  { group: "Otras bebidas", items: [{ name: "Té en hebras", price: 3400 }, { name: "Chocolate caliente", price: 4600 }, { name: "Limonada", price: 4000 }] },
+  { group: "Dulce", items: [{ name: "Medialuna de manteca", price: 2400 }, { name: "Budín de limón", price: 3600 }, { name: "Cookie de chocolate", price: 3200 }] },
+  { group: "Salado", items: [{ name: "Tostado de masa madre", price: 7800 }, { name: "Tostada con palta", price: 8600 }] },
 ];
