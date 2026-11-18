@@ -1,0 +1,60 @@
+/* Casa Materia · interfaz editorial mínima sobre la escena 3D */
+.cm {
+  --ink: #f4efe6; --mute: rgba(244,239,230,.72); --glass: rgba(24,20,16,.46); --line: rgba(244,239,230,.18);
+  --serif: "Cormorant Garamond", Georgia, serif; --sans: "Inter", system-ui, sans-serif;
+  position: fixed; inset: 0; overflow: hidden; background: #1b1814; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased;
+}
+.cm *, .cm *::before, .cm *::after { box-sizing: border-box; }
+.cm button { font: inherit; color: inherit; cursor: pointer; }
+.cm h1, .cm p { margin: 0; }
+.cm-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+.cm-top { position: absolute; top: 24px; left: 28px; z-index: 2; pointer-events: none; text-shadow: 0 1px 12px rgba(0,0,0,.35); }
+.cm-brand { font-family: var(--serif); font-weight: 500; font-size: 28px; letter-spacing: .01em; line-height: 1; }
+.cm-sub { margin-top: 6px !important; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
+.cm-tag { position: absolute; top: 28px; right: 28px; z-index: 2; padding: 7px 12px; border-radius: 999px; background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 11px; letter-spacing: .08em; color: var(--mute); }
+
+.cm-card { position: absolute; left: 28px; top: 96px; z-index: 2; width: min(340px, calc(100% - 56px)); padding: 18px 20px; border-radius: 14px; background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); animation: cmIn .6s cubic-bezier(.2,.7,.2,1) both; }
+.cm-card h1 { font-family: var(--serif); font-weight: 500; font-size: 26px; line-height: 1.05; margin-bottom: 8px !important; }
+.cm-card p { font-size: 14px; line-height: 1.55; color: var(--mute); }
+@keyframes cmIn { from { opacity: 0; transform: translateY(8px); } }
+
+.cm-views { position: absolute; left: 50%; bottom: 26px; z-index: 2; transform: translateX(-50%); display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.cm-views button { border: 0; background: none; padding: 10px 16px; border-radius: 999px; font-size: 13px; color: var(--mute); white-space: nowrap; transition: background .25s, color .25s; }
+.cm-views button:hover { color: var(--ink); }
+.cm-views button.on { background: var(--ink); color: #1b1814; }
+
+.cm-clock { position: absolute; right: 28px; bottom: 26px; z-index: 2; padding: 14px; border-radius: 14px; background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.cm-clock p { font-size: 11px; letter-spacing: .06em; color: var(--mute); margin-bottom: 10px !important; }
+.cm-clock div { display: flex; gap: 6px; }
+.cm-clock button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line); background: transparent; transition: background .25s, border-color .25s, color .25s; }
+.cm-clock button b { font-family: var(--serif); font-weight: 500; font-size: 20px; line-height: 1; }
+.cm-clock button small { font-size: 11px; color: var(--mute); }
+.cm-clock button.on { background: var(--ink); color: #1b1814; border-color: var(--ink); }
+.cm-clock button.on small { color: rgba(27,24,20,.7); }
+.cm-hint { position: absolute; left: 50%; bottom: 84px; z-index: 2; transform: translateX(-50%); font-size: 11px; color: var(--mute); text-shadow: 0 1px 8px rgba(0,0,0,.5); pointer-events: none; white-space: nowrap; }
+.cm :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+.cm-loader { position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: #1b1814; text-align: center; padding: 20px; }
+.cm-bar { width: 200px; height: 1px; background: var(--line); overflow: hidden; }
+.cm-bar i { display: block; height: 100%; background: var(--ink); transform-origin: left; transition: transform .3s; }
+.cm-loader small { font-size: 12px; color: var(--mute); letter-spacing: .06em; }
+
+/* el botón "Volver a NEXA" queda abajo a la izquierda: en escritorio no choca */
+@media (max-width: 860px) {
+  .cm-top { top: 16px; left: 16px; }
+  .cm-brand { font-size: 23px; }
+  .cm-tag { top: auto; bottom: 188px; right: 16px; }
+  .cm-card { left: 16px; right: 16px; top: 70px; width: auto; padding: 12px 14px; }
+  .cm-card h1 { font-size: 19px; margin-bottom: 4px !important; }
+  .cm-card p { font-size: 12.5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .cm-views { left: 16px; right: 16px; bottom: 72px; transform: none; overflow-x: auto; scrollbar-width: none; }
+  .cm-views button { padding: 10px 12px; }
+  .cm-clock { left: 16px; right: 16px; bottom: 122px; padding: 0; border: 0; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .cm-clock p { display: none; }
+  .cm-clock div { justify-content: space-between; }
+  .cm-clock button { flex: 1; background: var(--glass); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 7px 10px; }
+  .cm-clock button b { font-size: 17px; }
+  .cm-hint, .cm-tag { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .cm-card { animation: none; } }
