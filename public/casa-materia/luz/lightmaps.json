@@ -1,0 +1,58 @@
+{
+ "bake_suelos": {
+  "11": {
+   "file": "lm_suelos_11.webp",
+   "max": 8.83179
+  },
+  "18": {
+   "file": "lm_suelos_18.webp",
+   "max": 19.28485
+  },
+  "20": {
+   "file": "lm_suelos_20.webp",
+   "max": 27.44845
+  }
+ },
+ "bake_muros": {
+  "11": {
+   "file": "lm_muros_11.webp",
+   "max": 7.96437
+  },
+  "18": {
+   "file": "lm_muros_18.webp",
+   "max": 18.05183
+  },
+  "20": {
+   "file": "lm_muros_20.webp",
+   "max": 25.68025
+  }
+ },
+ "roof_techos": {
+  "11": {
+   "file": "lm_roof_techos_11.webp",
+   "max": 9.07096
+  },
+  "18": {
+   "file": "lm_roof_techos_18.webp",
+   "max": 8.34557
+  },
+  "20": {
+   "file": "lm_roof_techos_20.webp",
+   "max": 11.83518
+  }
+ },
+ "bake_terreno": {
+  "11": {
+   "file": "lm_terreno_11.webp",
+   "max": 10.19916
+  },
+  "18": {
+   "file": "lm_terreno_18.webp",
+   "max": 3.31761
+  },
+  "20": {
+   "file": "lm_terreno_20.webp",
+   "max": 0.41772
+  }
+ }
+}

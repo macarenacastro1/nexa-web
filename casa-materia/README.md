@@ -4,35 +4,26 @@ Concepto de portfolio de Nexa Experience. Este folder guarda **las fuentes edita
 
 ## Flujo
 
-1. **Recursos gratuitos (CC0)**: texturas, cielos y modelos de [Poly Haven](https://polyhaven.com) y [ambientCG](https://ambientcg.com).
+Todo se genera por script (Blender como módulo de Python, sin pantalla):
 
-   ```bash
-   python3 blender/download_assets.py <ASSETS> "<modelos,separados,por,coma>" "<texturas>" "<cielos>"
-   ```
+| Script | Qué hace |
+|---|---|
+| `blender/download_assets.py` | baja texturas, modelos y cielos CC0 de Poly Haven / ambientCG |
+| `blender/cm_lib.py` | materiales, geometría, importación, muebles base, cobogó, guirnaldas |
+| `blender/cm_plants.py` | monstera, palmera areca, strelitzia (con flor) y potus, con texturas de hoja generadas |
+| `blender/build_house.py` | **la casa según el plano** (escala 0.022 m/px): arquitectura, mobiliario, plantas, vistas |
+| `blender/bake_light.py` | luz precalculada con Cycles para 11, 18 y 20 h (lightmaps) + GLB para la web |
+| `blender/render_views.py` | renders de control desde las vistas `cam_*` y una vista cenital para comparar con el plano |
+| `build_web.sh` | corre todo y deja los archivos en `public/casa-materia/` |
 
-2. **Escena en Blender por script** (Blender como módulo de Python, `pip install bpy==5.1.2`):
+```bash
+ASSETS=<assets> WORK=<trabajo> RES=2048 SAMPLES=80 ./build_web.sh
+```
 
-   ```bash
-   CM_ASSETS=<ASSETS> CM_OUT=<salida> python3 blender/build_pilot.py
-   ```
-
-   Genera `casa-materia-pilot.blend` (editable) y `casa-materia-pilot.glb`.
-
-3. **Render de control** (Cycles) para comparar con la web:
-
-   ```bash
-   CM_BLEND=<salida>/casa-materia-pilot.blend CM_OUT=<renders> CM_VIEWS=cam_patio,cam_sala python3 blender/render_check.py
-   ```
-
-4. **Optimización para la web** (texturas a 1024 px en WebP + geometría meshopt). No usar `optimize`: borra los marcadores `cam_*` y `seat_*`.
-
-   ```bash
-   npx gltf-transform resize casa-materia-pilot.glb a.glb --width 1024 --height 1024
-   npx gltf-transform webp a.glb b.glb --quality 82
-   npx gltf-transform meshopt b.glb casa-materia-prueba.glb
-   ```
-
-5. Copiar el resultado a `public/casa-materia/`. La escena web está en `components/casa-materia/`.
+### Cómo se ve tan real en la web
+- La **arquitectura** (pisos, muros, techos, terreno) se une en pocos objetos con un segundo mapeo UV y la luz se calcula en Blender con Cycles (luz directa, rebotes, sombras de muebles y plantas, luces interiores y de noche). La web la dibuja como color × luz precalculada y mezcla los tres horarios cuando cambia el reloj.
+- **Muebles, plantas y objetos** se iluminan en tiempo real con el mismo sol y cielo que se usaron al hornear.
+- Los mapas de luz se guardan en 8 bits con curva gamma; `lightmaps.json` trae el máximo de cada uno para decodificarlos.
 
 ## Convención de nombres (la web la lee)
 
@@ -49,4 +40,4 @@ Concepto de portfolio de Nexa Experience. Este folder guarda **las fuentes edita
 
 ## Estado
 
-Prueba de realismo: patio tropical + barra + sala de experiencias. Falta: fachada y puerta, workshops, atelier, horno, boutique, baños, recorrido de cámara y reservas.
+Casa completa según el plano, con luz precalculada. Falta: recorrido de cámara (puerta → patio → maqueta), variantes de la sala de workshops, ocupación de mesas y reservas.

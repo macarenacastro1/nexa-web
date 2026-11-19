@@ -5,10 +5,16 @@ import type { SceneApi, TimeKey, ViewKey } from "./scene";
 /* Casa Materia · prueba de realismo (patio tropical + sala de experiencias). */
 
 const VIEWS: { k: ViewKey; label: string; title: string; text: string }[] = [
-  { k: "aerea", label: "La casa", title: "Casa Materia", text: "Un patio tropical con bar y, alrededor, las salas donde se crea. En esta prueba: el patio y la sala de experiencias." },
-  { k: "patio", label: "Patio", title: "Patio tropical", text: "Strelitzias, anturios y helechos detrás del cobogó, mesas de travertino y una guirnalda de luces para la tarde." },
-  { k: "barra", label: "Barra", title: "Barra de café y vino", text: "Frente de listones de roble, tapa de travertino, cafetera espresso y la cava a la vista." },
-  { k: "sala", label: "Sala de experiencias", title: "Sala de experiencias", text: "Cerámica & Café y Cerámica & Vino: una mesa larga de roble, piezas para pintar y luz cálida." },
+  { k: "aerea", label: "La casa", title: "Casa Materia", text: "Una casa de experiencias alrededor de un patio tropical: barra de café y vino, salas para crear, el horno, la boutique y los baños al costado del jardín." },
+  { k: "entrada", label: "Entrada", title: "La entrada", text: "Escalones de travertino, un portón doble de roble y canteros tropicales a los dos lados. El cobogó terracota marca la sala de workshops." },
+  { k: "patio", label: "Patio", title: "Patio tropical", text: "Piso de piedra irregular, monsteras, strelitzias y palmeras, una mesita para dos y guirnaldas de luces para la tarde." },
+  { k: "barra", label: "Barra", title: "Barra de café y vino", text: "Isla curva con frente de listones de roble y tapa de travertino. Atrás, la cava, la cerámica de la casa y plantas que caen." },
+  { k: "experiencias", label: "Experiencias", title: "Sala de experiencias", text: "Cerámica & Café y Cerámica & Vino: una mesa larga para catorce, sillas de ratán y lámparas de fibra." },
+  { k: "workshops", label: "Workshops", title: "Sala de workshops", text: "Tres mesas de trabajo para azulejos, pantallas de lámparas, crochet o pastas. Las estanterías guardan materiales y piezas." },
+  { k: "atelier", label: "Atelier", title: "Atelier de cerámica", text: "Cuatro tornos para los cursos mensuales, con estanterías de piezas en distintas etapas." },
+  { k: "horno", label: "Horno", title: "Sala del horno", text: "El horno, los carros de secado y la mesa de amasado: conectada con el atelier, los workshops y la sala de experiencias." },
+  { k: "boutique", label: "Boutique", title: "Boutique", text: "Piezas de la casa sobre estanterías de roble y una isla de exhibición. Pronto, también para comprar online." },
+  { k: "banos", label: "Baños", title: "Lavamanos y baños", text: "Lavamanos de travertino en el jardín, con espejos ovalados sobre el biombo de listones. Detrás, dos baños individuales." },
 ];
 const TIMES: { k: TimeKey; label: string; mood: string }[] = [
   { k: "11", label: "11:00", mood: "Luz de mañana" },
