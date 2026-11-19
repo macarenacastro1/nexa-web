@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { track } from "@/lib/config";
 import { useHref, useL, useLang } from "@/lib/i18n";
 import { rememberReturn } from "./criscuolo/BackToNexa";
-import { Defs as CbDefs, Shape } from "./cobalto/data";
+import MateriaMini from "./casa-materia/Mini";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -34,19 +34,19 @@ export function useProjects() {
       cta: L("Explorar el concepto", "Explorar o conceito"),
     },
     {
-      key: "cobalto",
-      name: "Cobalto",
-      cat: L("Experiencia web · Ceramic café", "Experiência web · Ceramic café"),
+      key: "casa-materia",
+      name: "Casa Materia",
+      cat: L("Sitio web · Atelier de experiencias", "Site · Ateliê de experiências"),
       status: L("Concepto · demo navegable", "Conceito · demo navegável"),
       challenge: L(
-        "Un estudio donde se pinta cerámica mientras se toma café vende un plan, no un producto: la web tiene que contagiar las ganas de ir y llevar directo a reservar.",
-        "Um estúdio onde se pinta cerâmica enquanto se toma café vende um programa, não um produto: o site precisa dar vontade de ir e levar direto à reserva.",
+        "Un atelier donde se hace cerámica, se toma café o vino y se aprende en workshops vende una tarde distinta: la web tiene que transmitir ese clima artesanal y llevar a reservar sin vueltas.",
+        "Um ateliê onde se faz cerâmica, se toma café ou vinho e se aprende em workshops vende uma tarde diferente: o site precisa transmitir esse clima artesanal e levar à reserva sem rodeios.",
       ),
       solution: L(
-        "Un sitio limpio donde las piezas son las protagonistas: se mueven con el cursor, se compran en dos toques y cualquier botón abre la reserva con día, horario y cupos.",
-        "Um site limpo onde as peças são as protagonistas: se movem com o cursor, se compram em dois toques e qualquer botão abre a reserva com dia, horário e vagas.",
+        "Una identidad de papel recortado hecha a medida: siluetas caladas, collages y un paisaje en capas. Cada experiencia se explica en una tarjeta y cualquier botón abre la reserva con plan, día, horario y personas.",
+        "Uma identidade de papel recortado feita sob medida: silhuetas vazadas, colagens e uma paisagem em camadas. Cada experiência cabe num card e qualquer botão abre a reserva com plano, dia, horário e pessoas.",
       ),
-      href: "/casos/cobalto/",
+      href: "/casos/casa-materia/",
       cta: L("Explorar el concepto", "Explorar o conceito"),
     },
   ];
@@ -62,13 +62,8 @@ export function ProjectVisual({ k }: { k: string }) {
       </div>
     );
   return (
-    <div className="pj-vis pj-vis--cb" aria-hidden>
-      <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Syne:wght@600&display=swap" />
-      <CbDefs />
-      {([["#a9bfcb", "#4a1117", "bowl"], ["#5b4318", "#a9bfcb", "bottle"], ["#cfb183", "#8a451b", "cup"], ["#4a1117", "#cfb183", "vase"]] as const).map(([bg, fg, k]) => (
-        <span key={k} style={{ background: bg }}><Shape k={k} color={fg} /></span>
-      ))}
-      <span className="pj-cb__seal">CO<br />BAL<br />TO</span>
+    <div className="pj-vis pj-vis--cm" aria-hidden>
+      <MateriaMini />
     </div>
   );
 }

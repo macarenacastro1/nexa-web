@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Contact from "@/components/Contact";
 import { Logo } from "@/components/Nav";
+import MateriaMini from "@/components/casa-materia/Mini";
 import { track } from "@/lib/config";
 import Dashboard, { BarChart, Icon } from "./Dashboard";
 import { BRANDS, BrandIcon, type BrandKey } from "./logos";
@@ -81,7 +82,7 @@ function Hero() {
     <section className="v2-hero">
       <div className="v2-grid" aria-hidden />
       <div className="v2-wrap">
-        <a className="v2-badge" href="/casos/casa-materia/" data-r><b>Nuevo</b> Conocé Casa Materia, nuestra experiencia 3D <Icon n="chev" size={13} /></a>
+        <a className="v2-badge" href="/casos/casa-materia/" data-r><b>Nuevo</b> Conocé Casa Materia, nuestro nuevo concepto web <Icon n="chev" size={13} /></a>
         <h1 data-r>Tu negocio puede<br />funcionar <span className="v2-acc">mejor.</span></h1>
         <p className="v2-hero__sub" data-r>Diseñamos experiencias web, sistemas a medida y automatizaciones para que vendas más y trabajes con menos caos.</p>
         <div className="v2-hero__cta" data-r>
@@ -271,7 +272,7 @@ function Scenarios() {
 /* ------------------------------ proyectos de Experience ------------------------------ */
 const WORK = [
   { k: "criscuolo", href: "/casos/criscuolo/", img: "/criscuolo/recorrido-v3-poster.jpg", tag: "Experiencia web · Café de especialidad", title: "Criscuolo Coffee", text: "Un recorrido narrativo del fruto a la taza: cada etapa del café es una escena y la colección aparece cuando ya sabés qué estás comprando.", chips: ["Storytelling", "Dirección de arte", "Transiciones inmersivas"] },
-  { k: "casa-materia", href: "/casos/casa-materia/", img: "/casa-materia/portada.webp", tag: "Experiencia 3D · Atelier de experiencias", title: "Casa Materia", text: "Una casa que se recorre en 3D: el patio tropical, las salas y la luz que cambia según el horario que elegís para reservar.", chips: ["Arquitectura 3D", "Luz por horario", "Reservas"] },
+  { k: "casa-materia", href: "/casos/casa-materia/", img: "", tag: "Sitio web · Atelier de experiencias", title: "Casa Materia", text: "Cerámica, café, vino y workshops: una web de papel recortado con ilustraciones propias y reserva online paso a paso.", chips: ["Dirección de arte", "Ilustración propia", "Reservas"] },
 ];
 function Work() {
   return (
@@ -291,8 +292,12 @@ function Work() {
           {WORK.map((w) => (
             <a key={w.k} className="v2-work__card" href={w.href} data-r onClick={() => track("project_open", { project: w.k, from: "v3" })}>
               <div className="v2-work__img">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={w.img} alt={`Vista del concepto ${w.title}`} loading="lazy" />
+                {w.img ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={w.img} alt={`Vista del concepto ${w.title}`} loading="lazy" />
+                ) : (
+                  <MateriaMini className="v2-work__mini" />
+                )}
                 <span className="v2-work__go">Ver el concepto <Icon n="arrow" size={14} /></span>
               </div>
               <div className="v2-work__txt">

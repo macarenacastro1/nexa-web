@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { track } from "@/lib/config";
 import { useHref, useL, useLang } from "@/lib/i18n";
 import { rememberReturn } from "./criscuolo/BackToNexa";
-import { Defs as CbDefs, Shape } from "./cobalto/data";
+import MateriaMini from "./casa-materia/Mini";
 
 /* =====================================================================
    Demostraciones de las tres divisiones. Son vistas conceptuales: los
@@ -12,7 +12,7 @@ import { Defs as CbDefs, Shape } from "./cobalto/data";
    ===================================================================== */
 
 /* ---------------------------- EXPERIENCE ---------------------------- */
-export const EXPERIENCE_PROJECTS = ["criscuolo", "cobalto"] as const;
+export const EXPERIENCE_PROJECTS = ["criscuolo", "materia"] as const;
 export type ExpKey = (typeof EXPERIENCE_PROJECTS)[number];
 
 export function useExperienceProjects() {
@@ -24,11 +24,11 @@ export function useExperienceProjects() {
       summary: L("Una experiencia de café que cuenta el camino del fruto a la taza.", "Uma experiência de café que conta o caminho da fruta à xícara."),
       shows: L(["Storytelling", "Dirección de arte", "Diseño editorial", "Transiciones inmersivas"], ["Storytelling", "Direção de arte", "Design editorial", "Transições imersivas"]),
     },
-    cobalto: {
-      name: "Cobalto",
+    materia: {
+      name: "Casa Materia",
       status: L("Concepto navegable", "Conceito navegável"),
-      summary: L("Un ceramic café de Palermo: pintás tu taza, tomás el café en ella, comprás piezas y reservás tu mesa en el momento.", "Um ceramic café em Palermo: você pinta sua xícara, toma o café nela, compra peças e reserva sua mesa na hora."),
-      shows: L(["Dirección de arte", "Tienda online", "Reservas", "Microinteracciones"], ["Direção de arte", "Loja online", "Reservas", "Microinterações"]),
+      summary: L("Un atelier de cerámica, café, vino y workshops: una web de papel recortado con reserva online paso a paso.", "Um ateliê de cerâmica, café, vinho e workshops: um site de papel recortado com reserva online passo a passo."),
+      shows: L(["Dirección de arte", "Ilustración propia", "Reservas", "Diseño editorial"], ["Direção de arte", "Ilustração própria", "Reservas", "Design editorial"]),
     },
   } satisfies Record<ExpKey, { name: string; status: string; summary: string; shows: string[] }>;
 }
@@ -73,23 +73,14 @@ function CriscuoloPreview() {
   );
 }
 
-function CobaltoPreview() {
+function MateriaPreview() {
   const L = useL();
   const { lang } = useLang();
   return (
-    <a className="vid-card" href="/casos/cobalto/" onClick={() => { rememberReturn(lang); track("project_open", { project: "cobalto", from: "preview" }); }}
-      aria-label={L("Ver el concepto de Cobalto completo", "Ver o conceito da Cobalto completo")}>
-      <Frame url="cobalto.studio" tone="light">
-        <CbDefs />
-        <div className="cbp" aria-hidden>
-          <link rel="stylesheet" precedence="default" href="https://fonts.googleapis.com/css2?family=Syne:wght@600&family=Inter:wght@400&display=swap" />
-          <div className="cbp__card"><span className="cbp__logo">COBALTO</span><span className="cbp__caps">Ceramic café · Hecho para tocar</span></div>
-          <div className="cbp__grid">
-            {([["#a9bfcb", "#4a1117", "bowl"], ["#5b4318", "#a9bfcb", "bottle"], ["#cfb183", "#8a451b", "cup"], ["#4a1117", "#cfb183", "vase"]] as const).map(([bg, fg, k]) => (
-              <span key={k} style={{ background: bg }}><Shape k={k} color={fg} /></span>
-            ))}
-          </div>
-        </div>
+    <a className="vid-card" href="/casos/casa-materia/" onClick={() => { rememberReturn(lang); track("project_open", { project: "casa-materia", from: "preview" }); }}
+      aria-label={L("Ver el concepto de Casa Materia completo", "Ver o conceito da Casa Materia completo")}>
+      <Frame url="casamateria.studio" tone="light">
+        <MateriaMini />
       </Frame>
       <span className="vid-card__cta">
         <span className="vid-card__play" aria-hidden>▶</span>
@@ -114,7 +105,7 @@ export function ExperienceDemo({ compact = false, active, onPick }: { compact?: 
         ))}
       </div>}
       <div className="demo__stage" aria-label={p.name} key={k}>
-        {k === "criscuolo" ? <CriscuoloPreview /> : <CobaltoPreview />}
+        {k === "criscuolo" ? <CriscuoloPreview /> : <MateriaPreview />}
       </div>
       <div className="demo__caption">
         <span className="status">{p.name} · {p.status}</span>

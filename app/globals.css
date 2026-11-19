@@ -2031,3 +2031,15 @@ tr.low .ap-qty s { background: #e8890c; }
 .pj-vis--cb { display: grid; grid-template-columns: 1fr 1fr; background: #e4e1b8; }
 .pj-vis--cb svg { width: 42%; }
 .pj-cb__seal { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 30%; aspect-ratio: 1; border-radius: 50%; background: #e4e1b8; color: #4a1117; display: grid; place-items: center; text-align: center; font-family: Syne, var(--sans); font-weight: 600; font-size: clamp(16px, 2vw, 26px); line-height: 1; letter-spacing: 0; }
+
+/* Casa Materia en miniatura (tarjetas de proyecto y demo de Experience) */
+.cmm { container-type: inline-size; position: relative; aspect-ratio: 16 / 10; overflow: hidden; display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 4cqw; padding: 6cqw; color: #f4efe6; }
+.pj-vis--cm .cmm { position: absolute; inset: 0; aspect-ratio: auto; height: 100%; }
+.cmm__land { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cmm__txt, .cmm__grid { position: relative; }
+.cmm__txt { display: flex; flex-direction: column; gap: 3cqw; align-self: start; padding-top: 2cqw; }
+.cmm__logo { font-family: "Bricolage Grotesque", var(--sans); font-weight: 800; letter-spacing: -.04em; font-size: 3cqw; }
+.cmm__h { font-family: "Bricolage Grotesque", var(--sans); font-weight: 800; letter-spacing: -.045em; font-size: 6.4cqw; line-height: .96; }
+.cmm i { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; letter-spacing: -.01em; color: #f0c7a8; }
+.cmm__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6cqw; }
+.cmm__grid svg { width: 100%; height: auto; filter: drop-shadow(0 .6cqw 1.2cqw rgba(20, 16, 12, .2)); }
