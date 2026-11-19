@@ -29,9 +29,11 @@ const TIMES: Record<TimeKey, Light> = {
   "18": { fog: 0xd9ad8a, sunPos: new THREE.Vector3(-27.65, 7.45, -8.93), sunColor: 0xffa05c, sun: 2.6, env: 0.8, bg: 0.85, exposure: 1.0, lamps: 0.7, bulbs: 2.5, bloom: 0.12, hemi: 0.15, sky: 1 },
   "20": { fog: 0x161a24, sunPos: new THREE.Vector3(14.25, 24.76, 9.15), sunColor: 0x9fb4ff, sun: 0.0, env: 0.15, bg: 0.14, exposure: 0.85, lamps: 1, bulbs: 6, bloom: 0.3, hemi: 0.55, sky: 2 },
 };
-const SKY_FILES = ["/casa-materia/cielo-dia.hdr", "/casa-materia/cielo-tarde.hdr", "/casa-materia/cielo-noche.hdr"];
-const MODEL = "/casa-materia/casa-materia.glb";
-const LM_BASE = "/casa-materia/luz/";
+// En la web la base es "/"; en una vista previa alojada en otra ruta, la define la página (__NX_BASE).
+const BASE = (typeof window !== "undefined" && (window as unknown as { __NX_BASE?: string }).__NX_BASE) || "/";
+const SKY_FILES = ["cielo-dia.hdr", "cielo-tarde.hdr", "cielo-noche.hdr"].map((f) => `${BASE}casa-materia/${f}`);
+const MODEL = `${BASE}casa-materia/casa-materia.glb`;
+const LM_BASE = `${BASE}casa-materia/luz/`;
 
 const toThree = (b: number[]) => new THREE.Vector3(b[0], b[2], -b[1]!); // Blender (Z arriba) → three (Y arriba)
 

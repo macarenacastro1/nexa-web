@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Contact from "@/components/Contact";
+import { Logo } from "@/components/Nav";
 import { track } from "@/lib/config";
 import Dashboard, { BarChart, Icon } from "./Dashboard";
 import { BRANDS, BrandIcon, type BrandKey } from "./logos";
@@ -40,6 +41,7 @@ export default function CleanHome({ variant = "light" }: { variant?: "light" | "
       <Divisions />
       <Features />
       <Scenarios />
+      <Work />
       <AllInOne />
       <Voices />
       <Process />
@@ -62,9 +64,9 @@ function Nav() {
   return (
     <header className={`v2-nav${solid ? " solid" : ""}${open ? " open" : ""}`}>
       <div className="v2-wrap v2-nav__in">
-        <a href="#main" className="v2-logo" aria-label="NEXA, inicio"><span className="v2-logo__mark">N</span>NEXA</a>
+        <a href="#main" className="v2-logo" aria-label="NEXA, inicio"><Logo />NEXA</a>
         <nav aria-label="Principal">
-          {[["#servicios", "Servicios"], ["#casos", "Casos"], ["#proceso", "Cómo trabajamos"], ["/proyectos/", "Proyectos"]].map(([h, t]) => <a key={h} href={h} onClick={() => setOpen(false)}>{t}</a>)}
+          {[["#servicios", "Servicios"], ["#casos", "Casos"], ["#proyectos", "Proyectos"], ["#proceso", "Cómo trabajamos"]].map(([h, t]) => <a key={h} href={h} onClick={() => setOpen(false)}>{t}</a>)}
         </nav>
         <a className="v2-btn v2-btn--line v2-btn--sm" href="#contacto" onClick={() => track("cta_click", { cta: "v2_nav" })}>Hablemos <Icon n="chev" size={14} /></a>
         <button type="button" className="v2-burger" aria-label="Menú" aria-expanded={open} onClick={() => setOpen((o) => !o)}><i /><i /></button>
@@ -172,7 +174,7 @@ function Features() {
           <article className="v2-card" data-r>
             <div className="v2-orbit" role="img" aria-label="Integraciones: WhatsApp, Gmail, Google Sheets, Mercado Pago, Instagram, SAP, Shopify, Odoo, HubSpot, Tango Gestión, Google Calendar y Supabase">
               <i className="v2-orbit__ring" /><i className="v2-orbit__ring v2-orbit__ring--2" />
-              <span className="v2-orbit__core">N</span>
+              <span className="v2-orbit__core"><Logo glow={false} /></span>
               {inner.map((k, i) => <span key={k} className="v2-orbit__dot" style={{ ["--a" as string]: `${i * 72}deg`, ["--r" as string]: "86px" }} title={BRANDS[k].title}><BrandIcon k={k} size={20} /></span>)}
               {outer.map((k, i) => <span key={k} className="v2-orbit__dot v2-orbit__dot--out" style={{ ["--a" as string]: `${i * (360 / 7) + 20}deg`, ["--r" as string]: "142px" }} title={BRANDS[k].title}><BrandIcon k={k} size={18} /></span>)}
             </div>
@@ -266,6 +268,47 @@ function Scenarios() {
   );
 }
 
+/* ------------------------------ proyectos de Experience ------------------------------ */
+const WORK = [
+  { k: "criscuolo", href: "/casos/criscuolo/", img: "/criscuolo/recorrido-v3-poster.jpg", tag: "Experiencia web · Café de especialidad", title: "Criscuolo Coffee", text: "Un recorrido narrativo del fruto a la taza: cada etapa del café es una escena y la colección aparece cuando ya sabés qué estás comprando.", chips: ["Storytelling", "Dirección de arte", "Transiciones inmersivas"] },
+  { k: "casa-materia", href: "/casos/casa-materia/", img: "/casa-materia/portada.webp", tag: "Experiencia 3D · Atelier de experiencias", title: "Casa Materia", text: "Una casa que se recorre en 3D: el patio tropical, las salas y la luz que cambia según el horario que elegís para reservar.", chips: ["Arquitectura 3D", "Luz por horario", "Reservas"] },
+];
+function Work() {
+  return (
+    <section className="v2-sec" id="proyectos">
+      <div className="v2-wrap">
+        <Head icon="globe" kicker="Proyectos" title={<>Experiencias que se <span className="v2-acc">recorren</span></>} text="El sistema con el que trabajamos todos los días y dos conceptos de Nexa Experience que muestran hasta dónde puede llegar una web." />
+        <div className="v2-work">
+          <a className="v2-work__card v2-work__card--os" href="/systems/" data-r onClick={() => track("project_open", { project: "nexa-os", from: "v3" })}>
+            <div className="v2-work__img v2-work__img--os" aria-hidden><div className="v2-work__os" inert><Dashboard /></div><span className="v2-work__go">Ver el sistema <Icon n="arrow" size={14} /></span></div>
+            <div className="v2-work__txt">
+              <p className="v2-work__tag">Sistema · Gestión comercial</p>
+              <h3>Nexa OS</h3>
+              <p>El sistema con el que manejamos Nexa: radar de clientes, CRM, bandeja de entrada, publicidad, proyectos y finanzas en un solo lugar. La misma base que adaptamos para cada cliente.</p>
+              <ul>{["Radar de clientes", "CRM", "Publicidad", "Finanzas"].map((c) => <li key={c}>{c}</li>)}</ul>
+            </div>
+          </a>
+          {WORK.map((w) => (
+            <a key={w.k} className="v2-work__card" href={w.href} data-r onClick={() => track("project_open", { project: w.k, from: "v3" })}>
+              <div className="v2-work__img">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={w.img} alt={`Vista del concepto ${w.title}`} loading="lazy" />
+                <span className="v2-work__go">Ver el concepto <Icon n="arrow" size={14} /></span>
+              </div>
+              <div className="v2-work__txt">
+                <p className="v2-work__tag">{w.tag}</p>
+                <h3>{w.title}</h3>
+                <p>{w.text}</p>
+                <ul>{w.chips.map((c) => <li key={c}>{c}</li>)}</ul>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ------------------------------ todo en un lugar ------------------------------ */
 function AllInOne() {
   return (
@@ -351,7 +394,7 @@ function Footer() {
   return (
     <footer className="v2-foot">
       <div className="v2-wrap v2-foot__in">
-        <a href="#main" className="v2-logo"><span className="v2-logo__mark">N</span>NEXA</a>
+        <a href="#main" className="v2-logo"><Logo />NEXA</a>
         <nav aria-label="Pie">
           <a href="/experience/">Experience</a><a href="/systems/">Systems</a><a href="/intelligence/">Intelligence</a><a href="/proyectos/">Proyectos</a><a href="/privacidad/">Privacidad</a>
         </nav>
