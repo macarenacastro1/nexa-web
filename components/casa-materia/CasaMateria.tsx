@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Art, { type ArtKey } from "./Art";
+import Art, { Cut, Land, Scrap, Shape, type ArtKey } from "./Art";
 
 /* Casa Materia · atelier ficticio de Buenos Aires (concepto de portfolio de NEXA).
    Las imágenes son ilustraciones vectoriales propias (Art.tsx). Precios, dirección y horarios reales
@@ -37,18 +37,21 @@ const DAY: { a: ArtKey; h: string; t: string; d: string }[] = [
 ];
 
 /* ---------- piezas gráficas ---------- */
-function Vessel({ k = 0, className }: { k?: number; className?: string }) {
-  const paths = [
-    "M38 8h24v8c0 6 18 14 18 38 0 24-14 38-30 38S20 78 20 54c0-24 18-32 18-38z",
-    "M30 10h40l-6 14c14 8 22 22 22 36 0 18-16 32-36 32S14 78 14 60c0-14 8-28 22-36z",
-    "M24 30c0-12 12-20 26-20s26 8 26 20c0 26-10 62-26 62S24 56 24 30z",
-  ];
-  return (
-    <svg viewBox="0 0 100 100" className={className} aria-hidden>
-      <path d={paths[k % 3]} fill="currentColor" />
-    </svg>
-  );
-}
+const HERO_CUTS = ["amphora", "bowls", "jug", "urn", "pitcher", "bulbs", "vase", "cup", "glass"];
+const COLLAGE: { s: string; paper?: string; tex?: string; t: string; span?: boolean }[] = [
+  { s: "table", paper: "wine", t: "La mesa larga", span: true },
+  { s: "chair", tex: "checker", t: "Sillas" },
+  { s: "pebble", paper: "brown", t: "Espejos" },
+  { s: "lamp", tex: "plaster", paper: "rose", t: "Lámparas" },
+  { s: "stool", tex: "wood", t: "La barra" },
+  { s: "bench", paper: "navy", t: "El patio", span: true },
+];
+const PIECES: [string, string, string][] = [
+  ["amphora", "Ánfora del patio", "Terracota natural"],
+  ["pitcher", "Jarra de la barra", "Gres esmaltado"],
+  ["bulbs", "Florero tres curvas", "Esmalte arena"],
+  ["bowls", "Cuencos apilados", "Gres crudo"],
+];
 function Leaf({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 120 160" className={className} aria-hidden fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -122,7 +125,7 @@ function Booking({ initial, onClose }: { initial?: string; onClose: () => void }
                 <div className="cm-opts">
                   {EXPS.map((x) => (
                     <button key={x.key} type="button" className={exp === x.key ? "on" : ""} aria-pressed={exp === x.key} onClick={() => { setExp(x.key); setDay(null); setTime(null); setPeople((p) => Math.min(p, x.key === "torno" ? 4 : 8)); }}>
-                      <Art k={x.img} />
+                      <Art k={x.img} w={100} h={100} />
                       <span><small>{x.kind}</small><b>{x.name}</b></span>
                     </button>
                   ))}
@@ -176,7 +179,7 @@ function Booking({ initial, onClose }: { initial?: string; onClose: () => void }
           </>
         ) : (
           <div className="cm-done" role="status">
-            <Vessel k={2} className="cm-done__v" />
+            <svg viewBox="0 0 100 100" className="cm-done__v" aria-hidden><Shape k="urn" color="currentColor" /></svg>
             <p className="cm-kicker">Reserva de demostración</p>
             <h2 id="cm-book-t">{name.trim().split(" ")[0]}, te esperamos en la casa.</h2>
             <p className="cm-done__when">{e.name} · {when} · {people} {people === 1 ? "persona" : "personas"}</p>
@@ -219,28 +222,32 @@ export default function CasaMateria() {
       <main id="top">
         {/* HERO */}
         <section className="cm-hero">
+          <Land className="cm-hero__land" />
           <div className="cm-hero__txt">
             <p className="cm-kicker" data-r>Atelier de experiencias · Buenos Aires</p>
             <h1 data-r>Una casa para hacer <em>con las manos.</em></h1>
-            <p className="cm-hero__lead" data-r>Cerámica, café, vino y workshops alrededor de un patio tropical. Venís a crear algo, te quedás por la tarde.</p>
+            <p className="cm-hero__lead" data-r>Cerámica, café, vino y workshops alrededor de un patio. Venís a crear algo, te quedás por la tarde.</p>
             <div className="cm-hero__cta" data-r>
-              <button type="button" className="cm-btn" onClick={() => open()}>Reservar una experiencia</button>
+              <button type="button" className="cm-btn cm-btn--light" onClick={() => open()}>Reservar una experiencia</button>
               <a href="#experiencias" className="cm-link">Ver experiencias →</a>
             </div>
           </div>
-          <div className="cm-hero__media" data-r>
-            <div className="cm-arch"><Art k="hero" /></div>
-            <div className="cm-hero__stamp" aria-hidden>
-              <svg viewBox="0 0 120 120"><defs><path id="cmc" d="M60 60m-46 0a46 46 0 1 1 92 0a46 46 0 1 1-92 0" /></defs><text><textPath href="#cmc">café · barro · vino · patio · café · barro · vino · patio ·</textPath></text></svg>
-              <Vessel k={0} />
-            </div>
+          <div className="cm-hero__grid" data-r>
+            {HERO_CUTS.map((k, i) => <Cut key={k} s={k} seed={i + 2} className="cm-cutcard" />)}
           </div>
         </section>
 
         {/* MANIFIESTO */}
         <section className="cm-intro">
-          <Leaf className="cm-intro__leaf" />
           <p data-r>Casa Materia es un lugar para <em>bajar el ritmo</em>: una mesa larga, arcilla fresca, una taza de café o una copa de vino, y un patio lleno de plantas en el medio de todo.</p>
+          <div className="cm-collage" data-r>
+            {COLLAGE.map((c, i) => (
+              <figure key={i} className={c.span ? "is-wide" : undefined}>
+                <Scrap s={c.s} paper={c.paper} tex={c.tex} w={c.span ? 200 : 100} h={112} seed={i + 20} size={c.span ? 96 : 74} />
+                <figcaption>{c.t}</figcaption>
+              </figure>
+            ))}
+          </div>
           <ul className="cm-intro__list" data-r>
             <li><b>Experiencias</b><span>Cerámica & Café, Cerámica & Vino</span></li>
             <li><b>Workshops</b><span>Un tema nuevo cada mes</span></li>
@@ -258,7 +265,7 @@ export default function CasaMateria() {
           <div className="cm-exps">
             {EXPS.slice(0, 2).map((x, i) => (
               <article key={x.key} className="cm-exp" data-r>
-                <div className="cm-exp__img"><Art k={x.img} /><span className="cm-exp__t">{x.moments.map((m) => m + " h").join(" · ")}</span></div>
+                <div className="cm-exp__img"><Art k={x.img} w={160} h={110} /><span className="cm-exp__t">{x.moments.map((m) => m + " h").join(" · ")}</span></div>
                 <div className="cm-exp__body">
                   <p className="cm-kicker">{i === 0 ? "De mañana" : "De tarde y de noche"}</p>
                   <h3>{x.name}</h3>
@@ -276,7 +283,9 @@ export default function CasaMateria() {
 
         {/* WORKSHOPS */}
         <section id="workshops" className="cm-sec cm-ws">
-          <div className="cm-ws__img" data-r><Art k="workshop" /></div>
+          <div className="cm-ws__img" data-r>
+            {WORKSHOPS.map((w, i) => <Art key={w.t} k={w.a} w={100} h={120} className={`cm-ws__s s${i}`} />)}
+          </div>
           <div className="cm-ws__txt">
             <div className="cm-head" data-r>
               <p className="cm-kicker">Workshops</p>
@@ -286,7 +295,7 @@ export default function CasaMateria() {
             <ol className="cm-wslist">
               {WORKSHOPS.map((w, i) => (
                 <li key={w.t} data-r style={{ "--c": w.c } as React.CSSProperties}>
-                  <span className="cm-wslist__a"><Art k={w.a} /></span>
+                  <span className="cm-wslist__a"><Art k={w.a} w={100} h={100} /></span>
                   <div><b>{w.t}</b><p>{w.d}</p></div>
                 </li>
               ))}
@@ -337,8 +346,8 @@ export default function CasaMateria() {
             <p>La barra está en el corazón del patio y abre para todos, aunque no vengas a un taller: un café de especialidad a media mañana, una copa a la tarde con las luces prendidas.</p>
           </div>
           <div className="cm-bar__imgs">
-            <div className="cm-bar__a" data-r><Art k="tarde" /></div>
-            <div className="cm-bar__b" data-r><Art k="noche" /></div>
+            <div className="cm-bar__a" data-r><Scrap s="jug" paper="olive" seed={41} /></div>
+            <div className="cm-bar__b" data-r><Scrap s="glass" paper="brown" w={100} h={133} seed={42} /></div>
           </div>
         </section>
 
@@ -349,18 +358,16 @@ export default function CasaMateria() {
             <h2>Piezas de la casa, <em>hechas acá.</em></h2>
             <p className="cm-head__lead">Tazas, cuencos, jarrones y platos que salen del mismo horno que tus piezas. Muy pronto, también para comprar online.</p>
           </div>
-          <div className="cm-shop__row">
-            {[
-              ["Jarrón cuello alto", "Terracota esmaltada"],
-              ["Botijo del patio", "Terracota natural"],
-              ["Jarrón semilla", "Esmalte oliva"],
-              ["Florero de la mesa", "Gres blanco"],
-            ].map(([t, m], i) => (
-              <article key={t} className="cm-piece" data-r>
-                <div className={`cm-piece__img v${i}`}><Vessel k={i} /></div>
-                <b>{t}</b><span>{m}</span>
-              </article>
-            ))}
+          <div className="cm-shop__wall" data-r>
+            <Land className="cm-shop__land" tone="dusk" />
+            <div className="cm-shop__row">
+              {PIECES.map(([k, t, m], i) => (
+                <article key={t} className="cm-piece">
+                  <Cut s={k} seed={i + 30} className="cm-cutcard" />
+                  <b>{t}</b><span>{m}</span>
+                </article>
+              ))}
+            </div>
           </div>
           <p className="cm-note cm-shop__note">Piezas y nombres de ejemplo.</p>
         </section>

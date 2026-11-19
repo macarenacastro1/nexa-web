@@ -1,217 +1,206 @@
-/* Ilustraciones vectoriales de Casa Materia: naturalezas muertas planas en la paleta de la casa.
-   Cada escena se dibuja en un viewBox 400×500 y se recorta con la forma del contenedor. */
+import { useId } from "react";
 
-const P = { cream: "#f4efe6", sand: "#e9dfcf", stone: "#d9ccb6", clay: "#b5532f", clayD: "#8f3f22", ochre: "#c99a5b", leaf: "#4f5b3a", leafL: "#6f7d52", ink: "#231d17", night: "#2a241d", rose: "#e3b8a0" };
+/* Casa Materia · lenguaje gráfico de papel recortado.
+   - Cut: tarjeta de papel crema con una silueta calada (el hueco deja ver lo que hay detrás).
+   - Scrap: recorte de papel de color (o con textura) con una silueta de papel crema pegada encima.
+   - Land: paisaje hecho de capas de papel, para usar de fondo.
+   Todo es vectorial y propio; los bordes irregulares salen de un filtro de turbulencia. */
 
-function Monstera({ x, y, s = 1, r = 0, c = P.leaf }: { x: number; y: number; s?: number; r?: number; c?: string }) {
+type Sh = { d: string; s?: number }[];
+export const SIL: Record<string, Sh> = {
+  amphora: [{ d: "M40 8h20v5h-3v10H43V13h-3z" }, { d: "M43 22c-12 4-17 12-17 24 0 18 11 36 24 38 13-2 24-20 24-38 0-12-5-20-17-24z" }, { d: "M43 27c-10-3-17 4-14 15", s: 4 }, { d: "M57 27c10-3 17 4 14 15", s: 4 }],
+  bowls: [{ d: "M24 38h52c0 14-11 22-26 22S24 52 24 38z" }, { d: "M16 64h68c0 15-15 25-34 25S16 79 16 64z" }],
+  jug: [{ d: "M46 8h8v14c0 4 6 6 6 10v6c8 6 12 16 12 28 0 16-10 26-22 26S28 82 28 66c0-12 4-22 12-28v-6c0-4 6-6 6-10z" }, { d: "M59 31c11 0 13 13 4 19", s: 4 }],
+  pitcher: [{ d: "M32 20h32l7-6 4 4-6 8c2 10 6 24 6 40 0 14-10 22-22 22S30 80 30 66c0-16 4-28 2-38z" }, { d: "M33 34c-15 0-15 26 0 26", s: 5 }],
+  bulbs: [{ d: "M38 8h24v8c10 4 12 14 4 22 10 6 10 16 2 22 8 6 8 18-6 28H38c-14-10-14-22-6-28-8-6-8-16 2-22-8-8-6-18 4-22z" }],
+  urn: [{ d: "M41 12h18v7c10 6 18 18 18 32 0 14-10 24-21 26v6h8v7H36v-7h8v-6C33 75 23 65 23 51c0-14 8-26 18-32z" }, { d: "M40 25c-15-7-23 6-15 19", s: 4 }, { d: "M60 25c15-7 23 6 15 19", s: 4 }],
+  vase: [{ d: "M44 8h12v10c0 6 14 12 14 34 0 22-8 38-20 38S30 74 30 52c0-22 14-28 14-34z" }],
+  cup: [{ d: "M26 32h42v22c0 14-10 22-21 22S26 68 26 54z" }, { d: "M68 39c13 0 13 19 0 19", s: 5 }, { d: "M14 80h70c0 5-8 9-35 9S14 85 14 80z" }],
+  glass: [{ d: "M32 8h36c0 28-8 42-18 44-10-2-18-16-18-44z" }, { d: "M48 50h4v32h-4z" }, { d: "M33 82h34v7H33z" }],
+  bottle: [{ d: "M45 4h10v24c0 6 11 10 11 20v46H34V48c0-10 11-14 11-20z" }],
+  chair: [{ d: "M36 6c-6 0-9 7-9 16v30h46V22c0-9-3-16-9-16z" }, { d: "M23 52h54v9H23z" }, { d: "M27 61h7v33h-7zM66 61h7v33h-7z" }],
+  table: [{ d: "M8 34c0-7 21-9 42-9s42 2 42 9-21 11-42 11S8 41 8 34z" }, { d: "M20 42h8v42h-8zM72 42h8v42h-8z" }],
+  bench: [{ d: "M4 40h92v10H4z" }, { d: "M10 50h8v34h-8zM82 50h8v34h-8z" }],
+  stool: [{ d: "M26 28h48c0 6-4 9-24 9s-24-3-24-9z" }, { d: "M33 37h7l-6 54h-7zM60 37h7l7 54h-7z" }, { d: "M33 64h34v5H33z" }],
+  lamp: [{ d: "M30 12h40l13 32H17z" }, { d: "M46 44h8v34h-8z" }, { d: "M30 78h40v9H30z" }],
+  pebble: [{ d: "M50 10c22 0 34 16 32 38-2 24-18 42-36 42S16 72 18 48c2-22 10-38 32-38z" }],
+  flower: [{ d: "M50 16c9 0 11 12 6 21 9-5 21-3 21 6s-12 11-21 6c5 9 3 21-6 21s-11-12-6-21c-9 5-21 3-21-6s12-11 21-6c-5-9-3-21 6-21z" }, { d: "M50 70v18", s: 4 }],
+  yarn: [{ d: "M48 16a30 30 0 1 1 0 60a30 30 0 1 1 0-60z" }, { d: "M68 68l22 22", s: 4 }, { d: "M20 84c10-8 20-6 26-12", s: 3 }],
+  pasta: [{ d: "M12 30c17 0 27 10 31 16 3-2 11-2 14 0 4-6 14-16 31-16v40c-17 0-27-10-31-16-3 2-11 2-14 0-4 6-14 16-31 16z" }],
+  wheel: [{ d: "M10 78c0-7 18-11 40-11s40 4 40 11-18 11-40 11-40-4-40-11z" }, { d: "M35 68c-3-15 4-30 9-36h12c5 6 12 21 9 36z" }],
+  leaf: [{ d: "M50 92C48 70 50 40 52 10c22 8 34 30 30 52-4 18-18 26-32 30z" }, { d: "M50 92c-14-6-30-20-30-40 0-16 12-32 32-42", s: 0 }],
+};
+
+const PAPER: Record<string, string> = {
+  wine: "#7a2230", brown: "#4a2420", navy: "#2f4a73", clay: "#b5532f", olive: "#4f5b3a", ochre: "#c99a5b",
+  rose: "#e3b8a0", sand: "#dcc8aa", stone: "#cfc2ad", night: "#2a241d", cream: "#f6efe2",
+};
+const CREAM = "#f8f2e6";
+
+export function Shape({ k, color = CREAM, x = 0, y = 0, size = 100, rotate = 0 }: { k: string; color?: string; x?: number; y?: number; size?: number; rotate?: number }) {
+  const sh = SIL[k] ?? SIL.vase!;
   return (
-    <g transform={`translate(${x} ${y}) rotate(${r}) scale(${s})`}>
-      <path d="M0 0C-4-40-2-80 4-120" stroke={c} strokeWidth="3" fill="none" />
-      <path d="M4-120c-46-6-80 26-74 70 10 20 30 30 52 28 6-12 14-30 22-44-8 16-12 30-14 44 22 2 44-6 60-24 18-28 4-70-46-74z" fill={c} />
-      <path d="M-36-80l18 10M-46-58l22 6M30-92l-16 12M44-66l-22 6" stroke={P.cream} strokeWidth="5" strokeLinecap="round" opacity=".9" />
+    <g transform={`translate(${x} ${y}) rotate(${rotate} ${size / 2} ${size / 2}) scale(${size / 100})`} fill={color} stroke={color}>
+      {sh.map((p, i) => p.s != null ? (p.s > 0 ? <path key={i} d={p.d} fill="none" strokeWidth={p.s} strokeLinecap="round" /> : null) : <path key={i} d={p.d} stroke="none" />)}
     </g>
   );
-}
-function Palm({ x, y, s = 1, c = P.leafL }: { x: number; y: number; s?: number; c?: string }) {
-  return (
-    <g transform={`translate(${x} ${y}) scale(${s})`} fill={c}>
-      <path d="M0 0C2-60 6-120 10-170" stroke={c} strokeWidth="3" fill="none" />
-      {[-70, -45, -20, 10, 35, 60].map((a, i) => (
-        <path key={i} transform={`translate(10 -170) rotate(${a})`} d="M0 0C10-30 8-70 0-100C-8-70-10-30 0 0z" />
-      ))}
-    </g>
-  );
-}
-function Vase({ x, y, k, c, s = 1 }: { x: number; y: number; k: number; c: string; s?: number }) {
-  const d = [
-    "M-12-120h24v14c0 8 30 22 30 58 0 30-18 48-42 48S-42-18-42-48c0-36 30-50 30-58z",
-    "M-18-90h36l-8 16c20 12 30 30 30 46 0 18-18 28-40 28S-40-10-40-28c0-16 10-34 30-46z",
-    "M-30-70c0-20 14-30 30-30s30 10 30 30c0 40-12 70-30 70S-30-30-30-70z",
-    "M-8-150h16v30c0 14 16 30 16 66 0 30-10 54-24 54S-24-24-24-54c0-36 16-52 16-66z",
-  ][k % 4];
-  return <path transform={`translate(${x} ${y}) scale(${s})`} d={d} fill={c} />;
-}
-function Bowl({ x, y, w = 90, c }: { x: number; y: number; w?: number; c: string }) {
-  return <path transform={`translate(${x} ${y})`} d={`M${-w / 2} 0h${w}c0 ${w * 0.38}-${w * 0.2} ${w * 0.5}-${w / 2} ${w * 0.5}S${-w / 2} ${w * 0.38} ${-w / 2} 0z`} fill={c} />;
-}
-function Cup({ x, y, c, steam = false }: { x: number; y: number; c: string; steam?: boolean }) {
-  return (
-    <g transform={`translate(${x} ${y})`}>
-      {steam && <path d="M-8-70c-10-12 10-18 0-32M10-70c-10-12 10-18 0-32" stroke={P.cream} strokeWidth="4" fill="none" strokeLinecap="round" opacity=".85" />}
-      <path d="M26-40c18 0 18 26 0 26" stroke={c} strokeWidth="8" fill="none" />
-      <path d="M-30-56h60v26c0 18-12 30-30 30s-30-12-30-30z" fill={c} />
-      <ellipse cx="0" cy="4" rx="46" ry="8" fill={c} opacity=".55" />
-    </g>
-  );
-}
-function Glass({ x, y }: { x: number; y: number }) {
-  return (
-    <g transform={`translate(${x} ${y})`}>
-      <path d="M-24-120h48c0 40-8 62-24 64-16-2-24-24-24-64z" fill={P.cream} opacity=".55" />
-      <path d="M-21-96h42c-2 26-10 38-21 40-11-2-19-14-21-40z" fill="#7a2230" />
-      <path d="M0-56V0M-20 0h40" stroke={P.cream} strokeWidth="4" opacity=".8" />
-    </g>
-  );
-}
-function Bottle({ x, y }: { x: number; y: number }) {
-  return (
-    <g transform={`translate(${x} ${y})`}>
-      <path d="M-8-210h16v50c0 10 22 22 22 46V0h-60v-114c0-24 22-36 22-46z" fill="#3d4a30" />
-      <rect x="-22" y="-100" width="44" height="46" rx="3" fill={P.sand} />
-      <path d="M-12-84h24M-12-72h16" stroke={P.clay} strokeWidth="3" />
-    </g>
-  );
-}
-function Lights({ y = 70, n = 9 }: { y?: number; n?: number }) {
-  return (
-    <g>
-      <path d={`M-10 ${y}Q200 ${y + 70} 410 ${y}`} stroke={P.ink} strokeWidth="1.5" fill="none" opacity=".6" />
-      {Array.from({ length: n }, (_, i) => {
-        const t = (i + 0.5) / n;
-        const xx = -10 + 420 * t;
-        const yy = y + 140 * t * (1 - t);
-        return <circle key={i} cx={xx} cy={yy + 8} r="5.5" fill="#ffd9a0" />;
-      })}
-    </g>
-  );
-}
-function Table({ y = 400, c = P.ochre }: { y?: number; c?: string }) {
-  return <rect x="-20" y={y} width="440" height="140" fill={c} />;
 }
 
-export type ArtKey = "hero" | "cafe" | "vino" | "workshop" | "torno" | "manana" | "tarde" | "noche" | "tiles" | "lampara" | "crochet" | "pasta";
-
-export default function Art({ k, className }: { k: ArtKey; className?: string }) {
-  const body = (() => {
-    switch (k) {
-      case "hero":
-        return (
-          <>
-            <rect width="400" height="500" fill={P.rose} />
-            <circle cx="270" cy="150" r="70" fill={P.cream} opacity=".7" />
-            <Palm x={80} y={430} s={1.3} />
-            <Monstera x={345} y={420} s={1.25} r={18} />
-            <Table y={400} c={P.clay} />
-            <Vase x={150} y={400} k={0} c={P.cream} s={1.15} />
-            <Vase x={238} y={400} k={2} c={P.ochre} />
-            <Cup x={318} y={400} c={P.cream} steam />
-          </>
-        );
-      case "cafe":
-      case "manana":
-        return (
-          <>
-            <rect width="400" height="500" fill={P.sand} />
-            <circle cx="300" cy="120" r="56" fill="#f3c98b" />
-            <Monstera x={60} y={420} s={1.1} r={-10} />
-            <Table y={390} />
-            <Cup x={150} y={390} c={P.clay} steam />
-            <Vase x={250} y={390} k={1} c={P.cream} />
-            <Bowl x={320} y={360} w={60} c={P.leaf} />
-            <path d="M200 440c30-10 60-10 90 0" stroke={P.clayD} strokeWidth="6" fill="none" strokeLinecap="round" opacity=".5" />
-          </>
-        );
-      case "vino":
-      case "noche":
-        return (
-          <>
-            <rect width="400" height="500" fill={P.night} />
-            <circle cx="90" cy="130" r="34" fill={P.cream} opacity=".9" />
-            <Lights y={60} />
-            <Palm x={340} y={420} s={1.1} c={P.leaf} />
-            <Table y={390} c={P.clayD} />
-            <Bottle x={120} y={390} />
-            <Glass x={200} y={390} />
-            <Glass x={258} y={390} />
-            <Vase x={320} y={390} k={2} c={P.ochre} s={0.8} />
-          </>
-        );
-      case "tarde":
-        return (
-          <>
-            <rect width="400" height="500" fill={P.clay} />
-            <circle cx="200" cy="300" r="120" fill={P.ochre} opacity=".85" />
-            <Lights y={50} n={7} />
-            <Monstera x={70} y={420} s={1.15} r={-8} c={P.leaf} />
-            <Table y={390} c={P.ochre} />
-            <Vase x={210} y={390} k={3} c={P.cream} />
-            <Vase x={280} y={390} k={1} c={P.stone} s={0.8} />
-          </>
-        );
-      case "workshop":
-      case "tiles":
-        return (
-          <>
-            <rect width="400" height="500" fill={P.stone} />
-            <g transform="translate(70 90)">
-              {Array.from({ length: 9 }, (_, i) => {
-                const x = (i % 3) * 90, y = Math.floor(i / 3) * 90;
-                const col = [P.cream, P.sand, P.cream][i % 3];
-                return (
-                  <g key={i} transform={`translate(${x} ${y})`}>
-                    <rect width="84" height="84" rx="4" fill={col} />
-                    <circle cx="42" cy="42" r="22" fill="none" stroke={i % 2 ? P.clay : P.leaf} strokeWidth="6" />
-                    <path d="M42 8v14M42 62v14M8 42h14M62 42h14" stroke={P.ochre} strokeWidth="5" strokeLinecap="round" />
-                  </g>
-                );
-              })}
-            </g>
-            <Table y={400} c={P.ochre} />
-            <rect x="250" y="370" width="16" height="40" rx="3" fill={P.clay} transform="rotate(-20 258 390)" />
-          </>
-        );
-      case "lampara":
-        return (
-          <>
-            <rect width="400" height="500" fill={P.leaf} />
-            <path d="M200 0v150" stroke={P.cream} strokeWidth="2" />
-            <path d="M120 250c0-60 36-100 80-100s80 40 80 100z" fill={P.ochre} />
-            <path d="M140 250c0-50 28-86 60-90M260 250c0-50-28-86-60-90M200 160v90" stroke={P.clayD} strokeWidth="2" fill="none" opacity=".5" />
-            <ellipse cx="200" cy="250" rx="80" ry="10" fill="#ffd9a0" />
-            <path d="M120 255L60 500h280L280 255z" fill="#ffd9a0" opacity=".18" />
-          </>
-        );
-      case "crochet":
-        return (
-          <>
-            <rect width="400" height="500" fill={P.rose} />
-            <circle cx="160" cy="300" r="80" fill={P.clay} />
-            {[-50, -25, 0, 25, 50].map((o) => <path key={o} d={`M${100 + o * 0.4} ${240 + o}c40 20 80 20 120 0`} stroke={P.clayD} strokeWidth="4" fill="none" opacity=".6" />)}
-            <circle cx="275" cy="340" r="44" fill={P.cream} />
-            <path d="M260 310c20 10 30 30 30 56M245 330c20 6 34 20 40 40" stroke={P.stone} strokeWidth="4" fill="none" />
-            <path d="M240 120L330 420" stroke={P.ink} strokeWidth="6" strokeLinecap="round" />
-            <path d="M160 380c40 60 140 50 200 100" stroke={P.clay} strokeWidth="4" fill="none" />
-          </>
-        );
-      case "pasta":
-        return (
-          <>
-            <rect width="400" height="500" fill={P.sand} />
-            <Table y={300} c={P.ochre} />
-            <path d="M120 300c0-40 40-60 80-60s80 20 80 60" fill={P.cream} />
-            <ellipse cx="200" cy="300" rx="36" ry="12" fill="#f3c98b" />
-            {[0, 1, 2, 3, 4].map((i) => <rect key={i} x={110 + i * 40} y="370" width="22" height="80" rx="11" fill="#f1dfb3" transform={`rotate(${i * 6 - 12} ${121 + i * 40} 410)`} />)}
-            <path d="M60 280h280" stroke={P.clayD} strokeWidth="10" strokeLinecap="round" />
-          </>
-        );
-      case "torno":
-        return (
-          <>
-            <rect width="400" height="500" fill={P.ochre} />
-            <circle cx="200" cy="200" r="150" fill={P.sand} opacity=".5" />
-            <ellipse cx="200" cy="400" rx="150" ry="34" fill={P.night} />
-            <ellipse cx="200" cy="388" rx="110" ry="22" fill={P.stone} />
-            <path d="M150 386c-6-60 10-110 22-130h56c12 20 28 70 22 130z" fill={P.clay} />
-            <ellipse cx="200" cy="256" rx="28" ry="7" fill={P.clayD} />
-            <path d="M130 320c30-10 40 20 30 40M270 320c-30-10-40 20-30 40" stroke={P.rose} strokeWidth="18" strokeLinecap="round" fill="none" />
-            <path d="M80 420c40 20 200 20 240 0" stroke={P.cream} strokeWidth="3" fill="none" opacity=".6" />
-          </>
-        );
-    }
-  })();
+/** Filtros compartidos: borde cortado a mano y grano de papel. */
+function Defs({ id, seed = 3, edge = 2.6 }: { id: string; seed?: number; edge?: number }) {
   return (
-    <svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" className={className} role="img" aria-hidden>
-      {body}
+    <defs>
+      <filter id={`${id}r`} x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed={seed} result="n" />
+        <feDisplacementMap in="SourceGraphic" in2="n" scale={edge} xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+      <filter id={`${id}g`} x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed={seed + 7} />
+        <feColorMatrix values="0 0 0 0 0.15  0 0 0 0 0.11  0 0 0 0 0.08  0 0 0 0.55 -0.12" />
+      </filter>
+      <linearGradient id={`${id}f`} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#fff" stopOpacity=".16" />
+        <stop offset=".48" stopColor="#fff" stopOpacity="0" />
+        <stop offset=".5" stopColor="#000" stopOpacity=".12" />
+        <stop offset=".53" stopColor="#fff" stopOpacity=".06" />
+        <stop offset="1" stopColor="#000" stopOpacity=".1" />
+      </linearGradient>
+      <pattern id={`${id}ck`} width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect width="16" height="16" fill="#efe6d4" />
+        <rect width="8" height="8" fill="#1f1b17" />
+        <rect x="8" y="8" width="8" height="8" fill="#1f1b17" />
+      </pattern>
+      <pattern id={`${id}wd`} width="22" height="40" patternUnits="userSpaceOnUse">
+        <rect width="22" height="40" fill="#a8774d" />
+        <rect x="11" width="11" height="40" fill="#9a6b43" />
+        <path d="M0 0v40M11 0v40" stroke="#6f4a2c" strokeWidth=".8" opacity=".6" />
+      </pattern>
+    </defs>
+  );
+}
+
+/** Relleno de un recorte: papel liso con pliegue, damero, madera o yeso. */
+function Fill({ id, tex, paper, w, h }: { id: string; tex: string; paper: string; w: number; h: number }) {
+  if (tex === "checker") return <rect width={w} height={h} fill={`url(#${id}ck)`} />;
+  if (tex === "wood") return <rect width={w} height={h} fill={`url(#${id}wd)`} />;
+  if (tex === "plaster")
+    return (
+      <>
+        <rect width={w} height={h} fill={PAPER[paper] ?? paper} />
+        <path d={`M0 ${h * 0.62}C${w * 0.3} ${h * 0.55} ${w * 0.6} ${h * 0.7} ${w} ${h * 0.6}V${h}H0z`} fill="#000" opacity=".07" />
+        <path d={`M${w * 0.15} 0v${h}M${w * 0.85} 0v${h}`} stroke="#000" strokeOpacity=".06" strokeWidth="5" />
+      </>
+    );
+  return (
+    <>
+      <rect width={w} height={h} fill={PAPER[paper] ?? paper} />
+      <rect width={w} height={h} fill={`url(#${id}f)`} />
+    </>
+  );
+}
+
+/** Recorte de papel con una silueta crema pegada encima (estilo collage). */
+export function Scrap({ s, paper = "clay", tex = "paper", w = 100, h = 125, size, seed = 3, extra, className }: { s: string; paper?: string; tex?: string; w?: number; h?: number; size?: number; seed?: number; extra?: { s: string; x: number; y: number; size: number; color?: string }[]; className?: string }) {
+  const id = useId().replace(/:/g, "");
+  const sz = size ?? Math.min(w, h) * 0.74;
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className={className} aria-hidden overflow="visible">
+      <Defs id={id} seed={seed} />
+      <g filter={`url(#${id}r)`}>
+        <Fill id={id} tex={tex} paper={paper} w={w} h={h} />
+        <rect width={w} height={h} filter={`url(#${id}g)`} opacity=".9" />
+      </g>
+      <g filter={`url(#${id}r)`}>
+        <Shape k={s} x={(w - sz) / 2} y={(h - sz) / 2 + sz * 0.02} size={sz} />
+        {extra?.map((e, i) => <Shape key={i} k={e.s} x={e.x} y={e.y} size={e.size} color={e.color} />)}
+      </g>
     </svg>
   );
+}
+
+/** Tarjeta de papel crema con la silueta calada: el hueco deja ver el fondo. */
+export function Cut({ s, w = 100, h = 128, seed = 5, className }: { s: string; w?: number; h?: number; seed?: number; className?: string }) {
+  const id = useId().replace(/:/g, "");
+  const sz = Math.min(w, h) * 0.78;
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className={className} aria-hidden overflow="visible">
+      <Defs id={id} seed={seed} edge={3.2} />
+      <mask id={`${id}m`} maskUnits="userSpaceOnUse" x="-10" y="-10" width={w + 20} height={h + 20}>
+        <rect x="2" y="2" width={w - 4} height={h - 4} fill="#fff" />
+        <Shape k={s} color="#000" x={(w - sz) / 2} y={(h - sz) / 2} size={sz} />
+      </mask>
+      <g filter={`url(#${id}r)`}>
+        <g mask={`url(#${id}m)`}>
+          <rect width={w} height={h} fill={CREAM} />
+          <rect width={w} height={h} filter={`url(#${id}g)`} opacity=".5" />
+        </g>
+      </g>
+    </svg>
+  );
+}
+
+/** Paisaje en capas de papel (cielo, sierras y pasto) para usar de fondo. */
+export function Land({ className, tone = "day" }: { className?: string; tone?: "day" | "dusk" }) {
+  const id = useId().replace(/:/g, "");
+  const sky = tone === "day" ? ["#2c3d55", "#5c7590", "#b9b5a6"] : ["#2a1f2c", "#7a3e3a", "#d9935e"];
+  return (
+    <svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" className={className} aria-hidden>
+      <defs>
+        <linearGradient id={`${id}s`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={sky[0]} />
+          <stop offset=".45" stopColor={sky[1]} />
+          <stop offset=".62" stopColor={sky[2]} />
+        </linearGradient>
+        <filter id={`${id}c`}>
+          <feTurbulence type="fractalNoise" baseFrequency="0.006 0.02" numOctaves="4" seed="8" />
+          <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.1 -0.55" />
+        </filter>
+        <filter id={`${id}e`} x="-5%" y="-20%" width="110%" height="140%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" seed="4" result="n" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="38" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+        <filter id={`${id}g`}>
+          <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="2" />
+          <feColorMatrix values="0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.05  0 0 0 0.6 -0.15" />
+        </filter>
+        <filter id={`${id}t`}>
+          <feTurbulence type="fractalNoise" baseFrequency="0.02 0.18" numOctaves="3" seed="11" />
+          <feColorMatrix values="0 0 0 0 0.25  0 0 0 0 0.3  0 0 0 0 0.12  0 0 0 1.4 -0.7" />
+        </filter>
+      </defs>
+      <rect width="800" height="600" fill={`url(#${id}s)`} />
+      <rect width="800" height="330" filter={`url(#${id}c)`} opacity=".42" />
+      <g filter={`url(#${id}e)`}>
+        <path d="M-40 360C60 330 120 300 200 318s150-40 230-30 130 50 210 30 140-20 200 0V600H-40z" fill="#c9b591" />
+        <path d="M-40 392C80 372 150 340 260 360s170 10 250-6 180 30 330 18V600H-40z" fill="#e1d1b0" />
+        <path d="M-40 420C120 410 220 386 330 400s230 20 300 6 120-6 210 2V600H-40z" fill="#b39a74" />
+      </g>
+      <path d="M-20 440C150 430 300 446 420 438s260-6 400 4V600H-20z" fill="#6b7442" filter={`url(#${id}e)`} />
+      <rect y="430" width="800" height="170" filter={`url(#${id}t)`} />
+      <rect width="800" height="600" filter={`url(#${id}g)`} opacity=".5" />
+    </svg>
+  );
+}
+
+/* ---------- composiciones con nombre, para la página ---------- */
+export type ArtKey = "hero" | "cafe" | "vino" | "workshop" | "torno" | "manana" | "tarde" | "noche" | "tiles" | "lampara" | "crochet" | "pasta";
+
+const SPEC: Record<ArtKey, { s: string; paper?: string; tex?: string; seed?: number }> = {
+  hero: { s: "urn", paper: "navy" },
+  cafe: { s: "cup", tex: "plaster", paper: "sand", seed: 4 },
+  manana: { s: "cup", tex: "plaster", paper: "sand", seed: 4 },
+  vino: { s: "glass", paper: "wine", seed: 6 },
+  noche: { s: "bottle", paper: "navy", seed: 9 },
+  tarde: { s: "pitcher", paper: "clay", seed: 2 },
+  workshop: { s: "flower", paper: "olive", seed: 12 },
+  torno: { s: "wheel", tex: "wood", seed: 7 },
+  tiles: { s: "flower", paper: "clay", seed: 13 },
+  lampara: { s: "lamp", paper: "navy", seed: 14 },
+  crochet: { s: "yarn", paper: "rose", seed: 15 },
+  pasta: { s: "pasta", paper: "ochre", seed: 16 },
+};
+
+export default function Art({ k, className, w = 100, h = 125 }: { k: ArtKey; className?: string; w?: number; h?: number }) {
+  const sp = SPEC[k];
+  return <Scrap s={sp.s} paper={sp.paper} tex={sp.tex} seed={sp.seed} w={w} h={h} className={className} />;
 }
