@@ -2035,8 +2035,9 @@ tr.low .ap-qty s { background: #e8890c; }
 /* Casa Materia en miniatura (tarjetas de proyecto y demo de Experience) */
 .cmm { container-type: inline-size; position: relative; aspect-ratio: 16 / 10; overflow: hidden; display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 4cqw; padding: 6cqw; color: #f4efe6; }
 .pj-vis--cm .cmm { position: absolute; inset: 0; aspect-ratio: auto; height: 100%; }
-.cmm__land { position: absolute; inset: 0; width: 100%; height: 100%; }
-.cmm__txt, .cmm__grid { position: relative; }
+.cmm__land { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
+.cmm::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(100deg, rgba(22, 26, 20, .6), rgba(22, 26, 20, 0) 65%); }
+.cmm__txt, .cmm__grid { position: relative; z-index: 2; }
 .cmm__txt { display: flex; flex-direction: column; gap: 3cqw; align-self: start; padding-top: 2cqw; }
 .cmm__logo { font-family: "Bricolage Grotesque", var(--sans); font-weight: 800; letter-spacing: -.04em; font-size: 3cqw; }
 .cmm__h { font-family: "Bricolage Grotesque", var(--sans); font-weight: 800; letter-spacing: -.045em; font-size: 6.4cqw; line-height: .96; }

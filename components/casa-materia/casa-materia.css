@@ -62,8 +62,10 @@ html:has(.cm) { scroll-behavior: smooth; scroll-padding-top: 84px; background: #
 
 /* hero: paisaje de papel con tarjetas caladas */
 .cm-hero { position: relative; overflow: hidden; display: grid; grid-template-columns: 1fr minmax(0, 520px); gap: clamp(28px, 5vw, 80px); align-items: start; min-height: 100svh; padding: clamp(120px, 16vh, 170px) var(--pad) 72px; color: var(--cream); }
-.cm-hero__land { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
-.cm-hero > :not(.cm-hero__land) { position: relative; z-index: 1; }
+.cm-hero__land { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; object-fit: cover; object-position: 50% 60%; }
+.cm-hero::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(100deg, rgba(18, 22, 16, .8) 0%, rgba(18, 22, 16, .6) 38%, rgba(18, 22, 16, .12) 68%, rgba(18, 22, 16, 0) 80%), linear-gradient(180deg, rgba(18, 22, 16, .4), rgba(18, 22, 16, 0) 28%); }
+.cm-hero > :not(.cm-hero__land) { position: relative; z-index: 2; }
+.cm-hero__grid .cm-cutcard { filter: drop-shadow(0 8px 18px rgba(10, 14, 10, .35)); }
 .cm-hero .cm-kicker { color: rgba(244, 239, 230, .78); }
 .cm-hero h1 { font-size: clamp(48px, 6.6vw, 100px); line-height: .95; margin: 22px 0 26px; text-shadow: 0 2px 30px rgba(20, 24, 34, .25); }
 .cm-hero h1 em { color: #f0c7a8; }
@@ -129,7 +131,7 @@ html:has(.cm) { scroll-behavior: smooth; scroll-padding-top: 84px; background: #
 /* atelier */
 .cm-atelier { position: relative; min-height: 86svh; display: flex; align-items: center; padding: var(--pad); color: var(--cream); }
 .cm-atelier { overflow: hidden; background: #c99a5b; }
-.cm-atelier__bg { position: absolute; z-index: 2; right: var(--pad); top: 50%; height: 80%; width: auto; max-width: none !important; aspect-ratio: 100 / 125; transform: translateY(-50%) rotate(1.6deg); filter: drop-shadow(0 10px 24px rgba(35, 29, 23, .25)); }
+.cm-atelier__bg { position: absolute; z-index: 2; right: var(--pad); top: 50%; height: 80%; width: auto; max-width: none !important; aspect-ratio: 5 / 7; object-fit: cover; border: 10px solid #f8f2e6; border-bottom-width: 38px; transform: translateY(-50%) rotate(1.6deg); box-shadow: 0 14px 34px rgba(35, 29, 23, .3); }
 .cm-atelier::before { content: none; }
 .cm-atelier__card { position: relative; z-index: 2; max-width: 520px; display: flex; flex-direction: column; gap: 18px; padding: clamp(24px, 3.4vw, 44px); border-radius: 22px; background: rgba(35, 29, 23, .62); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 .cm-atelier .cm-kicker { color: rgba(244, 239, 230, .7); }
@@ -261,6 +263,7 @@ html:has(.cm) { scroll-behavior: smooth; scroll-padding-top: 84px; background: #
   .cm-logo { font-size: 23px; }
   .cm-hero { grid-template-columns: 1fr; min-height: 0; padding-top: 104px; gap: 40px; }
   .cm-hero__grid { max-width: 420px; width: 100%; margin: 0 auto; }
+  .cm-hero::before { background: linear-gradient(180deg, rgba(18, 22, 16, .72) 0%, rgba(18, 22, 16, .55) 45%, rgba(18, 22, 16, .1) 70%); }
   .cm-collage { grid-template-columns: 1fr 1fr; }
   .cm-intro__list { grid-template-columns: 1fr 1fr; }
   .cm-exps, .cm-ws, .cm-bar { grid-template-columns: 1fr; }

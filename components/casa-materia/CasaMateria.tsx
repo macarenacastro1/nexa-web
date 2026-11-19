@@ -222,7 +222,8 @@ export default function CasaMateria() {
       <main id="top">
         {/* HERO */}
         <section className="cm-hero">
-          <Land className="cm-hero__land" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/casa-materia/paisaje.webp" alt="" className="cm-hero__land" fetchPriority="high" />
           <div className="cm-hero__txt">
             <p className="cm-kicker" data-r>Atelier de experiencias · Buenos Aires</p>
             <h1 data-r>Una casa para hacer <em>con las manos.</em></h1>
@@ -306,7 +307,8 @@ export default function CasaMateria() {
 
         {/* ATELIER */}
         <section id="atelier" className="cm-atelier">
-          <Art k="torno" className="cm-atelier__bg" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/casa-materia/torno.webp" alt="Manos levantando una pieza de barro en el torno" className="cm-atelier__bg" loading="lazy" />
           <div className="cm-atelier__card" data-r>
             <p className="cm-kicker">Atelier de cerámica</p>
             <h2>Aprendé a tornear, <em>sin apuro.</em></h2>
