@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Contact from "@/components/Contact";
 import { track } from "@/lib/config";
 import Dashboard, { BarChart, Icon } from "./Dashboard";
+import { BRANDS, BrandIcon, type BrandKey } from "./logos";
 
 /* =====================================================================
    NEXA · propuesta de diseño claro (inspirada en la estructura de los
@@ -91,13 +92,20 @@ function Hero() {
   );
 }
 
+const STACK: BrandKey[] = ["sap", "odoo", "tango", "shopify", "woo", "tiendanube", "mp", "stripe", "whatsapp", "gmail", "meta", "instagram", "sheets", "analytics", "hubspot", "supabase", "next", "openai"];
 function Stack() {
-  const items = ["Next.js", "Supabase", "Shopify", "WhatsApp Business", "Mercado Pago", "Google Analytics", "Meta Ads", "Gmail"];
   return (
-    <section className="v2-stack" aria-label="Herramientas con las que trabajamos">
-      <p data-r>Construimos con las herramientas que ya usa tu negocio</p>
+    <section className="v2-stack" aria-label="Herramientas y sistemas con los que trabajamos">
+      <p data-r>Nos conectamos con los sistemas y las herramientas que ya usa tu negocio</p>
+      <ul className="v2-stack__groups" data-r>
+        {["ERP", "E-commerce", "Pagos", "Mensajería", "Datos", "IA"].map((g) => <li key={g}>{g}</li>)}
+      </ul>
       <div className="v2-stack__row" data-r>
-        <div className="v2-stack__track">{[...items, ...items].map((t, i) => <span key={i}><i />{t}</span>)}</div>
+        <div className="v2-stack__track">
+          {[...STACK, ...STACK].map((k, i) => (
+            <span key={i} aria-hidden={i >= STACK.length}><BrandIcon k={k} size={22} color="mono" />{BRANDS[k].title}</span>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -149,7 +157,8 @@ function Divisions() {
 
 /* ------------------------------ funciones ------------------------------ */
 function Features() {
-  const tools = [["W", "#25d366"], ["G", "#ea4335"], ["S", "#0f9d58"], ["MP", "#00b1ea"], ["IG", "#e1306c"]] as const;
+  const inner: BrandKey[] = ["whatsapp", "gmail", "sheets", "mp", "instagram"];
+  const outer: BrandKey[] = ["sap", "shopify", "odoo", "hubspot", "tango", "calendar", "supabase"];
   return (
     <section className="v2-sec v2-sec--gray">
       <div className="v2-wrap">
@@ -161,13 +170,14 @@ function Features() {
             <p>Paneles con lo importante a la vista: ventas, stock, consultas y campañas actualizados solos, sin planillas.</p>
           </article>
           <article className="v2-card" data-r>
-            <div className="v2-orbit" aria-hidden>
+            <div className="v2-orbit" role="img" aria-label="Integraciones: WhatsApp, Gmail, Google Sheets, Mercado Pago, Instagram, SAP, Shopify, Odoo, HubSpot, Tango Gestión, Google Calendar y Supabase">
               <i className="v2-orbit__ring" /><i className="v2-orbit__ring v2-orbit__ring--2" />
               <span className="v2-orbit__core">N</span>
-              {tools.map(([t, c], i) => <span key={t} className="v2-orbit__dot" style={{ ["--a" as string]: `${i * 72}deg`, background: c }}>{t}</span>)}
+              {inner.map((k, i) => <span key={k} className="v2-orbit__dot" style={{ ["--a" as string]: `${i * 72}deg`, ["--r" as string]: "86px" }} title={BRANDS[k].title}><BrandIcon k={k} size={20} /></span>)}
+              {outer.map((k, i) => <span key={k} className="v2-orbit__dot v2-orbit__dot--out" style={{ ["--a" as string]: `${i * (360 / 7) + 20}deg`, ["--r" as string]: "142px" }} title={BRANDS[k].title}><BrandIcon k={k} size={18} /></span>)}
             </div>
             <h3>Todo conectado</h3>
-            <p>WhatsApp, Gmail, planillas, pagos y redes trabajando juntos, sin copiar y pegar.</p>
+            <p>Tu ERP (SAP, Odoo, Tango), la tienda online, los pagos, WhatsApp, el mail y las planillas trabajando juntos, sin copiar y pegar.</p>
           </article>
         </div>
       </div>

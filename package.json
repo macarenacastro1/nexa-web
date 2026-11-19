@@ -20,6 +20,7 @@
     "@types/node": "22.10.2",
     "@types/react": "19.2.2",
     "@types/three": "0.180.0",
+    "simple-icons": "^15.22.0",
     "typescript": "5.9.3"
   }
 }
