@@ -255,6 +255,12 @@
 .v2-cta h2 { margin-top: 0 !important; color: #fff; }
 .v2-cta p { margin: 16px auto 32px !important; max-width: 520px; color: rgba(255,255,255,.72); font-size: 18px; line-height: 1.5; }
 
+/* formulario de contacto (el mismo de la web actual, sobre su fondo oscuro) */
+.v2-contact { width: min(1200px, 100% - 40px); margin: 0 auto 80px; border-radius: 28px; overflow: hidden; scroll-margin-top: 80px; color: var(--text); }
+.v2-contact h2 { color: var(--text); }
+.v2-contact button[type="submit"] { color: #0b0c0e; }
+.v2-contact .contact { border-top: 0; }
+
 /* pie */
 .v2-foot { border-top: 1px solid var(--line); padding: 36px 0 44px; }
 .v2-foot__in { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }

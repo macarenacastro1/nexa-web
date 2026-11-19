@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Contact from "@/components/Contact";
 import { track } from "@/lib/config";
 import Dashboard, { BarChart, Icon } from "./Dashboard";
 
@@ -41,6 +42,7 @@ export default function CleanHome() {
       <Voices />
       <Process />
       <Cta />
+      <div className="v2-contact"><Contact /></div>
       <Footer />
     </div>
   );
@@ -62,7 +64,7 @@ function Nav() {
         <nav aria-label="Principal">
           {[["#servicios", "Servicios"], ["#casos", "Casos"], ["#proceso", "Cómo trabajamos"], ["/proyectos/", "Proyectos"]].map(([h, t]) => <a key={h} href={h} onClick={() => setOpen(false)}>{t}</a>)}
         </nav>
-        <a className="v2-btn v2-btn--line v2-btn--sm" href="/#contacto" onClick={() => track("cta_click", { cta: "v2_nav" })}>Hablemos <Icon n="chev" size={14} /></a>
+        <a className="v2-btn v2-btn--line v2-btn--sm" href="#contacto" onClick={() => track("cta_click", { cta: "v2_nav" })}>Hablemos <Icon n="chev" size={14} /></a>
         <button type="button" className="v2-burger" aria-label="Menú" aria-expanded={open} onClick={() => setOpen((o) => !o)}><i /><i /></button>
       </div>
     </header>
@@ -78,7 +80,7 @@ function Hero() {
         <h1 data-r>Tu negocio puede<br />funcionar mejor.</h1>
         <p className="v2-hero__sub" data-r>Diseñamos experiencias web, sistemas a medida y automatizaciones para que vendas más y trabajes con menos caos.</p>
         <div className="v2-hero__cta" data-r>
-          <a className="v2-btn" href="/#contacto" onClick={() => track("cta_click", { cta: "v2_hero" })}>Hablemos de tu proyecto <Icon n="chev" size={15} /></a>
+          <a className="v2-btn" href="#contacto" onClick={() => track("cta_click", { cta: "v2_hero" })}>Hablemos de tu proyecto <Icon n="chev" size={15} /></a>
           <a className="v2-btn v2-btn--line" href="#servicios">Ver servicios <Icon n="chev" size={15} /></a>
         </div>
         <div className="v2-hero__dash" data-r><Dashboard /></div>
@@ -326,7 +328,7 @@ function Cta() {
         <div className="v2-cta" data-r>
           <h2>¿Hablamos de tu proyecto?</h2>
           <p>Contanos qué necesitás y te respondemos con una primera idea para tu negocio.</p>
-          <a className="v2-btn v2-btn--light" href="/#contacto" onClick={() => track("cta_click", { cta: "v2_final" })}>Hablemos de tu proyecto <Icon n="chev" size={15} /></a>
+          <a className="v2-btn v2-btn--light" href="#contacto" onClick={() => track("cta_click", { cta: "v2_final" })}>Hablemos de tu proyecto <Icon n="chev" size={15} /></a>
         </div>
       </div>
     </section>
