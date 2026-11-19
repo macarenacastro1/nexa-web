@@ -28,10 +28,11 @@ const Head = ({ icon, kicker, title, text, align = "center", color = "teal" }: {
   </div>
 );
 
-export default function CleanHome() {
+/** variant "nx": la misma estructura con la identidad de Nexa (oscuro, turquesa/azul/verde y detalles futuristas). */
+export default function CleanHome({ variant = "light" }: { variant?: "light" | "nx" }) {
   useReveal();
   return (
-    <div className="v2" id="main">
+    <div className={`v2${variant === "nx" ? " v2--nx" : ""}`} id="main">
       <Nav />
       <Hero />
       <Stack />
@@ -75,9 +76,10 @@ function Nav() {
 function Hero() {
   return (
     <section className="v2-hero">
+      <div className="v2-grid" aria-hidden />
       <div className="v2-wrap">
         <a className="v2-badge" href="/casos/casa-materia/" data-r><b>Nuevo</b> Conocé Casa Materia, nuestra experiencia 3D <Icon n="chev" size={13} /></a>
-        <h1 data-r>Tu negocio puede<br />funcionar mejor.</h1>
+        <h1 data-r>Tu negocio puede<br />funcionar <span className="v2-acc">mejor.</span></h1>
         <p className="v2-hero__sub" data-r>Diseñamos experiencias web, sistemas a medida y automatizaciones para que vendas más y trabajes con menos caos.</p>
         <div className="v2-hero__cta" data-r>
           <a className="v2-btn" href="#contacto" onClick={() => track("cta_click", { cta: "v2_hero" })}>Hablemos de tu proyecto <Icon n="chev" size={15} /></a>
@@ -106,7 +108,7 @@ function Divisions() {
   return (
     <section className="v2-sec" id="servicios">
       <div className="v2-wrap">
-        <Head icon="spark" kicker="Servicios" title={<>Diseño, sistemas y automatización<br />en un solo equipo</>} text="Tres especialidades que combinamos según lo que necesita cada negocio. Sin intermediarios y con un mismo criterio de punta a punta." />
+        <Head icon="spark" kicker="Servicios" title={<>Diseño, sistemas y automatización<br />en un solo <span className="v2-acc">equipo</span></>} text="Tres especialidades que combinamos según lo que necesita cada negocio. Sin intermediarios y con un mismo criterio de punta a punta." />
         <div className="v2-tri">
           <article className="v2-tile" data-r>
             <div className="v2-tile__art">
@@ -151,7 +153,7 @@ function Features() {
   return (
     <section className="v2-sec v2-sec--gray">
       <div className="v2-wrap">
-        <Head icon="bolt" kicker="Lo que cambia" title={<>Menos tareas repetidas,<br />más control del negocio</>} text="Lo que construimos se nota en el día a día: información ordenada, procesos que corren solos y decisiones con datos." />
+        <Head icon="bolt" kicker="Lo que cambia" title={<>Menos tareas repetidas,<br />más <span className="v2-acc">control</span> del negocio</>} text="Lo que construimos se nota en el día a día: información ordenada, procesos que corren solos y decisiones con datos." />
         <div className="v2-feat">
           <article className="v2-card v2-card--lg" data-r>
             <div className="v2-card__inner"><p className="v2-card__h"><Icon n="chart" /> Ventas de la semana <span><Icon n="dots" /></span></p><BarChart /></div>
@@ -262,7 +264,7 @@ function AllInOne() {
         <div className="v2-all__head" data-r>
           <div>
             <p className="v2-kick v2-kick--teal"><Icon n="spark" size={15} /> Nexa OS</p>
-            <h2>Todo lo que necesitás para crecer, en un solo lugar</h2>
+            <h2>Todo lo que necesitás para crecer, en un solo <span className="v2-acc">lugar</span></h2>
             <p className="v2-lead">Ventas, clientes, agenda, finanzas y automatizaciones conectadas. Simple de usar para todo el equipo, aunque nadie sea técnico.</p>
           </div>
           <a className="v2-btn v2-btn--line" href="/systems/">Conocé los sistemas <Icon n="chev" size={14} /></a>
