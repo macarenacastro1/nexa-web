@@ -211,7 +211,7 @@ export default function CasaMateria() {
   return (
     <div className="cm">
       <header className={`cm-nav${scrolled ? " is-s" : ""}${menu ? " is-m" : ""}`}>
-        <a href="#top" className="cm-logo" onClick={() => setMenu(false)}>Casa <i>Materia</i></a>
+        <a href="#main" className="cm-logo" onClick={() => setMenu(false)}>Casa <i>Materia</i></a>
         <nav aria-label="Secciones">
           {NAV.map(([h, l]) => <a key={h} href={h} onClick={() => setMenu(false)}>{l}</a>)}
         </nav>
@@ -219,7 +219,7 @@ export default function CasaMateria() {
         <button type="button" className="cm-burger" aria-expanded={menu} aria-label={menu ? "Cerrar menú" : "Abrir menú"} onClick={() => setMenu(!menu)}><i /><i /></button>
       </header>
 
-      <main id="top">
+      <main id="main">
         {/* HERO */}
         <section className="cm-hero">
           {/* eslint-disable-next-line @next/next/no-img-element */}

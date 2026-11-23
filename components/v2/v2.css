@@ -475,3 +475,4 @@
 @media (max-width: 820px) {
   .v2--nx .v2-nav nav { background: #07080a; border-color: rgba(255,255,255,.08); }
 }
+html:has(.v2) { scroll-padding-top: 84px; }
