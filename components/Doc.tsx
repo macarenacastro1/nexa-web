@@ -1,6 +1,13 @@
 import Script from "next/script";
 import { GA_MEASUREMENT_ID } from "@/lib/config";
 import { LangProvider, type Lang } from "@/lib/i18n";
+import { SITE } from "@/lib/seo";
+
+/** Datos estructurados: nombre del sitio y logo que Google muestra en los resultados. */
+const LD = JSON.stringify([
+  { "@context": "https://schema.org", "@type": "WebSite", name: "The Nexa Company", alternateName: ["Nexa", "NEXA"], url: `${SITE}/` },
+  { "@context": "https://schema.org", "@type": "Organization", name: "The Nexa Company", url: `${SITE}/`, logo: `${SITE}/logo-512.png` },
+]);
 
 /**
  * Documento HTML compartido. Cada idioma tiene su propio layout raíz
@@ -17,6 +24,7 @@ export default function Doc({ lang, children }: { lang: Lang; children: React.Re
           href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap"
           rel="stylesheet"
         />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: LD }} />
       </head>
       <body>
         <a className="skip" href="#main">{lang === "pt" ? "Pular para o conteúdo" : "Saltar al contenido"}</a>
