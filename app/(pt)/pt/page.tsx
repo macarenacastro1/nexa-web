@@ -1,4 +1,5 @@
-import HomePage from "@/components/pages/HomePage";
+import CleanHome from "@/components/v2/CleanHome";
+import "@/components/v2/v2.css";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta(
@@ -9,5 +10,5 @@ export const metadata = pageMeta(
 );
 
 export default function Page() {
-  return <HomePage />;
+  return <CleanHome variant="nx" />;
 }

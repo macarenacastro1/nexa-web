@@ -33,30 +33,8 @@ export const DIVISIONS = [
  * En la home los enlaces van a las secciones; en las demás páginas, a la home.
  * Servicios abre el acceso a las tres páginas de división.
  */
-export default function Nav({ home = false }: { home?: boolean }) {
-  const { lang, setLang } = useLang();
-  const L = useL();
-  const href = useHref();
-  const bar = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState("");
-  const [scrolled, setScrolled] = useState(false);
-  const [menu, setMenu] = useState(false);
-  const [drop, setDrop] = useState(false);
-  const base = home ? "" : href("/");
-  const sec = (id: string) => `${base}#${id}`;
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to(bar.current, { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
-      ScrollTrigger.create({ start: 40, end: "max", onToggle: (s) => setScrolled(s.isActive) });
-      if (home)
-        ["servicios", "proceso", "testimonios", "contacto"].forEach((id) =>
-          ScrollTrigger.create({ trigger: `#${id}`, start: "top 50%", end: "bottom 50%", onToggle: (s) => s.isActive && setActive(id) }),
-        );
-    });
-    return () => ctx.revert();
-  }, [home]);
-
+/** Guarda la campaña de origen (UTM) de la visita y, en la primera visita desde un navegador en portugués, lleva a /pt/. */
+export function useVisitSetup(lang: "es" | "pt") {
   // Guarda la campaña de origen (UTM) de la visita para que el formulario la mande aunque se navegue entre páginas.
   useEffect(() => {
     try {
@@ -83,6 +61,34 @@ export default function Nav({ home = false }: { home?: boolean }) {
       /* sin almacenamiento */
     }
   }, [lang]);
+
+}
+
+export default function Nav({ home = false }: { home?: boolean }) {
+  const { lang, setLang } = useLang();
+  const L = useL();
+  const href = useHref();
+  const bar = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState("");
+  const [scrolled, setScrolled] = useState(false);
+  const [menu, setMenu] = useState(false);
+  const [drop, setDrop] = useState(false);
+  const base = home ? "" : href("/");
+  const sec = (id: string) => `${base}#${id}`;
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.to(bar.current, { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
+      ScrollTrigger.create({ start: 40, end: "max", onToggle: (s) => setScrolled(s.isActive) });
+      if (home)
+        ["servicios", "proceso", "testimonios", "contacto"].forEach((id) =>
+          ScrollTrigger.create({ trigger: `#${id}`, start: "top 50%", end: "bottom 50%", onToggle: (s) => s.isActive && setActive(id) }),
+        );
+    });
+    return () => ctx.revert();
+  }, [home]);
+
+  useVisitSetup(lang);
 
   // Escape cierra el menú y el desplegable.
   useEffect(() => {

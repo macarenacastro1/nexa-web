@@ -1,30 +1,31 @@
 "use client";
 import { useState } from "react";
+import { useL } from "@/lib/i18n";
 
 /* Panel de ejemplo (negocio ficticio "Rivera Insumos"): muestra cómo se ve un sistema de Nexa.
    Datos ilustrativos; se aclara en pantalla con la etiqueta "Ejemplo". */
 
 const KPIS = [
-  { k: "ventas", icon: "cash", label: "Ventas del mes", value: "$4.820.000", delta: "+18,2%", up: true, pts: [8, 12, 9, 14, 11, 17, 15, 21, 18, 24] },
-  { k: "consultas", icon: "chat", label: "Consultas respondidas", value: "1.248", delta: "+32,5%", up: true, pts: [5, 7, 6, 10, 9, 13, 12, 15, 17, 20] },
-  { k: "clientes", icon: "users", label: "Clientes nuevos", value: "86", delta: "−4,1%", up: false, pts: [14, 16, 13, 15, 12, 11, 13, 10, 12, 9] },
-  { k: "pedidos", icon: "box", label: "Pedidos", value: "312", delta: "+9,4%", up: true, pts: [9, 8, 11, 10, 12, 11, 14, 13, 15, 16] },
+  { k: "ventas", icon: "cash", label: "Ventas del mes", pt: "Vendas do mês", value: "$4.820.000", delta: "+18,2%", up: true, pts: [8, 12, 9, 14, 11, 17, 15, 21, 18, 24] },
+  { k: "consultas", icon: "chat", label: "Consultas respondidas", pt: "Mensagens respondidas", value: "1.248", delta: "+32,5%", up: true, pts: [5, 7, 6, 10, 9, 13, 12, 15, 17, 20] },
+  { k: "clientes", icon: "users", label: "Clientes nuevos", pt: "Clientes novos", value: "86", delta: "−4,1%", up: false, pts: [14, 16, 13, 15, 12, 11, 13, 10, 12, 9] },
+  { k: "pedidos", icon: "box", label: "Pedidos", pt: "Pedidos", value: "312", delta: "+9,4%", up: true, pts: [9, 8, 11, 10, 12, 11, 14, 13, 15, 16] },
 ];
 const NAV = [
-  { k: "panel", icon: "grid", label: "Panel" },
-  { k: "pedidos", icon: "box", label: "Pedidos" },
-  { k: "stock", icon: "layers", label: "Stock" },
-  { k: "clientes", icon: "users", label: "Clientes" },
-  { k: "agenda", icon: "cal", label: "Agenda" },
-  { k: "auto", icon: "bolt", label: "Automatizaciones" },
+  { k: "panel", icon: "grid", label: "Panel", pt: "Painel" },
+  { k: "pedidos", icon: "box", label: "Pedidos", pt: "Pedidos" },
+  { k: "stock", icon: "layers", label: "Stock", pt: "Estoque" },
+  { k: "clientes", icon: "users", label: "Clientes", pt: "Clientes" },
+  { k: "agenda", icon: "cal", label: "Agenda", pt: "Agenda" },
+  { k: "auto", icon: "bolt", label: "Automatizaciones", pt: "Automações" },
 ];
 const BARS = [
-  { d: "Lun", v: 42 }, { d: "Mar", v: 58 }, { d: "Mié", v: 51 }, { d: "Jue", v: 96 }, { d: "Vie", v: 64 }, { d: "Sáb", v: 71 }, { d: "Dom", v: 38 },
+  { d: "Lun", p: "Seg", v: 42 }, { d: "Mar", p: "Ter", v: 58 }, { d: "Mié", p: "Qua", v: 51 }, { d: "Jue", p: "Qui", v: 96 }, { d: "Vie", p: "Sex", v: 64 }, { d: "Sáb", p: "Sáb", v: 71 }, { d: "Dom", p: "Dom", v: 38 },
 ];
 const AGENDA = [
-  { t: "Reposición automática · Vaso térmico", h: "09:30", c: "#0f9f8f" },
-  { t: "Llamada con Café Molino", h: "11:00 — 11:30", c: "#3b6fe0" },
-  { t: "Campaña de reactivación enviada", h: "15:00", c: "#e8a33d" },
+  { t: "Reposición automática · Vaso térmico", pt: "Reposição automática · Copo térmico", h: "09:30", c: "#0f9f8f" },
+  { t: "Llamada con Café Molino", pt: "Ligação com Café Molino", h: "11:00 — 11:30", c: "#3b6fe0" },
+  { t: "Campaña de reactivación enviada", pt: "Campanha de reativação enviada", h: "15:00", c: "#e8a33d" },
 ];
 
 export function Icon({ n, size = 16 }: { n: string; size?: number }) {
@@ -72,16 +73,17 @@ function Spark({ pts, up }: { pts: number[]; up: boolean }) {
 const ars = (n: number) => new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(n);
 
 export function BarChart({ compact = false }: { compact?: boolean }) {
+  const L = useL();
   const [hov, setHov] = useState(3);
   return (
     <div className={`v2-bars${compact ? " v2-bars--c" : ""}`} onPointerLeave={() => setHov(3)}>
       <div className="v2-bars__axis" aria-hidden><span>$2M</span><span>$1M</span><span>$500k</span></div>
       <div className="v2-bars__cols">
         {BARS.map((b, i) => (
-          <button key={b.d} type="button" className={`v2-bars__col${hov === i ? " on" : ""}`} onPointerEnter={() => setHov(i)} onFocus={() => setHov(i)} aria-label={`${b.d}: ${ars(b.v * 20500)}`}>
+          <button key={b.d} type="button" className={`v2-bars__col${hov === i ? " on" : ""}`} onPointerEnter={() => setHov(i)} onFocus={() => setHov(i)} aria-label={`${L(b.d, b.p)}: ${ars(b.v * 20500)}`}>
             <i style={{ height: `${b.v}%` }} />
             {hov === i && <em>{ars(b.v * 20500)}</em>}
-            {!compact && <small>{b.d}</small>}
+            {!compact && <small>{L(b.d, b.p)}</small>}
           </button>
         ))}
       </div>
@@ -90,28 +92,29 @@ export function BarChart({ compact = false }: { compact?: boolean }) {
 }
 
 export default function Dashboard({ tilt = false }: { tilt?: boolean }) {
+  const L = useL();
   const [nav, setNav] = useState("panel");
   return (
-    <div className={`v2-dash${tilt ? " v2-dash--tilt" : ""}`} aria-label="Ejemplo de panel de un sistema hecho por Nexa">
+    <div className={`v2-dash${tilt ? " v2-dash--tilt" : ""}`} aria-label={L("Ejemplo de panel de un sistema hecho por Nexa", "Exemplo de painel de um sistema feito pela Nexa")}>
       <aside className="v2-dash__side">
-        <div className="v2-dash__org"><span className="v2-dash__logo">R</span><div><b>Rivera Insumos</b><small>8 personas</small></div><span className="v2-dash__tag">Ejemplo</span></div>
+        <div className="v2-dash__org"><span className="v2-dash__logo">R</span><div><b>Rivera Insumos</b><small>{L("8 personas", "8 pessoas")}</small></div><span className="v2-dash__tag">{L("Ejemplo", "Exemplo")}</span></div>
         <nav>
           {NAV.map((n) => (
-            <button key={n.k} type="button" className={nav === n.k ? "on" : ""} onClick={() => setNav(n.k)}><Icon n={n.icon} /> {n.label}</button>
+            <button key={n.k} type="button" className={nav === n.k ? "on" : ""} onClick={() => setNav(n.k)}><Icon n={n.icon} /> {L(n.label, n.pt)}</button>
           ))}
         </nav>
-        <p className="v2-dash__fav">Favoritos</p>
-        <ul className="v2-dash__favs"><li><i style={{ background: "#e8a33d" }} />Radar de clientes</li><li><i style={{ background: "#0f9f8f" }} />Campaña de invierno</li><li><i style={{ background: "#3b6fe0" }} />Proveedores</li></ul>
+        <p className="v2-dash__fav">{L("Favoritos", "Favoritos")}</p>
+        <ul className="v2-dash__favs"><li><i style={{ background: "#e8a33d" }} />{L("Radar de clientes", "Radar de clientes")}</li><li><i style={{ background: "#0f9f8f" }} />{L("Campaña de invierno", "Campanha de inverno")}</li><li><i style={{ background: "#3b6fe0" }} />{L("Proveedores", "Fornecedores")}</li></ul>
       </aside>
       <div className="v2-dash__main">
         <header className="v2-dash__head">
-          <div><h3>Panel</h3><p>Todo tu negocio, en una pantalla</p></div>
+          <div><h3>{L("Panel", "Painel")}</h3><p>{L("Todo tu negocio, en una pantalla", "Todo o seu negócio em uma tela")}</p></div>
           <span className="v2-dash__plus"><Icon n="plus" /></span>
         </header>
         <div className="v2-dash__kpis">
           {KPIS.map((k) => (
             <div key={k.k} className="v2-kpi">
-              <p className="v2-kpi__l"><Icon n={k.icon} /> {k.label}<span className="v2-kpi__go"><Icon n="arrow" size={11} /></span></p>
+              <p className="v2-kpi__l"><Icon n={k.icon} /> {L(k.label, k.pt)}<span className="v2-kpi__go"><Icon n="arrow" size={11} /></span></p>
               <p className="v2-kpi__v">{k.value}<span className={k.up ? "up" : "down"}>{k.up ? "↗" : "↘"} {k.delta}</span></p>
               <Spark pts={k.pts} up={k.up} />
             </div>
@@ -119,14 +122,14 @@ export default function Dashboard({ tilt = false }: { tilt?: boolean }) {
         </div>
         <div className="v2-dash__row">
           <div className="v2-card">
-            <p className="v2-card__h"><Icon n="chart" /> Ventas de la semana <span><Icon n="dots" /></span></p>
+            <p className="v2-card__h"><Icon n="chart" /> {L("Ventas de la semana", "Vendas da semana")} <span><Icon n="dots" /></span></p>
             <BarChart />
           </div>
           <div className="v2-card">
-            <p className="v2-card__h"><Icon n="cal" /> Agenda de hoy <span><Icon n="dots" /></span></p>
+            <p className="v2-card__h"><Icon n="cal" /> {L("Agenda de hoy", "Agenda de hoje")} <span><Icon n="dots" /></span></p>
             <ul className="v2-agenda">
               {AGENDA.map((a) => (
-                <li key={a.t}><i style={{ background: a.c }} /><div><b>{a.t}</b><small>{a.h}</small></div><Icon n="chev" size={14} /></li>
+                <li key={a.t}><i style={{ background: a.c }} /><div><b>{L(a.t, a.pt)}</b><small>{a.h}</small></div><Icon n="chev" size={14} /></li>
               ))}
             </ul>
           </div>
